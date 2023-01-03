@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.API", "Kenshi.API\Kenshi.API.csproj", "{7A7454CB-3D58-414A-B05A-0E5926981410}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{6E5F67C0-7653-4091-9C2C-86A30900F44B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A7454CB-3D58-414A-B05A-0E5926981410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A7454CB-3D58-414A-B05A-0E5926981410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A7454CB-3D58-414A-B05A-0E5926981410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A7454CB-3D58-414A-B05A-0E5926981410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E5F67C0-7653-4091-9C2C-86A30900F44B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E5F67C0-7653-4091-9C2C-86A30900F44B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E5F67C0-7653-4091-9C2C-86A30900F44B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E5F67C0-7653-4091-9C2C-86A30900F44B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
