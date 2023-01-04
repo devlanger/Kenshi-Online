@@ -14,6 +14,11 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _service = service;
     }
 
+    public async Task DeleteAllGameRooms()
+    {
+        await _service.DeleteAllPods();
+    }
+    
     public async Task DeleteGameRoom(int port)
     {
         try
@@ -50,23 +55,24 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     public async Task ListGameRooms()
     {
-        var podsList = _service.ListPods().Result.Select(p => p.Name()).ToList();
+        var podsList = _service.ListPods().Result.Select(p => p.Uid()).ToList();
         await Clients.Client(Context.ConnectionId).SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList));
     }
 
-    public Task JoinGameRoom(string roomId)
+    public async Task JoinGameRoom(string roomId)
     {
         try
         {
-            Console.WriteLine($"{Context.ConnectionId} has joined room");
+            var port = _service.ListPods().Result.Find(p => roomId == p.Uid()).Labels()["port"];
+
+            Console.WriteLine($"{Context.ConnectionId} has joined room port: {port}");        
+            await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", port);
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
-
-        return Task.CompletedTask;
     }
 
     public override Task OnConnectedAsync()

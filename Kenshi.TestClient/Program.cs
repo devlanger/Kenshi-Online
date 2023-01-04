@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using LiteNetLib;
+using LiteNetLib.Utils;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Kenshi.TestClient
@@ -22,6 +26,13 @@ namespace Kenshi.TestClient
             {
                 Console.WriteLine(message);
             });
+            
+            connection.On<string>("JoinGameRoom", (message) =>
+            {
+                string port = message;
+                ConnectToGameServer(int.Parse(port));
+                Console.WriteLine(message);
+            });
 
             while (true)
             {
@@ -40,6 +51,10 @@ namespace Kenshi.TestClient
                         case "delete_game":
                             await connection.SendAsync("DeleteGameRoom", int.Parse(parameters[1]));
                             Console.WriteLine($"delete game {int.Parse(parameters[1])}");
+                            break;
+                        case "delete_all_games":
+                            await connection.SendAsync("DeleteAllGameRooms");
+                            Console.WriteLine($"delete all games");
                             break;
                         case "join_game":
                             await connection.SendAsync("JoinGameRoom", parameters[1]);
@@ -61,6 +76,63 @@ namespace Kenshi.TestClient
                 
                 Thread.Sleep(50);
             }
+        }
+
+        public class Client : INetEventListener
+        {
+            private NetManager _client;
+            private NetPeer _serverPeer;
+
+            public void Start(string ip, int port)
+            {
+                _client = new NetManager(this);
+                _client.Start();
+                _client.Connect(ip, port, "");
+            }
+
+            public void OnPeerConnected(NetPeer peer)
+            {
+                Console.WriteLine("Connected to server: " + peer.EndPoint);
+                _serverPeer = peer;
+
+                // Send a message to the server
+                var writer = new NetDataWriter();
+                writer.Put("Hello from the client!");
+                _serverPeer.Send(writer, DeliveryMethod.Unreliable);
+            }
+
+            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+            {
+                Console.WriteLine("Disconnected from server: " + peer.EndPoint);
+                _serverPeer = null;
+            }
+
+            public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
+            {
+                
+            }
+
+            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
+            {
+            }
+
+            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+            {
+            }
+
+            public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+            {
+            }
+
+            public void OnConnectionRequest(ConnectionRequest request)
+            {
+            }
+        }
+
+        public static void ConnectToGameServer(int port)
+        {
+            var client = new Client();
+            client.Start("127.0.0.1", port);
         }
     }
 }

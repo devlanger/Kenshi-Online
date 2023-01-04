@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Tests", "Kenshi.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.TestClient", "Kenshi.TestClient\Kenshi.TestClient.csproj", "{61F2223F-5176-4D8D-9327-88DDA71789ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.TestGameServer", "Kenshi.TestGameServer\Kenshi.TestGameServer.csproj", "{2AF9A323-9F3A-4564-83C8-119F794E0C22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AF9A323-9F3A-4564-83C8-119F794E0C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AF9A323-9F3A-4564-83C8-119F794E0C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AF9A323-9F3A-4564-83C8-119F794E0C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AF9A323-9F3A-4564-83C8-119F794E0C22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

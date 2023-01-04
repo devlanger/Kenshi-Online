@@ -8,6 +8,8 @@ public class KubernetesService
     private readonly IConfiguration _configuration;
     private readonly KubernetesClientConfiguration _kubeConfig;
     private readonly Kubernetes _client;
+
+    private string GetPodName(int port) => $"gameroom-{port}";
     
     public KubernetesService(IConfiguration config)
     {
@@ -45,11 +47,12 @@ public class KubernetesService
             Kind = "Pod",
             Metadata = new V1ObjectMeta
             {
-                Name = $"my-pod-{freePort}",
+                Name = $"{GetPodName(freePort)}",
                 NamespaceProperty = "default",
                 Labels = new Dictionary<string, string>
                 {
-                    { "app", "my-app" }
+                    { "app", "my-app" },
+                    { "port", freePort.ToString() }
                 },
                 Annotations = settings.Annotations
             },
@@ -67,6 +70,10 @@ public class KubernetesService
                             {
                                 ContainerPort = freePort
                             }
+                        },
+                        Args = new List<string>
+                        {
+                            freePort.ToString(),
                         }
                     }
                 }
@@ -80,5 +87,17 @@ public class KubernetesService
     {
         var pods = await _client.ListNamespacedPodAsync("default");
         return pods.Items.ToList();
+    }
+
+    public async Task DeleteAllPods()
+    {
+        // List all pods in the namespace
+        var pods = await _client.ListNamespacedPodAsync("default");
+
+        // Iterate over the pods and delete them
+        foreach (var pod in pods.Items)
+        {
+            await _client.DeleteNamespacedPodAsync(pod.Metadata.Name, "default");
+        }
     }
 }
