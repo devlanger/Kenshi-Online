@@ -12,24 +12,40 @@ public class KubernetesService
     public KubernetesService(IConfiguration config)
     {
         _configuration = config;
-        _kubeConfig = new KubernetesClientConfiguration
-        {
-            Host = _configuration["KUBERNETES_HOST"],
-            AccessToken = _configuration["KUBERNETES_TOKEN"],
-            SslCaCerts = null,
-        };
+        _kubeConfig = KubernetesClientConfiguration.BuildDefaultConfig();
+
         _client = new Kubernetes(_kubeConfig);
     }
 
+    public async Task DeletePod(int port)
+    {
+        await _client.DeleteNamespacedPodAsync($"my-pod-{port}","default");
+    }
+    
     public async Task CreatePod(GameRoomPodSettings settings)
     {
+        var pods = _client.ListNamespacedPod("default").Items;
+        
+        // Find a free port
+        int freePort;
+        if (pods.Any())
+        {
+            // If there are pods in the cluster, find the highest used port number and add 1
+            freePort = pods.Max(p => p.Spec.Containers.Max(c => c.Ports.Max(port => port.ContainerPort))) + 1;
+        }
+        else
+        {
+            // If there are no pods in the cluster, set the free port to a default value
+            freePort = 1;
+        }
+        
         var pod = new V1Pod
         {
             ApiVersion = "v1",
             Kind = "Pod",
             Metadata = new V1ObjectMeta
             {
-                Name = "my-pod",
+                Name = $"my-pod-{freePort}",
                 NamespaceProperty = "default",
                 Labels = new Dictionary<string, string>
                 {
@@ -49,7 +65,7 @@ public class KubernetesService
                         {
                             new V1ContainerPort
                             {
-                                ContainerPort = settings.Port
+                                ContainerPort = freePort
                             }
                         }
                     }
@@ -58,5 +74,11 @@ public class KubernetesService
         };
 
         await _client.CreateNamespacedPodAsync(pod, "default");
+    }
+
+    public async Task<List<V1Pod>> ListPods()
+    {
+        var pods = await _client.ListNamespacedPodAsync("default");
+        return pods.Items.ToList();
     }
 }
