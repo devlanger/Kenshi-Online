@@ -1,14 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Net.Sockets;
-using LiteNetLib;
+﻿using LiteNetLib;
 using LiteNetLib.Utils;
 
 namespace UDPServer
 {
     class Program
     {
-        static void Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var port = int.Parse(args[0]);
             EventBasedNetListener listener = new EventBasedNetListener();
@@ -36,7 +33,7 @@ namespace UDPServer
                 Console.WriteLine("We got disconnection: {0} {1}", peer.EndPoint, dcInfo.Reason); // Show peer ip
             };
 
-            while (!Console.KeyAvailable)
+            while (true)
             {
                 server.PollEvents();
                 Thread.Sleep(15);

@@ -30,8 +30,8 @@ namespace Kenshi.TestClient
             connection.On<string>("JoinGameRoom", (message) =>
             {
                 string port = message;
-                //ConnectToGameServer(int.Parse(port));
-                ConnectToGameServer(5000);
+                ConnectToGameServer(int.Parse(port));
+                //ConnectToGameServer(5000);
                 Console.WriteLine(message);
             });
 
@@ -86,6 +86,7 @@ namespace Kenshi.TestClient
 
             public void Start(string ip, int port)
             {
+                Console.WriteLine($"Try to connect to game server: {ip} {port}");
                 _client = new NetManager(this);
                 _client.Start();
                 _client.Connect(ip, port, "test");
@@ -133,7 +134,7 @@ namespace Kenshi.TestClient
         public static void ConnectToGameServer(int port)
         {
             var client = new Client();
-            client.Start("127.0.0.1", port);
+            client.Start("192.168.49.2", port);
         }
     }
 }

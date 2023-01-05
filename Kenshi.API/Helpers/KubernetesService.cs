@@ -10,7 +10,7 @@ public class KubernetesService
     private readonly Kubernetes _client;
 
     private string GetPodName(int port) => $"gameroom-{port}";
-    
+
     public KubernetesService(IConfiguration config)
     {
         _configuration = config;
@@ -21,26 +21,26 @@ public class KubernetesService
 
     public async Task DeletePod(int port)
     {
-        await _client.DeleteNamespacedPodAsync($"my-pod-{port}","default");
+        await _client.DeleteNamespacedPodAsync($"my-pod-{port}", "default");
     }
-    
+
     public async Task CreatePod(GameRoomPodSettings settings)
     {
         var pods = _client.ListNamespacedPod("default").Items;
-        
+        int startPort = 5000;
         // Find a free port
         int freePort;
         if (pods.Any())
         {
             // If there are pods in the cluster, find the highest used port number and add 1
-            freePort = pods.Max(p => p.Spec.Containers.Max(c => c.Ports.Max(port => port.ContainerPort))) + 1;
+            freePort = pods.Max(p => p.Spec.Containers.Max(c => c.Ports.Max(port => port.ContainerPort))) + startPort + 1;
         }
         else
         {
             // If there are no pods in the cluster, set the free port to a default value
-            freePort = 1;
+            freePort = startPort + 1;
         }
-        
+
         var pod = new V1Pod
         {
             ApiVersion = "v1",
@@ -58,17 +58,20 @@ public class KubernetesService
             },
             Spec = new V1PodSpec
             {
+                HostNetwork = true,
                 Containers = new List<V1Container>
                 {
                     new V1Container
                     {
                         Name = "my-container",
-                        Image = "nginx:latest",
+                        Image = "piotrlanger/kenshigameserver:latest",
                         Ports = new List<V1ContainerPort>
                         {
                             new V1ContainerPort
                             {
-                                ContainerPort = freePort
+                                Protocol = "UDP",
+                                ContainerPort = freePort,
+                                HostPort = freePort
                             }
                         },
                         Args = new List<string>
