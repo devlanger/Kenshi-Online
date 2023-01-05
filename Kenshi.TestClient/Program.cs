@@ -30,7 +30,8 @@ namespace Kenshi.TestClient
             connection.On<string>("JoinGameRoom", (message) =>
             {
                 string port = message;
-                ConnectToGameServer(int.Parse(port));
+                //ConnectToGameServer(int.Parse(port));
+                ConnectToGameServer(5000);
                 Console.WriteLine(message);
             });
 
@@ -87,7 +88,7 @@ namespace Kenshi.TestClient
             {
                 _client = new NetManager(this);
                 _client.Start();
-                _client.Connect(ip, port, "");
+                _client.Connect(ip, port, "test");
             }
 
             public void OnPeerConnected(NetPeer peer)

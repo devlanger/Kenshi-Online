@@ -2,64 +2,46 @@
 using System.Net;
 using System.Net.Sockets;
 using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace UDPServer
 {
-    class Server : INetEventListener
-    {
-        private NetManager _server;
-
-        public void Start(int port)
-        {
-            _server = new NetManager(this);
-            _server.Start(port);
-        }
-
-        public void OnPeerConnected(NetPeer peer)
-        {
-            Console.WriteLine("Client connected: " + peer.EndPoint);
-        }
-
-        public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
-        {
-            Console.WriteLine("Client disconnected: " + peer.EndPoint);
-        }
-
-        public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
-        {
-            Console.WriteLine("Network error: " + socketError);
-        }
-
-        public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
-        {
-            Console.WriteLine("Received message from client: " + reader.GetString(100));
-        }
-
-        public void OnNetworkReceiveUnconnected(IPEndPoint endPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-        {
-            // Handle unconnected messages
-        }
-
-        public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
-        {
-            // Update latency information
-        }
-
-        public void OnConnectionRequest(ConnectionRequest request)
-        {
-            request.Accept();
-        }
-    }
-    
     class Program
     {
         static void Main(string[] args)
         {
             var port = int.Parse(args[0]);
-            var server = new Server();
-            server.Start(port);
-            Console.WriteLine($"Server started {port}");
-            Console.ReadKey();
+            EventBasedNetListener listener = new EventBasedNetListener();
+            NetManager server = new NetManager(listener);
+            server.Start(port /* port */);
+            Console.WriteLine($"{port}");
+            listener.ConnectionRequestEvent += request =>
+            {
+                if(server.ConnectedPeersCount < 10 /* max connections */)
+                    request.AcceptIfKey("test");
+                else
+                    request.Reject();
+            };
+
+            listener.PeerConnectedEvent += peer =>
+            {
+                Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
+                NetDataWriter writer = new NetDataWriter();                 // Create writer class
+                writer.Put("Hello client!");                                // Put some string
+                peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
+            };
+
+            listener.PeerDisconnectedEvent += (peer, dcInfo) =>
+            {
+                Console.WriteLine("We got disconnection: {0} {1}", peer.EndPoint, dcInfo.Reason); // Show peer ip
+            };
+
+            while (!Console.KeyAvailable)
+            {
+                server.PollEvents();
+                Thread.Sleep(15);
+            }
+            server.Stop();
         }
     }
 }
