@@ -1,0 +1,63 @@
+using System.Linq.Expressions;
+using Hangfire;
+using Kenshi.API.Extensions;
+using Kenshi.API.Helpers;
+using Kenshi.API.Hub;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+
+namespace Kenshi.API;
+
+public class Startup
+{
+    private readonly IConfiguration _configuration;
+
+    public Startup(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+    
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddMicrosoftIdentityWebApi(_configuration.GetSection("AzureAd"));
+
+        services.AddServices();
+
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+    }
+    
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        // Configure the HTTP request pipeline.
+        //if (app.Environment.IsDevelopment())
+        //{
+        //    app.UseSwagger();
+        //    app.UseSwaggerUI();
+        //}
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.UseRouting();
+        app.UseEndpoints(x =>
+        {
+            x.MapControllers();
+            x.MapHub<GameHub>("/gameHub");
+        });
+
+        app.UseHangfireDashboard();
+        app.UseHangfireServer();
+        
+        var service = app.ApplicationServices.GetRequiredService<KubernetesService>();
+        RecurringJob.AddOrUpdate(() => MethodCall(service), "*/5 * * * * *");
+    }
+
+    public static async Task MethodCall(KubernetesService service)
+    {            
+        await service.DeletePodsWithZeroPlayers();
+    }
+}

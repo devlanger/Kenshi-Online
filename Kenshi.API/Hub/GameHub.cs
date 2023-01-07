@@ -2,13 +2,14 @@ using k8s.Models;
 using Kenshi.API.Helpers;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace Kenshi.API.Hub;
 
 public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 {
     private readonly KubernetesService _service;
-
+    
     public GameHub(KubernetesService service)
     {
         _service = service;
@@ -19,12 +20,12 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         await _service.DeleteAllPods();
     }
     
-    public async Task DeleteGameRoom(int port)
+    public async Task DeleteGameRoom(string id)
     {
         try
         {
-            Console.WriteLine($"Delete game on port {port}");
-            await _service.DeletePod(port);
+            Console.WriteLine($"Delete game id {id}");
+            await _service.DeletePod(id);
         }
         catch (Exception e)
         {
@@ -55,15 +56,23 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     public async Task ListGameRooms()
     {
-        var podsList = _service.ListPods().Result.Select(p => p.Uid()).ToList();
-        await Clients.Client(Context.ConnectionId).SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList));
+        var redis = ConnectionMultiplexer.Connect("redis");
+
+        var podsList = await _service.ListPods();
+        foreach (var item in podsList)
+        {
+            string playersCount = redis.GetDatabase().StringGet($"{item.Name}_players");
+            item.PlayersCount = int.Parse(playersCount);
+        }
+        
+        await Clients.Client(Context.ConnectionId).SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
     }
 
     public async Task JoinGameRoom(string roomId)
     {
         try
         {
-            var port = _service.ListPods().Result.Find(p => roomId == p.Uid()).Labels()["port"];
+            var port = _service.ListPods().Result.Find(p => roomId == p.Id).Port;
 
             Console.WriteLine($"{Context.ConnectionId} has joined room port: {port}");        
             await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", port);

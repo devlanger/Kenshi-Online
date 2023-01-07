@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using Kenshi.Shared;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -11,13 +12,23 @@ namespace Kenshi.TestClient
     {
         private static Stack<string> commandsHistory = new Stack<string>();
 
+        private static string GetUrl()
+        {
+            return "http://localhost:3330/gameHub";
+        }
+        
         static async Task Main(string[] args)
         {
             // Create a connection to the SignalR hub
             var connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/gameHub")
+                .WithUrl(GetUrl())
                 .Build();
 
+            NetworkCommandProcessor.RegisterCommand("connect", (string[] parameters) =>
+            {
+                ConnectToGameServer(parameters[1], int.Parse(parameters[2]));
+            });
+            
             // Start the connection
             await connection.StartAsync();
             
@@ -30,7 +41,7 @@ namespace Kenshi.TestClient
             connection.On<string>("JoinGameRoom", (message) =>
             {
                 string port = message;
-                ConnectToGameServer(int.Parse(port));
+                ConnectToGameServer("localhost", int.Parse(port));
                 //ConnectToGameServer(5000);
                 Console.WriteLine(message);
             });
@@ -38,46 +49,12 @@ namespace Kenshi.TestClient
             while (true)
             {
                 var input = Console.ReadLine();
-                string[] parameters = input.Split(" ");
+                await NetworkCommandProcessor.ProccessCommand(input, connection);
 
-                try
-                {
-                    switch (parameters[0])
-                    {
-                        case "dc" or "disconnect":
-                            return;
-                        case "create_game":
-                            await connection.SendAsync("CreateGameRoom", "test-room");
-                            break;
-                        case "delete_game":
-                            await connection.SendAsync("DeleteGameRoom", int.Parse(parameters[1]));
-                            Console.WriteLine($"delete game {int.Parse(parameters[1])}");
-                            break;
-                        case "delete_all_games":
-                            await connection.SendAsync("DeleteAllGameRooms");
-                            Console.WriteLine($"delete all games");
-                            break;
-                        case "join_game":
-                            await connection.SendAsync("JoinGameRoom", parameters[1]);
-                            break;
-                        case "games":
-                            await connection.SendAsync("ListGameRooms");
-                            break;
-                    }
-
-                    if (!string.IsNullOrEmpty(input))
-                    {
-                        commandsHistory.Push(input);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Error executing command." + e);
-                }
-                
                 Thread.Sleep(50);
             }
         }
+
 
         public class Client : INetEventListener
         {
@@ -131,10 +108,10 @@ namespace Kenshi.TestClient
             }
         }
 
-        public static void ConnectToGameServer(int port)
-        {
+        public static void ConnectToGameServer(string ip, int port)
+        {   
             var client = new Client();
-            client.Start("192.168.49.2", port);
+            client.Start(ip, port);
         }
     }
 }

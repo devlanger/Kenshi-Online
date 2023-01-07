@@ -1,3 +1,8 @@
+using Docker.DotNet;
+using Docker.DotNet.Models;
+using Kenshi.Shared.Models;
+using StackExchange.Redis;
+
 namespace Kenshi.API.Helpers;
 
 using k8s;
@@ -6,101 +11,150 @@ using k8s.Models;
 public class KubernetesService
 {
     private readonly IConfiguration _configuration;
-    private readonly KubernetesClientConfiguration _kubeConfig;
-    private readonly Kubernetes _client;
+    private readonly IDockerClient _client;
 
     private string GetPodName(int port) => $"gameroom-{port}";
 
     public KubernetesService(IConfiguration config)
     {
         _configuration = config;
-        _kubeConfig = KubernetesClientConfiguration.BuildDefaultConfig();
-
-        _client = new Kubernetes(_kubeConfig);
+        _client = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
     }
 
-    public async Task DeletePod(int port)
+    public async Task DeletePod(string id)
     {
-        await _client.DeleteNamespacedPodAsync($"my-pod-{port}", "default");
+        Console.WriteLine(id);
+        await _client.Containers.RemoveContainerAsync(id, new ContainerRemoveParameters()
+        {
+            Force = true,
+            RemoveVolumes = true
+        });
     }
 
     public async Task CreatePod(GameRoomPodSettings settings)
     {
-        var pods = _client.ListNamespacedPod("default").Items;
         int startPort = 5000;
         // Find a free port
-        int freePort;
-        if (pods.Any())
+        int freePort = startPort + 1;
+        if (ListPods().Result.Any())
         {
             // If there are pods in the cluster, find the highest used port number and add 1
-            freePort = pods.Max(p => p.Spec.Containers.Max(c => c.Ports.Max(port => port.ContainerPort))) + startPort + 1;
+            freePort = ListPods().Result.Max(c => int.Parse(c.Port) + 1);
         }
-        else
+        
+        var container = await _client.Containers.CreateContainerAsync(new CreateContainerParameters()
         {
-            // If there are no pods in the cluster, set the free port to a default value
-            freePort = startPort + 1;
-        }
-
-        var pod = new V1Pod
-        {
-            ApiVersion = "v1",
-            Kind = "Pod",
-            Metadata = new V1ObjectMeta
+            Name = GetPodName(freePort),
+            Image = "piotrlanger/kenshigameserver:latest",
+            Labels = new Dictionary<string, string>()
             {
-                Name = $"{GetPodName(freePort)}",
-                NamespaceProperty = "default",
-                Labels = new Dictionary<string, string>
-                {
-                    { "app", "my-app" },
-                    { "port", freePort.ToString() }
-                },
-                Annotations = settings.Annotations
+                { "app", "kenshi-gameserver" },
+                { "port", freePort.ToString() }
             },
-            Spec = new V1PodSpec
+            ExposedPorts = new Dictionary<string, EmptyStruct>()
             {
-                HostNetwork = true,
-                Containers = new List<V1Container>
+                { $"{freePort}/udp", new EmptyStruct() }
+            },
+            NetworkingConfig = new NetworkingConfig
+            {
+                EndpointsConfig = new Dictionary<string, EndpointSettings>
                 {
-                    new V1Container
+                    { "local-dev", new EndpointSettings() }
+                }
+            },
+            HostConfig = new HostConfig()
+            {
+                DNS = new[] { "8.8.8.8", "8.8.4.4" },
+                PortBindings = new Dictionary<string, IList<PortBinding>>()
+                {
                     {
-                        Name = "my-container",
-                        Image = "piotrlanger/kenshigameserver:latest",
-                        Ports = new List<V1ContainerPort>
+                        $"{freePort}/udp", new List<PortBinding>
                         {
-                            new V1ContainerPort
+                            new PortBinding()
                             {
-                                Protocol = "UDP",
-                                ContainerPort = freePort,
-                                HostPort = freePort
+                                HostPort = freePort.ToString(),
+                                HostIP = "0.0.0.0"
                             }
-                        },
-                        Args = new List<string>
-                        {
-                            freePort.ToString(),
                         }
                     }
                 }
+            },
+            Env = new List<string>
+            {
+                $"CONTAINER_NAME={GetPodName(freePort)}",
+                $"GAME_SERVER_PORT={freePort}",
+                $"REDIS_HOST=redis",
             }
-        };
+        });
+        
+        await _client.Containers.StartContainerAsync(container.ID, new ContainerStartParameters()
+        {
 
-        await _client.CreateNamespacedPodAsync(pod, "default");
+        });
     }
 
-    public async Task<List<V1Pod>> ListPods()
+    public async Task<List<ContainerDto>> ListPods()
     {
-        var pods = await _client.ListNamespacedPodAsync("default");
-        return pods.Items.ToList();
+        var containers = await ListContainersAsync();
+
+        List<ContainerDto> result = new List<ContainerDto>();
+        foreach (var container in containers)
+        {
+            var newDto = new ContainerDto()
+            {
+                Id = container.ID,
+                Name = container.Names[0].Replace("/", ""),
+                //Ip = "127.0.0.1",
+                Port = container.Labels.ContainsKey("port") ? container.Labels["port"] : "0"
+            };
+
+            result.Add(newDto);
+        }
+        
+        return result;
+    }
+
+    private async Task<IList<ContainerListResponse>> ListContainersAsync()
+    {
+        return await _client.Containers.ListContainersAsync(new ContainersListParameters()
+        {
+            Filters = new Dictionary<string, IDictionary<string, bool>>()
+            {
+                { "label", new Dictionary<string, bool> { {"app=kenshi-gameserver", true }} }
+            }
+        });
     }
 
     public async Task DeleteAllPods()
     {
         // List all pods in the namespace
-        var pods = await _client.ListNamespacedPodAsync("default");
+        var pods = await ListPods();
 
         // Iterate over the pods and delete them
-        foreach (var pod in pods.Items)
+        foreach (var pod in pods)
         {
-            await _client.DeleteNamespacedPodAsync(pod.Metadata.Name, "default");
+            await DeletePod(pod.Id);
+        }
+    }
+
+    public async Task DeletePodsWithZeroPlayers()
+    {
+        var redis = ConnectionMultiplexer.Connect("redis");
+        var pods = await ListContainersAsync();
+        
+        // Iterate over the pods and delete them
+        foreach (var pod in pods)
+        {
+            var c = await _client.Containers.InspectContainerAsync(pod.ID);
+            if (c.Config.Env.Contains("PLAYERS=0"))
+            {
+                string players = redis.GetDatabase().StringGet($"{pod.Names[0].Replace("/","")}_players");
+                Console.WriteLine(pod.ID + players);
+                //await DeletePod(pod.ID);
+            }
+            else
+            {
+            }
         }
     }
 }

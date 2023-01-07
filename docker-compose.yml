@@ -1,7 +1,46 @@
-version: '3'
+version: '3.9'
+
+networks:
+  local-dev:
+    external: true
+
 services:
+  kenshiapi:
+    depends_on:
+      - redis
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    build:
+      context: .
+      dockerfile: Kenshi.API/Dockerfile
+    image: piotrlanger/kenshiapi
+    ports:
+      - 3330:3330
+      - 3331:3331
+    environment:
+      - "ASPNETCORE_URLS=http://+:3330"
+    networks:
+      - local-dev
+        
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+    networks:
+      - local-dev
+    
   kenshigameserver:
+    depends_on:
+      - redis
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     build:
       context: .
       dockerfile: Kenshi.TestGameServer/Dockerfile
     image: piotrlanger/kenshigameserver
+    environment:
+      - "REDIS_HOST=redis"
+    networks:
+      - local-dev

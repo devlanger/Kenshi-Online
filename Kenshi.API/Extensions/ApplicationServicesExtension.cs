@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Kenshi.API.Helpers;
 
 namespace Kenshi.API.Extensions;
@@ -8,5 +10,10 @@ public static class ApplicationServicesExtension
     {
         services.AddSignalR();
         services.AddTransient<KubernetesService>();
+        
+        services.AddHangfire(config =>
+        {
+            config.UseMemoryStorage();
+        });
     }
 }
