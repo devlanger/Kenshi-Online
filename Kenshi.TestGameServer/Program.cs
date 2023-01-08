@@ -1,68 +1,34 @@
 ﻿using System.Security.Authentication;
 using Docker.DotNet;
 using Docker.DotNet.Models;
-using LiteNetLib;
-using LiteNetLib.Utils;
 using StackExchange.Redis;
+using UDPServer;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ENet;
+using Address = ENet.Address;
 
 namespace UDPServer
 {
+
     class Program
     {
+        struct Position
+        {
+            public float x;
+            public float y;
+        }
+
+        static Host _server = new Host();
+        private static Dictionary<uint, Position> _players = new Dictionary<uint, Position>();
+
         private static string containerName = "test";
         private static int players = 0;
         private static IDockerClient _client;
 
         private static ConnectionMultiplexer redis;
         
-        private static async Task Main(string[] args)
-        {
-            containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test";
-            redis = ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redis");
-            _client = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
-            var port = int.Parse(Environment.GetEnvironmentVariable("GAME_SERVER_PORT") ?? "5001");
-            if (UpdatePlayersAmount(0))
-            {
-                Console.WriteLine("Successfully connected to redis and initialized server parameters.");
-            }
-            EventBasedNetListener listener = new EventBasedNetListener();
-            NetManager server = new NetManager(listener);
-            server.Start(port /* port */);
-            Console.WriteLine($"Server Started successfully at port: {port}");
-            listener.ConnectionRequestEvent += request =>
-            {
-                if(server.ConnectedPeersCount < 10 /* max connections */)
-                    request.AcceptIfKey("test");
-                else
-                    request.Reject();
-            };
-            
-            listener.PeerConnectedEvent += peer =>
-            {
-                Console.WriteLine("We got connection: {0}", peer.EndPoint); // Show peer ip
-                NetDataWriter writer = new NetDataWriter();                 // Create writer class
-                writer.Put("Hello client!");                                // Put some string
-                peer.Send(writer, DeliveryMethod.ReliableOrdered);             // Send with reliability
-                players++;
-                // Set the name of the environmental variable
-                UpdatePlayersAmount(players);
-            };
-
-            listener.PeerDisconnectedEvent += (peer, dcInfo) =>
-            {
-                Console.WriteLine("We got disconnection: {0} {1}", peer.EndPoint, dcInfo.Reason); // Show peer ip
-                players--;
-                UpdatePlayersAmount(players);
-            };
-
-            while (true)
-            {
-                server.PollEvents();
-                Thread.Sleep(15);
-            }
-            server.Stop();
-        }
-
         private static bool UpdatePlayersAmount(int i)
         {
             try
@@ -77,6 +43,186 @@ namespace UDPServer
                 Console.WriteLine("Redis connection error: " + e);
                 return false;
             }
+        }
+        
+        static async Task Main(string[] args)
+        {
+            containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test";
+            ushort port = 5001;
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redis");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            port = ushort.Parse(Environment.GetEnvironmentVariable("GAME_SERVER_PORT") ?? "5001");
+            if (UpdatePlayersAmount(0))
+            {
+                Console.WriteLine("Successfully connected to redis and initialized server parameters.");
+            }
+            
+            const int maxClients = 100;
+            Library.Initialize();
+
+            _server = new Host();
+            Address address = new Address();
+
+            address.Port = port;
+            _server.Create(address, maxClients);
+
+            Console.WriteLine($"Circle ENet Server started on {port}");
+
+            Event netEvent;
+            while (true)
+            {
+                bool polled = false;
+
+                while (!polled)
+                {
+                    if (_server.CheckEvents(out netEvent) <= 0)
+                    {
+                        if (_server.Service(15, out netEvent) <= 0)
+                            break;
+
+                        polled = true;
+                    }
+
+                    switch (netEvent.Type)
+                    {
+                        case EventType.None:
+                            break;
+
+                        case EventType.Connect:
+                            Console.WriteLine("Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                            netEvent.Peer.Timeout(32, 1000, 4000);
+                            players++;
+                            UpdatePlayersAmount(players);
+                            break;
+
+                        case EventType.Disconnect:
+                            Console.WriteLine("Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                            HandleLogout(netEvent.Peer.ID);
+                            break;
+
+                        case EventType.Timeout:
+                            Console.WriteLine("Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                            HandleLogout(netEvent.Peer.ID);
+                            break;
+
+                        case EventType.Receive:
+                            //Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
+                            HandlePacket(ref netEvent);
+                            netEvent.Packet.Dispose();
+                            break;
+                    }
+                }
+
+                _server.Flush();
+            }
+            Library.Deinitialize();
+        }
+
+        enum PacketId : byte
+        {
+            LoginRequest = 1,
+            LoginResponse = 2,
+            LoginEvent = 3,
+            PositionUpdateRequest = 4,
+            PositionUpdateEvent = 5,
+            LogoutEvent = 6
+        }
+
+        static void HandlePacket(ref Event netEvent)
+        {
+            var readBuffer = new byte[1024];
+            var readStream = new MemoryStream(readBuffer);
+            var reader = new BinaryReader(readStream);
+
+            readStream.Position = 0;
+            netEvent.Packet.CopyTo(readBuffer);
+            var packetId = (PacketId)reader.ReadByte();
+
+            if (packetId != PacketId.PositionUpdateRequest)
+                Console.WriteLine($"HandlePacket received: {packetId}");
+
+            if (packetId == PacketId.LoginRequest)
+            {
+                var playerId = netEvent.Peer.ID;
+                SendLoginResponse(ref netEvent, playerId);
+                BroadcastLoginEvent(playerId);
+                foreach (var p in _players)
+                {
+                    SendLoginEvent(ref netEvent, p.Key);
+                }
+                _players.Add(playerId, new Position { x = 0.0f, y = 0.0f });
+            }
+            else if (packetId == PacketId.PositionUpdateRequest)
+            {
+                var playerId = reader.ReadUInt32();
+                var x = reader.ReadSingle();
+                var y = reader.ReadSingle();
+                var z = reader.ReadSingle();
+                //Console.WriteLine($"ID: {playerId}, Pos: {x}, {y}");
+                BroadcastPositionUpdateEvent(playerId, x, y, z);
+            }
+        }
+
+        static void SendLoginResponse(ref Event netEvent, uint playerId)
+        {
+            var protocol = new Protocol();
+            var buffer = protocol.Serialize((byte)PacketId.LoginResponse, playerId);
+            var packet = default(Packet);
+            packet.Create(buffer);
+            netEvent.Peer.Send(0, ref packet);
+        }
+
+        static void SendLoginEvent(ref Event netEvent, uint playerId)
+        {
+            var protocol = new Protocol();
+            var buffer = protocol.Serialize((byte)PacketId.LoginEvent, playerId);
+            var packet = default(Packet);
+            packet.Create(buffer);
+            netEvent.Peer.Send(0, ref packet);
+        }
+
+        static void BroadcastLoginEvent(uint playerId)
+        {
+            var protocol = new Protocol();
+            var buffer = protocol.Serialize((byte)PacketId.LoginEvent, playerId);
+            var packet = default(Packet);
+            packet.Create(buffer);
+            _server.Broadcast(0, ref packet);
+        }
+
+        static void BroadcastLogoutEvent(uint playerId)
+        {
+            var protocol = new Protocol();
+            var buffer = protocol.Serialize((byte)PacketId.LogoutEvent, playerId);
+            var packet = default(Packet);
+            packet.Create(buffer);
+            _server.Broadcast(0, ref packet);
+        }
+
+        static void BroadcastPositionUpdateEvent(uint playerId, float x, float y, float z)
+        {
+            var protocol = new Protocol();
+            var buffer = protocol.Serialize((byte)PacketId.PositionUpdateEvent, playerId, x, y, z);
+            var packet = default(Packet);
+            packet.Create(buffer);
+            _server.Broadcast(0, ref packet);
+        }
+
+        static void HandleLogout(uint playerId)
+        {
+            if (!_players.ContainsKey(playerId))
+                return;
+
+            _players.Remove(playerId);
+            BroadcastLogoutEvent(playerId);
+            players--;
+            UpdatePlayersAmount(players);
         }
     }
 }

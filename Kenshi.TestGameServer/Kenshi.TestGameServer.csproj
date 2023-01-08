@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
         <OutputType>Exe</OutputType>
@@ -17,7 +17,7 @@
 
     <ItemGroup>
       <PackageReference Include="Docker.DotNet" Version="3.125.12" />
-      <PackageReference Include="LiteNetLib" Version="1.0.0-rc.3" />
+      <PackageReference Include="ENet-CSharp" Version="2.4.8" />
       <PackageReference Include="StackExchange.Redis" Version="2.6.86" />
     </ItemGroup>
 
