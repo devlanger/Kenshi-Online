@@ -34,6 +34,7 @@ services:
   kenshigameserver:
     depends_on:
       - redis
+    platform: linux/amd64
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     build:
@@ -44,3 +45,5 @@ services:
       - "REDIS_HOST=redis"
     networks:
       - local-dev
+    #profiles:
+    #  - donotstart

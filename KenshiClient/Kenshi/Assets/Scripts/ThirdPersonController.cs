@@ -28,10 +28,6 @@ namespace StarterAssets
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
 
-        public AudioClip LandingAudioClip;
-        public AudioClip[] FootstepAudioClips;
-        [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
-
         [Space(10)]
         [Tooltip("The height the player can jump")]
         public float JumpHeight = 1.2f;
@@ -106,7 +102,11 @@ namespace StarterAssets
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
 
+        private Transform target;
+        
         private const float _threshold = 0.01f;
+
+        private int jumpIndex = 0;
 
         private bool _hasAnimator;
 
@@ -132,12 +132,13 @@ namespace StarterAssets
             }
         }
 
-        private void Start()
+        public void SetPlayer(Transform player)
         {
+            target = player;
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
-            _hasAnimator = TryGetComponent(out _animator);
-            _controller = GetComponent<CharacterController>();
+            _hasAnimator = player.TryGetComponent(out _animator);
+            _controller = player.GetComponent<CharacterController>();
             _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
@@ -154,7 +155,7 @@ namespace StarterAssets
 
         private void Update()
         {
-            _hasAnimator = TryGetComponent(out _animator);
+            _hasAnimator = target.TryGetComponent(out _animator);
 
             JumpAndGravity();
             GroundedCheck();
@@ -177,17 +178,28 @@ namespace StarterAssets
 
         private void GroundedCheck()
         {
+            bool grounded = Grounded;
+            
             // set sphere position, with offset
-            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
-                transform.position.z);
+            Vector3 spherePosition = new Vector3(target.transform.position.x, target.transform.position.y - GroundedOffset,
+                target.transform.position.z);
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
 
+            if (!grounded && Grounded)
+            {
+                OnLand();
+            }
             // update animator if using character
             if (_hasAnimator)
             {
                 _animator.SetBool(_animIDGrounded, Grounded);
             }
+        }
+
+        private void OnLand()
+        {
+            jumpIndex = 0;
         }
 
         private void CameraRotation()
@@ -257,11 +269,11 @@ namespace StarterAssets
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
+                float rotation = Mathf.SmoothDampAngle(target.transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
                     RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                target.transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
 
@@ -281,13 +293,30 @@ namespace StarterAssets
 
         private void JumpAndGravity()
         {
+            // Jump
+            if (jumpIndex < 2 && _input.jump)
+            {
+                jumpIndex++;
+
+                // the square root of H * -2 * G = how much velocity needed to reach desired height
+                _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                // update animator if using character
+                if (_hasAnimator)
+                {
+                    _animator.SetBool(_animIDJump, true);
+                }
+
+                _input.jump = false;
+            }
+            
             if (Grounded)
             {
                 // reset the fall timeout timer
                 _fallTimeoutDelta = FallTimeout;
 
                 // update animator if using character
-                if (_hasAnimator)
+                if (_hasAnimator && jumpIndex == 0)
                 {
                     _animator.SetBool(_animIDJump, false);
                     _animator.SetBool(_animIDFreeFall, false);
@@ -297,19 +326,6 @@ namespace StarterAssets
                 if (_verticalVelocity < 0.0f)
                 {
                     _verticalVelocity = -2f;
-                }
-
-                // Jump
-                if (_input.jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-
-                    // update animator if using character
-                    if (_hasAnimator)
-                    {
-                        _animator.SetBool(_animIDJump, true);
-                    }
                 }
 
                 // jump timeout
@@ -340,7 +356,7 @@ namespace StarterAssets
                 // if we are not grounded, do not jump
                 _input.jump = false;
             }
-
+            
             // apply gravity over time if under terminal (multiply by delta time twice to linearly speed up over time)
             if (_verticalVelocity < _terminalVelocity)
             {
@@ -357,6 +373,10 @@ namespace StarterAssets
 
         private void OnDrawGizmosSelected()
         {
+            if (target == null)
+            {
+                return;
+            }
             Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
             Color transparentRed = new Color(1.0f, 0.0f, 0.0f, 0.35f);
 
@@ -365,28 +385,8 @@ namespace StarterAssets
 
             // when selected, draw a gizmo in the position of, and matching radius of, the grounded collider
             Gizmos.DrawSphere(
-                new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
+                new Vector3(target.transform.position.x, target.transform.position.y - GroundedOffset, target.transform.position.z),
                 GroundedRadius);
-        }
-
-        private void OnFootstep(AnimationEvent animationEvent)
-        {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
-            {
-                if (FootstepAudioClips.Length > 0)
-                {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
-                    AudioSource.PlayClipAtPoint(FootstepAudioClips[index], transform.TransformPoint(_controller.center), FootstepAudioVolume);
-                }
-            }
-        }
-
-        private void OnLand(AnimationEvent animationEvent)
-        {
-            if (animationEvent.animatorClipInfo.weight > 0.5f)
-            {
-                AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
-            }
         }
     }
 }

@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="ENet-CSharp" Version="2.4.8" />
       <PackageReference Include="LiteNetLib" Version="1.0.0-rc.3" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.1" />
     </ItemGroup>

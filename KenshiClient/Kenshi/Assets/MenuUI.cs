@@ -53,6 +53,7 @@ public class MenuUI : MonoBehaviour
                 break;
             case "JoinGameRoom":
                 string port = arg2;
+                GameRoomNetworkController.Port = ushort.Parse(port);
                 SceneManager.LoadScene(1);
                 break;
         }

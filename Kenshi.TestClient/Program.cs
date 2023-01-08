@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using ENet;
 using Kenshi.Shared;
 using LiteNetLib;
 using LiteNetLib.Utils;
 using Microsoft.AspNetCore.SignalR.Client;
+using Event = ENet.Event;
+using EventType = ENet.EventType;
 
 namespace Kenshi.TestClient
 {
@@ -26,7 +29,7 @@ namespace Kenshi.TestClient
 
             NetworkCommandProcessor.RegisterCommand("connect", (string[] parameters) =>
             {
-                ConnectToGameServer(parameters[1], int.Parse(parameters[2]));
+                ConnectToGameServer(parameters[1], ushort.Parse(parameters[2]));
             });
             
             // Start the connection
@@ -41,7 +44,7 @@ namespace Kenshi.TestClient
             connection.On<string>("JoinGameRoom", (message) =>
             {
                 string port = message;
-                ConnectToGameServer("localhost", int.Parse(port));
+                ConnectToGameServer("localhost", ushort.Parse(port));
                 //ConnectToGameServer(5000);
                 Console.WriteLine(message);
             });
@@ -56,59 +59,60 @@ namespace Kenshi.TestClient
         }
 
 
-        public class Client : INetEventListener
+        public class Client
         {
-            private NetManager _client;
-            private NetPeer _serverPeer;
-
-            public void Start(string ip, int port)
+            public void Start(string ip, ushort port)
             {
-                Console.WriteLine($"Try to connect to game server: {ip} {port}");
-                _client = new NetManager(this);
-                _client.Start();
-                _client.Connect(ip, port, "test");
-            }
+                ENet.Library.Initialize();
+                using (Host server = new Host()) {
+                    Address address = new Address();
 
-            public void OnPeerConnected(NetPeer peer)
-            {
-                Console.WriteLine("Connected to server: " + peer.EndPoint);
-                _serverPeer = peer;
+                    address.Port = port;
+                    server.Create(address, 100);
+                    Console.WriteLine($"Server started at port {port}");
+                    Event netEvent;
 
-                // Send a message to the server
-                var writer = new NetDataWriter();
-                writer.Put("Hello from the client!");
-                _serverPeer.Send(writer, DeliveryMethod.Unreliable);
-            }
+                    while (!Console.KeyAvailable) {
+                        bool polled = false;
 
-            public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
-            {
-                Console.WriteLine("Disconnected from server: " + peer.EndPoint);
-                _serverPeer = null;
-            }
+                        while (!polled) {
+                            if (server.CheckEvents(out netEvent) <= 0) {
+                                if (server.Service(15, out netEvent) <= 0)
+                                    break;
 
-            public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
-            {
-                
-            }
+                                polled = true;
+                            }
 
-            public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
-            {
-            }
+                            switch (netEvent.Type) {
+                                case EventType.None:
+                                    break;
 
-            public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
-            {
-            }
+                                case EventType.Connect:
+                                    Console.WriteLine("Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                                    break;
 
-            public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
-            {
-            }
+                                case EventType.Disconnect:
+                                    Console.WriteLine("Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                                    break;
 
-            public void OnConnectionRequest(ConnectionRequest request)
-            {
+                                case EventType.Timeout:
+                                    Console.WriteLine("Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                                    break;
+
+                                case EventType.Receive:
+                                    Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
+                                    netEvent.Packet.Dispose();
+                                    break;
+                            }
+                        }
+                    }
+
+                    server.Flush();
+                }
             }
         }
 
-        public static void ConnectToGameServer(string ip, int port)
+        public static void ConnectToGameServer(string ip, ushort port)
         {   
             var client = new Client();
             client.Start(ip, port);

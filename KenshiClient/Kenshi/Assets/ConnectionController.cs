@@ -30,6 +30,11 @@ public class ConnectionController : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        Connection.DisposeAsync();
+    }
+
     private async void Start()
     {
         Connection = new HubConnectionBuilder()
