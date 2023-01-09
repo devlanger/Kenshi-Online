@@ -109,6 +109,8 @@ namespace StarterAssets
         private int jumpIndex = 0;
 
         private bool _hasAnimator;
+        [SerializeField] private float cameraSpeedY = 3;
+        [SerializeField] private float cameraSpeedX = 3;
 
         private bool IsCurrentDeviceMouse
         {
@@ -210,8 +212,8 @@ namespace StarterAssets
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+                _cinemachineTargetYaw += _input.look.x * cameraSpeedY * deltaTimeMultiplier;
+                _cinemachineTargetPitch += _input.look.y * cameraSpeedX * deltaTimeMultiplier;
             }
 
             // clamp our rotations so our values are limited 360 degrees

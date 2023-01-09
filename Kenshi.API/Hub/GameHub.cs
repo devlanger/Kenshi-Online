@@ -1,5 +1,6 @@
 using k8s.Models;
 using Kenshi.API.Helpers;
+using Kenshi.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -9,12 +10,16 @@ namespace Kenshi.API.Hub;
 public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 {
     private readonly KubernetesService _service;
+    private readonly IConfiguration _config;
+
+    private string GetUsername() => (string)Context.Items["username"];
     
-    public GameHub(KubernetesService service)
+    public GameHub(KubernetesService service, IConfiguration config)
     {
         _service = service;
+        _config = config;
     }
-
+    
     public async Task DeleteAllGameRooms()
     {
         await _service.DeleteAllPods();
@@ -46,6 +51,9 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
                 Port = 3000,
                 RoomId = 1
             });
+            
+            var podsList = await GetGamesRooms();
+            await Clients.All.SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
         }
         catch (Exception e)
         {
@@ -56,7 +64,14 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     public async Task ListGameRooms()
     {
-        var redis = ConnectionMultiplexer.Connect("redis");
+        var podsList = await GetGamesRooms();
+
+        await Clients.Client(Context.ConnectionId).SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
+    }
+
+    private async Task<List<ContainerDto>> GetGamesRooms()
+    {
+        var redis = ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_HOST") ?? "localhost");
 
         var podsList = await _service.ListPods();
         foreach (var item in podsList)
@@ -64,8 +79,20 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             string playersCount = redis.GetDatabase().StringGet($"{item.Name}_players");
             item.PlayersCount = int.Parse(playersCount);
         }
-        
-        await Clients.Client(Context.ConnectionId).SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
+
+        return podsList;
+    }
+
+    public async Task SendChatMessageToAll(string message)
+    {
+        string msg = $"{GetUsername()}: {message}";
+        Console.WriteLine($"send message {message}");
+        await Clients.All.SendAsync("ShowChatMessage", msg);
+    }
+
+    private async Task SendMessageToUser(string id, string message)
+    {
+        await Clients.Client(id).SendAsync("ShowChatMessage", message);
     }
 
     public async Task JoinGameRoom(string roomId)
@@ -84,15 +111,17 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         }
     }
 
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
-        Console.WriteLine($"{Context.ConnectionId} has joined");
-        return base.OnConnectedAsync();
+        var username = $"User-{new Random().Next(10000).ToString()}";
+        Context.Items["username"] = username;
+        Console.WriteLine($"{Context.ConnectionId}: {username} has joined");
+        await Clients.All.SendAsync("ShowChatMessage", $"[SYS] {username} has joined");
     }
 
-    public override Task OnDisconnectedAsync(Exception? exception)
+    public override async Task OnDisconnectedAsync(Exception? exception)
     {
+        await Clients.All.SendAsync("ShowChatMessage", $"[SYS] {GetUsername()} has left");
         Console.WriteLine($"{Context.ConnectionId} has left");
-        return base.OnDisconnectedAsync(exception);
     }
 }

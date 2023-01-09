@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ContentList : MonoBehaviour
 {
+    [SerializeField] private int maxItems = 50;
     [SerializeField] private Transform parent;
     [SerializeField] private bool removeChildren = true;
     private List<GameObject> list = new List<GameObject>();
@@ -22,6 +23,12 @@ public class ContentList : MonoBehaviour
 
     public T SpawnItem<T>(T item) where T : MonoBehaviour
     {
+        if (list.Count > maxItems + 1)
+        {
+            Destroy(list[0]);
+            list.RemoveAt(0);
+        }
+        
         var inst = Instantiate(item, parent);
         list.Add(inst.gameObject);
         return inst.GetComponent<T>();

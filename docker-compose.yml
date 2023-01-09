@@ -19,6 +19,7 @@ services:
       - 3331:3331
     environment:
       - "ASPNETCORE_URLS=http://+:3330"
+      - "REDIS_HOST=redis"
     networks:
       - local-dev
         

@@ -117,11 +117,12 @@ public class GameRoomNetworkController : MonoBehaviour
 
     private void SendPositionUpdate()
     {
-        var x = _myPlayer.GetComponent<Rigidbody>().position.x;
-        var y = _myPlayer.GetComponent<Rigidbody>().position.y;
+        var x = _myPlayer.transform.position.x;
+        var y = _myPlayer.transform.position.y;
+        var z = _myPlayer.transform.position.z;
 
         var protocol = new Protocol();
-        var buffer = protocol.Serialize((byte)PacketId.PositionUpdateRequest, _myPlayerId, x, y);
+        var buffer = protocol.Serialize((byte)PacketId.PositionUpdateRequest, _myPlayerId, x, y, z);
         var packet = default(Packet);
         packet.Create(buffer);
         _peer.Send(channelID, ref packet);
@@ -194,7 +195,7 @@ public class GameRoomNetworkController : MonoBehaviour
         if (playerId == _myPlayerId)
             return;
 
-        Debug.Log("UpdatePosition " + playerId);
+        Debug.Log($"UpdatePosition {x} {y} {z}");
         _players[playerId].transform.position = new Vector3(x, y, z);
     }
 }

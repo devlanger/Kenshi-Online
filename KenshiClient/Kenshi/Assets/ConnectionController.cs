@@ -32,7 +32,10 @@ public class ConnectionController : MonoBehaviour
 
     private void OnDestroy()
     {
-        Connection.DisposeAsync();
+        if (Connection != null)
+        {
+            Connection.DisposeAsync();
+        }
     }
 
     private async void Start()
@@ -59,6 +62,14 @@ public class ConnectionController : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
                 OnMessageReceived?.Invoke("JoinGameRoom", s);
+            });
+        }));
+        
+        Connection.On<string>("ShowChatMessage", (s =>
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                OnMessageReceived?.Invoke("ShowChatMessage", s);
             });
         }));
         

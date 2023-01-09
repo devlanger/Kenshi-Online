@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ENet;
+using Kenshi.Shared.Enums;
+using Kenshi.Shared.Packets.GameServer;
 using Address = ENet.Address;
 
 namespace UDPServer
@@ -18,6 +20,7 @@ namespace UDPServer
         {
             public float x;
             public float y;
+            public float z;
         }
 
         static Host _server = new Host();
@@ -44,7 +47,7 @@ namespace UDPServer
                 return false;
             }
         }
-        
+
         static async Task Main(string[] args)
         {
             containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test";
@@ -124,16 +127,6 @@ namespace UDPServer
             Library.Deinitialize();
         }
 
-        enum PacketId : byte
-        {
-            LoginRequest = 1,
-            LoginResponse = 2,
-            LoginEvent = 3,
-            PositionUpdateRequest = 4,
-            PositionUpdateEvent = 5,
-            LogoutEvent = 6
-        }
-
         static void HandlePacket(ref Event netEvent)
         {
             var readBuffer = new byte[1024];
@@ -150,13 +143,13 @@ namespace UDPServer
             if (packetId == PacketId.LoginRequest)
             {
                 var playerId = netEvent.Peer.ID;
-                SendLoginResponse(ref netEvent, playerId);
-                BroadcastLoginEvent(playerId);
+                SendPacket(ref netEvent, new LoginResponsePacket(playerId));
+                SendPacketToAll(new LoginEventPacket(playerId));
                 foreach (var p in _players)
                 {
-                    SendLoginEvent(ref netEvent, p.Key);
+                    SendPacket(ref netEvent, new LoginEventPacket(p.Key));
                 }
-                _players.Add(playerId, new Position { x = 0.0f, y = 0.0f });
+                _players.Add(playerId, new Position { x = 0.0f, y = 0.0f, z = 0.0f });
             }
             else if (packetId == PacketId.PositionUpdateRequest)
             {
@@ -165,50 +158,24 @@ namespace UDPServer
                 var y = reader.ReadSingle();
                 var z = reader.ReadSingle();
                 //Console.WriteLine($"ID: {playerId}, Pos: {x}, {y}");
-                BroadcastPositionUpdateEvent(playerId, x, y, z);
+                SendPacketToAll(new PositionUpdatePacket(playerId, x, y, z));
             }
         }
 
-        static void SendLoginResponse(ref Event netEvent, uint playerId)
+        static void SendPacket(ref Event netEvent, SendablePacket p)
         {
             var protocol = new Protocol();
-            var buffer = protocol.Serialize((byte)PacketId.LoginResponse, playerId);
+            var buffer = protocol.Serialize(p);
             var packet = default(Packet);
             packet.Create(buffer);
+            
             netEvent.Peer.Send(0, ref packet);
         }
 
-        static void SendLoginEvent(ref Event netEvent, uint playerId)
+        static void SendPacketToAll(SendablePacket p)
         {
             var protocol = new Protocol();
-            var buffer = protocol.Serialize((byte)PacketId.LoginEvent, playerId);
-            var packet = default(Packet);
-            packet.Create(buffer);
-            netEvent.Peer.Send(0, ref packet);
-        }
-
-        static void BroadcastLoginEvent(uint playerId)
-        {
-            var protocol = new Protocol();
-            var buffer = protocol.Serialize((byte)PacketId.LoginEvent, playerId);
-            var packet = default(Packet);
-            packet.Create(buffer);
-            _server.Broadcast(0, ref packet);
-        }
-
-        static void BroadcastLogoutEvent(uint playerId)
-        {
-            var protocol = new Protocol();
-            var buffer = protocol.Serialize((byte)PacketId.LogoutEvent, playerId);
-            var packet = default(Packet);
-            packet.Create(buffer);
-            _server.Broadcast(0, ref packet);
-        }
-
-        static void BroadcastPositionUpdateEvent(uint playerId, float x, float y, float z)
-        {
-            var protocol = new Protocol();
-            var buffer = protocol.Serialize((byte)PacketId.PositionUpdateEvent, playerId, x, y, z);
+            var buffer = protocol.Serialize(p);
             var packet = default(Packet);
             packet.Create(buffer);
             _server.Broadcast(0, ref packet);
@@ -220,7 +187,7 @@ namespace UDPServer
                 return;
 
             _players.Remove(playerId);
-            BroadcastLogoutEvent(playerId);
+            SendPacketToAll(new LogoutEventPacket(playerId));
             players--;
             UpdatePlayersAmount(players);
         }

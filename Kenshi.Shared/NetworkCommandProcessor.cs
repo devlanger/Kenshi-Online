@@ -51,6 +51,9 @@ namespace Kenshi.Shared
                     case "games":
                         await connection.SendAsync("ListGameRooms");
                         break;
+                    case "chat_msg":
+                        await connection.SendAsync("SendChatMessageToAll", parameters[1]);
+                        break;
                     case "connect":
                         //ConnectToGameServer(parameters[1], int.Parse(parameters[2]));
                         break;

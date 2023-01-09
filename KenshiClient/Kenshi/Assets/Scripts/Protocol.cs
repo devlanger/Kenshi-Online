@@ -24,7 +24,19 @@ class Protocol
         m_writer.Write(value);
         return m_buffer;
     }
-
+    
+    public byte[] Serialize(byte code, uint value, float x, float y, float z)
+    {
+        const int bufSize = sizeof(byte) + sizeof(int) + sizeof(float) + sizeof(float)+ sizeof(float);
+        InitWriter(bufSize);
+        m_writer.Write(code);
+        m_writer.Write(value);
+        m_writer.Write(x);
+        m_writer.Write(y);
+        m_writer.Write(z);
+        return m_buffer;
+    }
+    
     public byte[] Serialize(byte code, uint value, float x, float y)
     {
         const int bufSize = sizeof(byte) + sizeof(int) + sizeof(float) + sizeof(float);
