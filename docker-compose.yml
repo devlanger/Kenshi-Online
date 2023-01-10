@@ -6,6 +6,7 @@ networks:
 
 services:
   kenshiapi:
+    platform: linux/amd64 #set to work on ubuntu
     depends_on:
       - redis
     volumes:

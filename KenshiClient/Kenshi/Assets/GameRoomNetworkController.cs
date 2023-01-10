@@ -2,23 +2,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using ENet;
+using LiteNetLib;
 using StarterAssets;
 using UnityEngine;
-using Event = ENet.Event;
-using EventType = ENet.EventType;
 using Random = Unity.Mathematics.Random;
+using ConnectionState = LiteNetLib.ConnectionState;
 
-public class GameRoomNetworkController : MonoBehaviour
+public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 {
     public GameObject myPlayerFactory;
     public GameObject otherPlayerFactory;
 
     private GameObject _myPlayer;
     private uint _myPlayerId;
+    
+    private NetManager _netClient;
 
-    private Host _client;
-    private Peer _peer;
     private int _skipFrame = 0;
     private Dictionary<uint, GameObject> _players = new Dictionary<uint, GameObject>();
 
@@ -51,57 +53,31 @@ public class GameRoomNetworkController : MonoBehaviour
 
     void OnDestroy()
     {
-        _client.Dispose();
-        ENet.Library.Deinitialize();
+        _netClient.DisconnectAll();
     }
 
     private void InitENet()
     {
-        const string ip = "127.0.0.1";
-        ENet.Library.Initialize();
-        _client = new Host();
-        Address address = new Address();
-
-        address.SetHost(ip);
-        address.Port = Port;
-        _client.Create();
-        Debug.Log("Connecting");
-        _peer = _client.Connect(address);   
+        _netClient = new NetManager(this);
+        _netClient.UnconnectedMessagesEnabled = true;
+        _netClient.UpdateTime = 15;
+        _netClient.Start();
+        _netClient.Connect(ConnectionController.Host, Port, "test");
+        
+        Debug.Log($"Connecting {ConnectionController.Host}:{Port}");
     }
 
     private void UpdateENet()
     {
-        ENet.Event netEvent;
+        _netClient.PollEvents();
 
-        if (_client.CheckEvents(out netEvent) <= 0)
+        var peer = _netClient.FirstPeer;
+        if (peer != null && peer.ConnectionState == ConnectionState.Connected)
         {
-            if (_client.Service(15, out netEvent) <= 0)
-                return;
         }
-
-        switch (netEvent.Type)
+        else
         {
-            case ENet.EventType.None:
-                break;
-
-            case ENet.EventType.Connect:
-                Debug.Log("Client connected to server - ID: " + _peer.ID);
-                SendLogin();
-                break;
-
-            case ENet.EventType.Disconnect:
-                Debug.Log("Client disconnected from server");
-                break;
-
-            case ENet.EventType.Timeout:
-                Debug.Log("Client connection timeout");
-                break;
-
-            case ENet.EventType.Receive:
-                //Debug.Log("Packet received from server - Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
-                ParsePacket(ref netEvent);
-                netEvent.Packet.Dispose();
-                break;
+            _netClient.SendBroadcast(new byte[] {1}, 5000);
         }
     }
 
@@ -123,9 +99,7 @@ public class GameRoomNetworkController : MonoBehaviour
 
         var protocol = new Protocol();
         var buffer = protocol.Serialize((byte)PacketId.PositionUpdateRequest, _myPlayerId, x, y, z);
-        var packet = default(Packet);
-        packet.Create(buffer);
-        _peer.Send(channelID, ref packet);
+        _netClient.FirstPeer.Send(buffer, DeliveryMethod.Unreliable);
     }
 
     private void SendLogin()
@@ -133,45 +107,37 @@ public class GameRoomNetworkController : MonoBehaviour
         Debug.Log("SendLogin");
         var protocol = new Protocol();
         var buffer = protocol.Serialize((byte)PacketId.LoginRequest, 0);
-        var packet = default(Packet);
-        packet.Create(buffer);
-        _peer.Send(channelID, ref packet);
+        _netClient.FirstPeer.Send(buffer, DeliveryMethod.ReliableOrdered);
     }
 
-    private void ParsePacket(ref ENet.Event netEvent)
+    private void ParsePacket(NetPacketReader reader)
     {
-        var readBuffer = new byte[1024];
-        var readStream = new MemoryStream(readBuffer);
-        var reader = new BinaryReader(readStream);
-
-        readStream.Position = 0;
-        netEvent.Packet.CopyTo(readBuffer);
-        var packetId = (PacketId)reader.ReadByte();
+        var packetId = (PacketId)reader.GetByte();
 
         //Debug.Log("ParsePacket received: " + packetId);
 
         if (packetId == PacketId.LoginResponse)
         {
-            _myPlayerId = reader.ReadUInt32();
+            _myPlayerId = reader.GetUInt();
             Debug.Log("MyPlayerId: " + _myPlayerId);
         }
         else if (packetId == PacketId.LoginEvent)
         {
-            var playerId = reader.ReadUInt32();
+            var playerId = reader.GetUInt();
             Debug.Log("OtherPlayerId: " + playerId);
             SpawnOtherPlayer(playerId);
         }
         else if (packetId == PacketId.PositionUpdateEvent)
         {
-            var playerId = reader.ReadUInt32();
-            var x = reader.ReadSingle();
-            var y = reader.ReadSingle();
-            var z = reader.ReadSingle();
+            var playerId = reader.GetUInt();
+            var x = reader.GetFloat();
+            var y = reader.GetFloat();
+            var z = reader.GetFloat();
             UpdatePosition(playerId, x, y, z);
         }
         else if (packetId == PacketId.LogoutEvent)
         {
-            var playerId = reader.ReadUInt32();
+            var playerId = reader.GetUInt();
             if (_players.ContainsKey(playerId))
             {
                 Destroy(_players[playerId]);
@@ -197,5 +163,38 @@ public class GameRoomNetworkController : MonoBehaviour
 
         Debug.Log($"UpdatePosition {x} {y} {z}");
         _players[playerId].transform.position = new Vector3(x, y, z);
+    }
+
+    public void OnPeerConnected(NetPeer peer)
+    {
+        Debug.Log("Client connected to server - ID: " + peer.Id);
+        SendLogin();
+    }
+
+    public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
+    {
+        Debug.Log("Client disconnected from server");
+
+    }
+
+    public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
+    {
+    }
+
+    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
+    {
+        ParsePacket(reader);
+    }
+
+    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+    {
+    }
+
+    public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
+    {
+    }
+
+    public void OnConnectionRequest(ConnectionRequest request)
+    {
     }
 }

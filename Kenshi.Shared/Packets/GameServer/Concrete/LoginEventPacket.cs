@@ -5,13 +5,13 @@ namespace Kenshi.Shared.Packets.GameServer
 {
     public class LoginEventPacket : SendablePacket
     {
-        public uint _playerId;
+        public int _playerId;
 
         public LoginEventPacket() : base(PacketId.LoginEvent)
         {
         }
 
-        public LoginEventPacket(uint playerId) : base(PacketId.LoginEvent)
+        public LoginEventPacket(int playerId) : base(PacketId.LoginEvent)
         {
             _playerId = playerId;
         }
@@ -19,7 +19,7 @@ namespace Kenshi.Shared.Packets.GameServer
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
-            _playerId = reader.ReadUInt32();
+            _playerId = reader.ReadInt32();
         }
 
         public override void Serialize(BinaryWriter writer)

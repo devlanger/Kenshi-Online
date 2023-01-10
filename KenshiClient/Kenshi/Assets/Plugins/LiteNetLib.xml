@@ -60,12 +60,13 @@
             <param name="endPoint">From endPoint (can be null)</param>
             <param name="socketError">Socket error</param>
         </member>
-        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,LiteNetLib.DeliveryMethod)">
+        <member name="M:LiteNetLib.INetEventListener.OnNetworkReceive(LiteNetLib.NetPeer,LiteNetLib.NetPacketReader,System.Byte,LiteNetLib.DeliveryMethod)">
             <summary>
             Received some data
             </summary>
             <param name="peer">From peer</param>
             <param name="reader">DataReader containing all received data</param>
+            <param name="channelNumber">Number of channel at which packet arrived</param>
             <param name="deliveryMethod">Type of received packet</param>
         </member>
         <member name="M:LiteNetLib.INetEventListener.OnNetworkReceiveUnconnected(System.Net.IPEndPoint,LiteNetLib.NetPacketReader,LiteNetLib.UnconnectedMessageType)">
@@ -105,6 +106,11 @@
         <member name="T:LiteNetLib.NatPunchModule">
             <summary>
             Module for UDP NAT Hole punching operations. Can be accessed from NetManager
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NatPunchModule.UnsyncedEvents">
+            <summary>
+            Events automatically will be called without PollEvents method from another thread
             </summary>
         </member>
         <member name="T:LiteNetLib.DeliveryMethod">
@@ -172,16 +178,18 @@
         <member name="F:LiteNetLib.NetManager.UpdateTime">
             <summary>
             Library logic update and send period in milliseconds
+            Lowest values in Windows doesn't change much because of Thread.Sleep precision
+            To more frequent sends (or sends tied to your game logic) use <see cref="M:LiteNetLib.NetManager.TriggerUpdate"/>
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.PingInterval">
             <summary>
-            Interval for latency detection and checking connection
+            Interval for latency detection and checking connection (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.DisconnectTimeout">
             <summary>
-            If NetManager doesn't receive any packet from remote peer during this time then connection will be closed
+            If NetManager doesn't receive any packet from remote peer during this time (in milliseconds) then connection will be closed
             (including library internal keepalive packets)
             </summary>
         </member>
@@ -202,12 +210,12 @@
         </member>
         <member name="F:LiteNetLib.NetManager.SimulationMinLatency">
             <summary>
-            Minimum simulated latency
+            Minimum simulated latency (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.SimulationMaxLatency">
             <summary>
-            Maximum simulated latency
+            Maximum simulated latency (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.UnsyncedEvents">
@@ -232,7 +240,7 @@
         </member>
         <member name="F:LiteNetLib.NetManager.ReconnectDelay">
             <summary>
-            Delay between initial connection attempts
+            Delay between initial connection attempts (in milliseconds)
             </summary>
         </member>
         <member name="F:LiteNetLib.NetManager.MaxConnectAttempts">
@@ -275,7 +283,7 @@
             Automatically recycle NetPacketReader after OnReceive event
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetManager.IPv6Enabled">
+        <member name="F:LiteNetLib.NetManager.IPv6Mode">
             <summary>
             IPv6 support
             </summary>
@@ -295,9 +303,20 @@
             First peer. Useful for Client mode
             </summary>
         </member>
+        <member name="F:LiteNetLib.NetManager.UseNativeSockets">
+            <summary>
+            Experimental feature mostly for servers. Only for Windows/Linux
+            use direct socket calls for send/receive to drastically increase speed and reduce GC pressure
+            </summary>
+        </member>
         <member name="F:LiteNetLib.NetManager.DisconnectOnUnreachable">
             <summary>
             Disconnect peers if HostUnreachable or NetworkUnreachable spawned (old behaviour 0.9.x was true)
+            </summary>
+        </member>
+        <member name="F:LiteNetLib.NetManager.AllowPeerAddressChange">
+            <summary>
+            Allows peer change it's ip (lte to wifi, wifi to lte, etc). Use only on server
             </summary>
         </member>
         <member name="P:LiteNetLib.NetManager.ChannelsCount">
@@ -317,6 +336,14 @@
             <param name="id">id of peer</param>
             <returns>Peer if peer with id exist, otherwise null</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.TryGetPeerById(System.Int32,LiteNetLib.NetPeer@)">
+            <summary>
+            Gets peer by peer id
+            </summary>
+            <param name="id">id of peer</param>
+            <param name="peer">resulting peer</param>
+            <returns>True if peer with id exist, otherwise false</returns>
+        </member>
         <member name="P:LiteNetLib.NetManager.ConnectedPeersCount">
             <summary>
             Returns connected peers count
@@ -334,12 +361,6 @@
             Update and send logic. Use this only when NetManager started in manual mode
             </summary>
             <param name="elapsedMilliseconds">elapsed milliseconds since last update call</param>
-        </member>
-        <member name="M:LiteNetLib.NetManager.ManualReceive">
-            <summary>
-            Receive logic. It will call Receive events immediately without need to use PollEvents or UnsyncedEvents
-            Use this only when NetManager started in manual mode
-            </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.SendToAll(LiteNetLib.Utils.NetDataWriter,LiteNetLib.DeliveryMethod)">
             <summary>
@@ -511,6 +532,17 @@
             <param name="remoteEndPoint">Packet destination</param>
             <returns>Operation result</returns>
         </member>
+        <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.String,System.Int32)">
+            <summary>
+            Send message without connection. WARNING This method allocates a new IPEndPoint object and
+            synchronously makes a DNS request. If you're calling this method every frame it will be
+            much faster to just cache the IPEndPoint.
+            </summary>
+            <param name="writer">Data serializer</param>
+            <param name="address">Packet destination IP or hostname</param>
+            <param name="port">Packet destination port</param>
+            <returns>Operation result</returns>
+        </member>
         <member name="M:LiteNetLib.NetManager.SendUnconnectedMessage(LiteNetLib.Utils.NetDataWriter,System.Net.IPEndPoint)">
             <summary>
             Send message without connection
@@ -537,6 +569,7 @@
         <member name="M:LiteNetLib.NetManager.PollEvents">
             <summary>
             Receive all pending events. Call this in game update code
+            In Manual mode it will call also socket Receive (which can be slow)
             </summary>
         </member>
         <member name="M:LiteNetLib.NetManager.Connect(System.String,System.Int32,System.String)">
@@ -669,6 +702,20 @@
             </summary>
             <param name="ntpServerAddress">NTP Server address.</param>
         </member>
+        <member name="F:LiteNetLib.NetManager.PacketPoolSize">
+            <summary>
+            Maximum packet pool size (increase if you have tons of packets sending)
+            </summary>
+        </member>
+        <member name="M:LiteNetLib.NetManager.Start(System.Net.IPAddress,System.Net.IPAddress,System.Int32,System.Boolean)">
+            <summary>
+            Start logic thread and listening on selected port
+            </summary>
+            <param name="addressIPv4">bind to specific ipv4 address</param>
+            <param name="addressIPv6">bind to specific ipv6 address</param>
+            <param name="port">port to listen</param>
+            <param name="manualMode">mode of library</param>
+        </member>
         <member name="T:LiteNetLib.ConnectionState">
             <summary>
             Peer connection state
@@ -679,7 +726,7 @@
             Network peer. Main purpose is sending messages to specific peer.
             </summary>
         </member>
-        <member name="F:LiteNetLib.NetPeer.EndPoint">
+        <member name="P:LiteNetLib.NetPeer.EndPoint">
             <summary>
             Peer ip address and port
             </summary>
@@ -704,9 +751,19 @@
             Peer id can be used as key in your dictionary of peers
             </summary>
         </member>
+        <member name="P:LiteNetLib.NetPeer.RemoteId">
+            <summary>
+            Id assigned from server
+            </summary>
+        </member>
         <member name="P:LiteNetLib.NetPeer.Ping">
             <summary>
-            Current ping in milliseconds
+            Current one-way ping (RTT/2) in milliseconds
+            </summary>
+        </member>
+        <member name="P:LiteNetLib.NetPeer.RoundTripTime">
+            <summary>
+            Round trip time in milliseconds
             </summary>
         </member>
         <member name="P:LiteNetLib.NetPeer.Mtu">
@@ -912,6 +969,12 @@
             <param name="length">length</param>
             <returns>CRC32C checksum</returns>
         </member>
+        <member name="M:LiteNetLib.Utils.NetDataReader.GetString(System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
+            <returns>"string.Empty" if value > "maxLength"</returns>
+        </member>
         <member name="M:LiteNetLib.Utils.NetDataWriter.FromBytes(System.Byte[],System.Boolean)">
             <summary>
             Creates NetDataWriter from existing ByteArray
@@ -933,6 +996,11 @@
             </summary>
             <param name="position">new byte position</param>
             <returns>previous position of data writer</returns>
+        </member>
+        <member name="M:LiteNetLib.Utils.NetDataWriter.Put(System.String,System.Int32)">
+            <summary>
+            Note that "maxLength" only limits the number of characters in a string, not its size in bytes.
+            </summary>
         </member>
         <member name="M:LiteNetLib.Utils.NetPacketProcessor.RegisterNestedType``1">
             <summary>

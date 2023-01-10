@@ -77,7 +77,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         foreach (var item in podsList)
         {
             string playersCount = redis.GetDatabase().StringGet($"{item.Name}_players");
-            item.PlayersCount = int.Parse(playersCount);
+            item.PlayersCount = string.IsNullOrEmpty(playersCount) ? 0 : int.Parse(playersCount);
         }
 
         return podsList;

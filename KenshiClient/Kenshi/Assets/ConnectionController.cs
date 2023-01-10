@@ -16,7 +16,11 @@ public class ConnectionController : MonoBehaviour
     public event Action<string, string> OnMessageReceived;
 
     public static ConnectionController Instance;
-    
+
+    public bool useLocal = true;
+    public string host = "127.0.0.1";
+    public static string Host => Instance.useLocal ? "127.0.0.1" : Instance.host;
+    public static string Ip => Instance.useLocal ? $"http://127.0.0.1:3330" : $"http://{Instance.host}:3330";
     private void Awake()
     {
         if (Instance == null)
@@ -41,7 +45,7 @@ public class ConnectionController : MonoBehaviour
     private async void Start()
     {
         Connection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:3330/gameHub")
+            .WithUrl($"{Ip}/gameHub")
             .Build();
 
         NetworkCommandProcessor.RegisterCommand("connect", (string[] param) =>

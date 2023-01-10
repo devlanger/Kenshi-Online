@@ -8,7 +8,7 @@ namespace UDPServer
     {
         private void InitWriter()
         {
-            m_buffer = new byte[1024];
+            m_buffer = new byte[256];
             m_stream = new MemoryStream(m_buffer);
             m_writer = new BinaryWriter(m_stream);
         }
