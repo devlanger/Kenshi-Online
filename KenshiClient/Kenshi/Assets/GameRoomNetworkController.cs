@@ -62,9 +62,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         _netClient.UnconnectedMessagesEnabled = true;
         _netClient.UpdateTime = 15;
         _netClient.Start();
-        _netClient.Connect(ConnectionController.Host, Port, "test");
+        string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
+        _netClient.Connect(host, Port, "test");
         
-        Debug.Log($"Connecting {ConnectionController.Host}:{Port}");
+        Debug.Log($"Connecting {host}:{Port}");
     }
 
     private void UpdateENet()
@@ -162,6 +163,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             return;
 
         Debug.Log($"UpdatePosition {x} {y} {z}");
+        if (!_players.ContainsKey(playerId))
+        {
+            return;
+        }
         _players[playerId].transform.position = new Vector3(x, y, z);
     }
 

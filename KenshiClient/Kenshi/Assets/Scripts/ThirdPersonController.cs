@@ -8,7 +8,6 @@ using UnityEngine.InputSystem;
 
 namespace StarterAssets
 {
-    [RequireComponent(typeof(CharacterController))]
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
     [RequireComponent(typeof(PlayerInput))]
 #endif
@@ -132,6 +131,8 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
+
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         public void SetPlayer(Transform player)
