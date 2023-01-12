@@ -2,14 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class InGameChatUI : MonoBehaviour
 {
     [SerializeField] private Image background;
-    [SerializeField] private TMP_InputField _inputField;
     [SerializeField] private CanvasGroup scrollBar;
-    
+    [SerializeField] private ChatController chat;
+
     public bool IsChatActive { get; set; }
     
     // Start is called before the first frame update
@@ -17,22 +18,39 @@ public class InGameChatUI : MonoBehaviour
     {
         IsChatActive = false;
         RefreshState();
+        
+        chat.PushMessage($"Welcome in Kenshi Online {Application.version} game room.");
+        chat.inputField.onFocusSelectAll = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetState(bool active)
     {
-        if (Input.GetKeyDown((KeyCode.Return)))
-        {
-            IsChatActive = !IsChatActive;
-            RefreshState();
-        }
+        IsChatActive = active;
+        RefreshState();
     }
 
+    public void SendChatMessage()
+    {
+        chat.Send(() =>
+        {
+            if (chat.inputField.text != "")
+            {
+                chat.PushMessage(chat.inputField.text);
+            }
+        });
+    }
+    
     private void RefreshState()
     {
-        _inputField.gameObject.SetActive(IsChatActive);
+        chat.inputField.gameObject.SetActive(IsChatActive);
         background.enabled = IsChatActive;
         scrollBar.alpha = IsChatActive ? 1 : 0;
+        
+        if (IsChatActive)
+        {
+            chat.inputField.Select();
+            chat.inputField.ActivateInputField();
+            EventSystem.current.SetSelectedGameObject(chat.inputField.gameObject);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -131,8 +132,6 @@ namespace StarterAssets
             {
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
-
-            Cursor.lockState = CursorLockMode.Locked;
         }
 
         public void SetPlayer(Transform player)
@@ -155,16 +154,20 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
         }
-
-        private void Update()
+        
+        public void UpdateGravity()
         {
             _hasAnimator = target.TryGetComponent(out _animator);
-
             JumpAndGravity();
             GroundedCheck();
+        }
+        
+        public void UpdateMovement()
+        {
+            _hasAnimator = target.TryGetComponent(out _animator);
             Move();
         }
-
+        
         private void LateUpdate()
         {
             CameraRotation();

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
 #endif
@@ -7,11 +8,15 @@ namespace StarterAssets
 {
 	public class StarterAssetsInputs : MonoBehaviour
 	{
+		public bool rightClick;
+		public bool leftClick;
+		
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool tab;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -39,6 +44,26 @@ namespace StarterAssets
 			JumpInput(value.isPressed);
 		}
 
+		public void OnMouseRight(InputValue value)
+		{
+			RightClickInput(value.isPressed);
+		}
+		
+		public void OnMouseLeft(InputValue value)
+		{
+			LeftClickInput(value.isPressed);
+		}
+		
+		public void OnTab(InputValue value)
+		{
+			TabInput(value.isPressed);
+		}
+
+		private void TabInput(bool valueIsPressed)
+		{
+			tab = valueIsPressed;
+		}
+
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
@@ -55,7 +80,17 @@ namespace StarterAssets
 		{
 			look = newLookDirection;
 		}
-
+		
+		public void LeftClickInput(bool leftClick)
+		{
+			this.leftClick = leftClick;
+		}
+		
+		public void RightClickInput(bool rightClick)
+		{
+			this.rightClick = rightClick;
+		}
+		
 		public void JumpInput(bool newJumpState)
 		{
 			jump = newJumpState;
