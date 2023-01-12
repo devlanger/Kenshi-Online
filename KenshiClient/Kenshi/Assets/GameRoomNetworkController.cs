@@ -8,6 +8,7 @@ using ENet;
 using LiteNetLib;
 using StarterAssets;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = Unity.Mathematics.Random;
 using ConnectionState = LiteNetLib.ConnectionState;
 
@@ -63,7 +64,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         _netClient.UpdateTime = 15;
         _netClient.Start();
         string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
-        _netClient.Connect(host, Port, "test");
+        _netClient.Connect(host, Port, ConnectionController.Token);
         
         Debug.Log($"Connecting {host}:{Port}");
     }
@@ -179,7 +180,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("Client disconnected from server");
-
+        SceneManager.LoadScene(0);
     }
 
     public void OnNetworkError(IPEndPoint endPoint, SocketError socketError)

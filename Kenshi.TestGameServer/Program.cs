@@ -5,6 +5,7 @@ using StackExchange.Redis;
 using UDPServer;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
@@ -50,15 +51,47 @@ namespace UDPServer
         private static EventBasedNetListener listener;
         private static NetManager server;
         private static ushort port;
+        private static Dictionary<int, string> tokens = new Dictionary<int, string>();
+
+        public class ClaimsDto
+        {
+            public string Name { get; set; }
+        }
+        
+        public static ClaimsDto GetUserClaims(int playerId)
+        {
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokens[playerId]);
+            return new ClaimsDto()
+            {
+                Name = jwt.Claims.First(c => c.Type == "Name").Value
+            };
+        }
         
         static async Task Main(string[] args)
         {
             Start();
         }
+        private static string GetRoomId(int port) => $"gameroom-{port}";
 
+        public static void AddPlayer(string player)
+        {
+            redis.GetDatabase().ListLeftPush(GetRoomId(port), player);
+        }
+        
+        public static void RemovePlayer(string player)
+        {
+            redis.GetDatabase().ListRemove(GetRoomId(port), player);
+        }
+
+        public static List<string> GetPlayers(string room)
+        {
+            return redis.GetDatabase().ListRange(GetRoomId(port)).Select(x => x.ToString()).ToList();
+        }
+        
         private static void Start()
         {
-            
+            string jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET");
+
             containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test";
             port = 5001;
             try
@@ -75,7 +108,7 @@ namespace UDPServer
                 Console.WriteLine("Successfully connected to redis and initialized server parameters.");
             }
             
-            const int maxClients = 100;
+            const int maxClients = 16;
             listener = new EventBasedNetListener();
             server = new NetManager(listener);
             server.Start(port /* port */);
@@ -84,8 +117,20 @@ namespace UDPServer
 
             listener.ConnectionRequestEvent += request =>
             {
-                if(server.ConnectedPeersCount < 10 /* max connections */)
-                    request.AcceptIfKey("test");
+                if (server.ConnectedPeersCount < maxClients /* max connections */)
+                {
+                    string token = request.Data.GetString();
+                    if (JwtTokenService.VerifyToken(jwtSecretKey, token))   
+                    {
+                        var peer = request.Accept();
+                        tokens.Add(peer.Id, token);
+                        AddPlayer(GetUserClaims(peer.Id).Name);
+                    }
+                    else
+                    {
+                        request.Reject();
+                    }
+                }
                 else
                     request.Reject();
             };
@@ -102,7 +147,8 @@ namespace UDPServer
         
             listener.PeerConnectedEvent += peer =>
             {
-                Console.WriteLine("Client connected - ID: " + peer.Id + ", IP: ");
+                var claims = GetUserClaims(peer.Id);
+                Console.WriteLine($"Client connected - ID: {peer.Id} Name: {claims.Name}");
                 //peer.Timeout(32, 1000, 4000);
                 players++;
                 UpdatePlayersAmount(players);
@@ -167,6 +213,8 @@ namespace UDPServer
             if (!_players.ContainsKey(playerId))
                 return;
 
+            RemovePlayer(GetUserClaims(playerId).Name);
+            tokens.Remove(playerId);
             _players.Remove(playerId);
             SendPacketToAll(new LogoutEventPacket(playerId));
             players--;

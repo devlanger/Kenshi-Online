@@ -92,6 +92,7 @@ public class KubernetesService
                 $"CONTAINER_NAME={GetPodName(freePort)}",
                 $"GAME_SERVER_PORT={freePort}",
                 $"REDIS_HOST=redis",
+                $"JWT_SECRET={_configuration["Jwt:Key"]}"
             }
         });
         
@@ -113,7 +114,7 @@ public class KubernetesService
                 Id = container.ID,
                 Name = container.Names[0].Replace("/", ""),
                 //Ip = "127.0.0.1",
-                Port = container.Labels.ContainsKey("port") ? container.Labels["port"] : "0"
+                Port = container.Labels.ContainsKey("port") ? container.Labels["port"] : "0",
             };
 
             result.Add(newDto);

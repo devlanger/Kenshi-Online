@@ -17,8 +17,10 @@ public class ConnectionController : MonoBehaviour
 
     public static ConnectionController Instance;
 
+    private string token;
     public bool useLocal = true;
     public string host = "127.0.0.1";
+    public static string Token => Instance.token;
     public static string Host => Instance.useLocal ? "127.0.0.1" : Instance.host;
     public static string Ip => Instance.useLocal ? $"http://127.0.0.1:3330" : $"http://{Instance.host}:3330";
     private void Awake()
@@ -75,6 +77,11 @@ public class ConnectionController : MonoBehaviour
             {
                 OnMessageReceived?.Invoke("ShowChatMessage", s);
             });
+        }));
+        
+        Connection.On<string>("SetToken", (s =>
+        {
+            token = s;
         }));
         
         clientMessager = new ClientMessageHandler(Connection); 

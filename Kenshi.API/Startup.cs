@@ -19,10 +19,7 @@ public class Startup
     
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddMicrosoftIdentityWebApi(_configuration.GetSection("AzureAd"));
-
-        services.AddServices();
+        services.AddServices(_configuration);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -40,6 +37,7 @@ public class Startup
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseRouting();
