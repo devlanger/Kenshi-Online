@@ -5,3 +5,4 @@ riderModule.iml
 /_ReSharper.Caches/
 Builds
 KenshiClient/Kenshi_clone_0
+data/dump.rdb
