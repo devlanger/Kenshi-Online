@@ -17,6 +17,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
         <PackageReference Include="Microsoft.Identity.Web" Version="1.16.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+        <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
         <PackageReference Include="StackExchange.Redis" Version="2.6.86" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
@@ -28,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Kenshi.Backend.Shared\Kenshi.Backend.Shared.csproj" />
       <ProjectReference Include="..\Kenshi.Shared\Kenshi.Shared.csproj" />
     </ItemGroup>
 

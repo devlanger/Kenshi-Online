@@ -2,6 +2,7 @@ using System.Text;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Kenshi.API.Helpers;
+using Kenshi.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -14,7 +15,11 @@ public static class ApplicationServicesExtension
         services.AddSignalR();
         services.AddTransient<KubernetesService>();
         services.AddTransient<JwtTokenService>();
-
+        services.AddTransient<IGameRoomService, GameRoomService>();
+        
+        Console.WriteLine(configuration["ConnectionStrings:rabbitmq"]);
+        services.AddHostedService<RabbitConsumer>();
+        
         services.AddAuthentication(opts =>
         {
             opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

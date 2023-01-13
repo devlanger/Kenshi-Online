@@ -1,5 +1,7 @@
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Kenshi.API.Hub;
+using Kenshi.API.Services;
 using Kenshi.Shared.Models;
 using StackExchange.Redis;
 
@@ -33,7 +35,7 @@ public class KubernetesService
         });
     }
 
-    public async Task CreatePod(GameRoomPodSettings settings)
+    public async Task<IGameRoomInstance> CreatePod(GameRoomPodSettings settings)
     {
         int startPort = 5000;
         // Find a free port
@@ -92,14 +94,27 @@ public class KubernetesService
                 $"CONTAINER_NAME={GetPodName(freePort)}",
                 $"GAME_SERVER_PORT={freePort}",
                 $"REDIS_HOST=redis",
+                $"RABBIT_MQ_HOST=kenshirabbitmq",
                 $"JWT_SECRET={_configuration["Jwt:Key"]}"
             }
         });
         
-        await _client.Containers.StartContainerAsync(container.ID, new ContainerStartParameters()
+        bool run = await _client.Containers.StartContainerAsync(container.ID, new ContainerStartParameters()
         {
 
         });
+
+        if (run)
+        {
+            return new GameRoomInstance
+            {
+                RoomId = GetPodName(freePort),
+            };
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public async Task<List<ContainerDto>> ListPods()
@@ -148,7 +163,8 @@ public class KubernetesService
 
     public async Task DeletePodsWithZeroPlayers()
     {
-        var redis = ConnectionMultiplexer.Connect("redis");
+        return;
+        var redis = ConnectionMultiplexer.Connect(GameHub.RedisString(_configuration));
         var pods = await ListContainersAsync();
         
         // Iterate over the pods and delete them

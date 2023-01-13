@@ -5,12 +5,13 @@ using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using RabbitMQ.Client;
 
 namespace Kenshi.API;
 
 public class Startup
 {
-    private readonly IConfiguration _configuration;
+    private IConfiguration _configuration;
 
     public Startup(IConfiguration configuration)
     {
@@ -20,7 +21,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddServices(_configuration);
-
+        
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

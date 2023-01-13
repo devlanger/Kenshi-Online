@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Kenshi.Shared.Packets.GameServer;
 
-namespace UDPServer
+namespace Kenshi.Backend.GameServer
 {
     class Protocol
     {

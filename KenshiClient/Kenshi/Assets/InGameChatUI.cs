@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,9 +19,20 @@ public class InGameChatUI : MonoBehaviour
     {
         IsChatActive = false;
         RefreshState();
-        
+        FindObjectOfType<ConnectionController>().OnMessageReceived += ChatReceived;
+
         chat.PushMessage($"Welcome in Kenshi Online {Application.version} game room.");
         chat.inputField.onFocusSelectAll = true;
+    }
+
+    private void OnDestroy()
+    {   
+        var c = FindObjectOfType<ConnectionController>();
+
+        if (c != null)
+        {
+            c.OnMessageReceived -= ChatReceived;
+        }
     }
 
     public void SetState(bool active)
@@ -29,13 +41,22 @@ public class InGameChatUI : MonoBehaviour
         RefreshState();
     }
 
+    private void ChatReceived(string arg1, string arg2)
+    {
+        if (arg1 == "ShowChatMessage")
+        {
+            chat.PushMessage(arg2);
+        }
+    }
+    
     public void SendChatMessage()
     {
         chat.Send(() =>
         {
             if (chat.inputField.text != "")
             {
-                chat.PushMessage(chat.inputField.text);
+                FindObjectOfType<ConnectionController>().ExecuteCommand($"chat_msg {chat.inputField.text}");
+                //chat.PushMessage(chat.inputField.text);
             }
         });
     }

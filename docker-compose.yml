@@ -9,6 +9,8 @@ services:
     #platform: linux/amd64 #set to work on ubuntu
     depends_on:
       - redis
+      - kenshirabbitmq
+    restart: on-failure
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     build:
@@ -33,6 +35,19 @@ services:
     networks:
       - local-dev
     
+  kenshirabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      # AMQP protocol port
+      - '5672:5672'
+      # HTTP management UI
+      - '15672:15672'
+    environment:
+      HOST_PORT_RABBIT: 5672
+      HOST_PORT_RABBIT_MGMT: 15672
+    networks:
+      - local-dev
+    
   kenshigameserver:
     depends_on:
       - redis
@@ -41,7 +56,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     build:
       context: .
-      dockerfile: Kenshi.TestGameServer/Dockerfile
+      dockerfile: Kenshi.Backend.GameServer/Dockerfile
     image: piotrlanger/kenshigameserver
     environment:
       - "REDIS_HOST=redis"
@@ -49,3 +64,4 @@ services:
       - local-dev
     #profiles:
     #  - donotstart
+      

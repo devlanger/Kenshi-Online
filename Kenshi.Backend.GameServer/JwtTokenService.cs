@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace UDPServer;
+namespace Kenshi.Backend.GameServer;
 
 public class JwtTokenService
 {

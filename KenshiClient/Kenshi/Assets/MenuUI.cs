@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Kenshi.Shared.Models;
 using Newtonsoft.Json;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class MenuUI : MonoBehaviour
 {
     private ConnectionController connectionController;
 
+    [SerializeField] private TextMeshProUGUI nicknameLabel;
     [SerializeField] private Button createGameButton;
     [SerializeField] private Button joinGameButton;
     [SerializeField] private Button exitGameButton;
@@ -22,11 +24,28 @@ public class MenuUI : MonoBehaviour
     {
         connectionController = FindObjectOfType<ConnectionController>();
         connectionController.OnMessageReceived += ConnectionControllerOnOnMessageReceived;
+        connectionController.OnLogged += ConnectionControllerOnOnLogged;
         
         createGameButton.onClick.AddListener(CreateGameClick);
         joinGameButton.onClick.AddListener(JoinGameClick);
         exitGameButton.onClick.AddListener(ExitGameClick);
         refreshGameButton.onClick.AddListener(RefreshGameClick);
+    }
+
+    private void OnDestroy()
+    {
+        connectionController = FindObjectOfType<ConnectionController>();
+
+        if (connectionController != null)
+        {
+            FindObjectOfType<ConnectionController>().OnMessageReceived -= ConnectionControllerOnOnMessageReceived;
+            FindObjectOfType<ConnectionController>().OnLogged -= ConnectionControllerOnOnLogged;
+        }
+    }
+
+    private void ConnectionControllerOnOnLogged(ConnectionDto obj)
+    {
+        nicknameLabel.SetText(obj.nickname);
     }
 
     private async void RefreshGameClick()

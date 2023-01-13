@@ -39,6 +39,15 @@ public class ChatUI : MonoBehaviour
         ChatReceived("ShowChatMessage", $"Welcome in Kenshi Online {Application.version} lobby!");
     }
 
+    private void OnDestroy()
+    {
+        var c = FindObjectOfType<ConnectionController>();
+        if (c != null)
+        {
+            c.OnMessageReceived -= ChatReceived;
+        }
+    }
+
     private void SendMessageClick()
     {
         chat.Send(() =>

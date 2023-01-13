@@ -33,7 +33,7 @@ public class JwtTokenService
 
     public string GenerateToken(string userId)
     {
-        var claims = new[] { new Claim("Name", userId) };
+        var claims = new[] { new Claim(ClaimTypes.Name, userId) };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

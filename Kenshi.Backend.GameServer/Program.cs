@@ -7,13 +7,16 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Security.Claims;
+using Kenshi.Backend.Shared.Models;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using LiteNetLib.Utils;
+using Newtonsoft.Json;
 using Address = ENet.Address;
 
-namespace UDPServer
+namespace Kenshi.Backend.GameServer
 {
     class Program
     {
@@ -63,7 +66,7 @@ namespace UDPServer
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokens[playerId]);
             return new ClaimsDto()
             {
-                Name = jwt.Claims.First(c => c.Type == "Name").Value
+                Name = jwt.Claims.First(c => c.Type == ClaimTypes.Name).Value
             };
         }
         
@@ -117,7 +120,7 @@ namespace UDPServer
 
             listener.ConnectionRequestEvent += request =>
             {
-                if (server.ConnectedPeersCount < maxClients /* max connections */)
+                if (server.ConnectedPeersCount < maxClients)
                 {
                     string token = request.Data.GetString();
                     if (JwtTokenService.VerifyToken(jwtSecretKey, token))   
@@ -148,8 +151,15 @@ namespace UDPServer
             listener.PeerConnectedEvent += peer =>
             {
                 var claims = GetUserClaims(peer.Id);
-                Console.WriteLine($"Client connected - ID: {peer.Id} Name: {claims.Name}");
-                //peer.Timeout(32, 1000, 4000);
+                RabbitMqClient client = new RabbitMqClient();
+                var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
+                {
+                    State = RoomEventState.Joined,
+                    RoomId = GetRoomId(port),
+                    Username = claims.Name
+                });
+                client.SendConnectedUser("connected_user",json);
+                Console.WriteLine($"[GAME SERVER] Client connected - ID: {peer.Id} Name: {claims.Name}");
                 players++;
                 UpdatePlayersAmount(players);
             };
@@ -213,12 +223,22 @@ namespace UDPServer
             if (!_players.ContainsKey(playerId))
                 return;
 
-            RemovePlayer(GetUserClaims(playerId).Name);
+            string username = GetUserClaims(playerId).Name;
+            var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
+            {
+                State = RoomEventState.Left,
+                RoomId = GetRoomId(port),
+                Username = username
+            });
+            new RabbitMqClient().SendConnectedUser("disconnected_user",json);
+            RemovePlayer(username);
             tokens.Remove(playerId);
             _players.Remove(playerId);
             SendPacketToAll(new LogoutEventPacket(playerId));
             players--;
             UpdatePlayersAmount(players);
+            
+            Console.WriteLine($"User has disconnected {username}");
         }
     }
 }

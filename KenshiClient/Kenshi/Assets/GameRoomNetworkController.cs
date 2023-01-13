@@ -54,7 +54,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     void OnDestroy()
     {
-        _netClient.DisconnectAll();
+        _netClient?.DisconnectAll();
     }
 
     private void InitENet()

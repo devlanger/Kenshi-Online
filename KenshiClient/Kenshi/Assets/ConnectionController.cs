@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Kenshi.Shared;
+using Kenshi.Shared.Models;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,9 +22,13 @@ public class ConnectionController : MonoBehaviour
     private string token;
     public bool useLocal = true;
     public string host = "127.0.0.1";
-    public static string Token => Instance.token;
+    public ConnectionDto connectionDto;
+    public static string Nickname => Instance.connectionDto.nickname;
+    public static string Token => Instance.connectionDto.token;
     public static string Host => Instance.useLocal ? "127.0.0.1" : Instance.host;
     public static string Ip => Instance.useLocal ? $"http://127.0.0.1:3330" : $"http://{Instance.host}:3330";
+    public event Action<ConnectionDto> OnLogged;
+
     private void Awake()
     {
         if (Instance == null)
@@ -79,15 +85,18 @@ public class ConnectionController : MonoBehaviour
             });
         }));
         
-        Connection.On<string>("SetToken", (s =>
+        Connection.On<string>("SetConnectionData", (s =>
         {
-            token = s;
+            var data = JsonConvert.DeserializeObject<ConnectionDto>(s);
+            connectionDto = data;
+            OnLogged?.Invoke(data);
         }));
         
         clientMessager = new ClientMessageHandler(Connection); 
 
         await Connection.StartAsync();
     }
+
 
     public async Task ExecuteCommand(string command)
     {

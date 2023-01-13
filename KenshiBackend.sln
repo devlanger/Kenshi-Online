@@ -6,9 +6,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Tests", "Kenshi.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.TestClient", "Kenshi.TestClient\Kenshi.TestClient.csproj", "{61F2223F-5176-4D8D-9327-88DDA71789ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.TestGameServer", "Kenshi.TestGameServer\Kenshi.TestGameServer.csproj", "{2AF9A323-9F3A-4564-83C8-119F794E0C22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Backend.GameServer", "Kenshi.Backend.GameServer\Kenshi.Backend.GameServer.csproj", "{2AF9A323-9F3A-4564-83C8-119F794E0C22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Shared", "Kenshi.Shared\Kenshi.Shared.csproj", "{760CD983-B09B-4183-9240-17F87361A870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Backend.Shared", "Kenshi.Backend.Shared\Kenshi.Backend.Shared.csproj", "{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +38,9 @@ Global
 		{760CD983-B09B-4183-9240-17F87361A870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{760CD983-B09B-4183-9240-17F87361A870}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{760CD983-B09B-4183-9240-17F87361A870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
