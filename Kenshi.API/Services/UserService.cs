@@ -7,6 +7,8 @@ public class UserService
     /// </summary>
     public static Dictionary<string, string> userIds = new Dictionary<string, string>();
 
+    public static List<string> UsersInLobby = new List<string>();
+    
     public string GetConnectionIdByUsername(string username)
     {
         if (!userIds.ContainsKey(username))

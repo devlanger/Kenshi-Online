@@ -1,6 +1,8 @@
 using System.Text;
+using Kenshi.API.Hub;
 using Kenshi.API.Services;
 using Kenshi.Backend.Shared.Models;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -11,19 +13,23 @@ public class RabbitConsumer : IHostedService
 {
     private readonly IConfiguration _configuration;
     private readonly IGameRoomService _gameRoomService;
+    private readonly UserService _userService;
+    private readonly IHubContext<GameHub> _gameHub;
     private IConnection _connection;
     private IModel _connectedChannel;
     private IModel _disconnectedChannel;
     private readonly string _host;
 
-    public RabbitConsumer(IConfiguration config, IGameRoomService gameRoomService)
+    public RabbitConsumer(IConfiguration config, IGameRoomService gameRoomService, UserService userService, IHubContext<GameHub> gameHub)
     {
         _configuration = config;
         _gameRoomService = gameRoomService;
+        _userService = userService;
+        _gameHub = gameHub;
         _host = _configuration["ConnectionStrings:rabbitmq"];
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         ConnectionFactory factory = null;
         
@@ -59,9 +65,12 @@ public class RabbitConsumer : IHostedService
                 string json = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var dto = JsonConvert.DeserializeObject<UserRoomStateEventDto>(json);
                 _gameRoomService.AddPlayerToRoom(dto.RoomId, dto.Username);
-
+                UserService.UsersInLobby.Remove(dto.Username);
                 Console.WriteLine($"{json}");
-            
+                //TODO: fix
+                var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);
+                _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(users)).SendAsync("ShowChatMessage", $"[SYS] {dto.Username} has joined the room");
+
                 _connectedChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             }
             catch (Exception e)
@@ -92,7 +101,9 @@ public class RabbitConsumer : IHostedService
                 var dto = JsonConvert.DeserializeObject<UserRoomStateEventDto>(json);
                 Console.WriteLine($"{json}");
                 _gameRoomService.RemovePlayerFromRoom(dto.RoomId, dto.Username);
-
+                UserService.UsersInLobby.Add(dto.Username);
+                var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);
+                _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(users)).SendAsync("ShowChatMessage", $"[SYS] {dto.Username} has left the room");
                 _disconnectedChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
             }
             catch (Exception e)
@@ -104,15 +115,12 @@ public class RabbitConsumer : IHostedService
                              autoAck: false,
                              consumer: disconnectedConsumer);
 
-        return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         _disconnectedChannel.Close();
         _connectedChannel.Close();
         _connection.Close();
-
-        return Task.CompletedTask;
     }
 }

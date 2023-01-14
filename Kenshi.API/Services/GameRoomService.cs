@@ -34,7 +34,7 @@ public class GameRoomService : IGameRoomService
     {
         return GetRoomByName(roomName)?.Players.ToList();
     }
-
+    
     public void AddPlayerToRoom(string roomName, string username)
     {
         GetRoomByName(roomName)?.AddPlayer(username);
