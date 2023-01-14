@@ -53,40 +53,18 @@ public class ConnectionController : MonoBehaviour
     private async void Start()
     {
         Connection = new HubConnectionBuilder()
-            .WithUrl($"{Ip}/gameHub")
+            .WithUrl($"http://localhost:3330/gameHub")
             .Build();
 
         NetworkCommandProcessor.RegisterCommand("connect", (string[] param) =>
         {
             SceneManager.LoadScene(1);
         });
-
-        Connection.On<string>("ListGameRooms", (s =>
-        {
-            UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                OnMessageReceived?.Invoke("ListGameRooms", s);
-            });
-        }));
         
-        Connection.On<string>("JoinGameRoom", (s =>
-        {
-            UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                OnMessageReceived?.Invoke("JoinGameRoom", s);
-            });
-        }));
-        
-        Connection.On<string>("ShowChatMessage", (s =>
-        {
-            Console.WriteLine(s);
-            UnityMainThreadDispatcher.Instance().Enqueue(() =>
-            {
-                Console.WriteLine(s);
-
-                OnMessageReceived?.Invoke("ShowChatMessage", s);
-            });
-        }));
+        RegisterStringEventListener("UpdatePlayersList");
+        RegisterStringEventListener("ListGameRooms");
+        RegisterStringEventListener("JoinGameRoom");
+        RegisterStringEventListener("ShowChatMessage");
         
         Connection.On<string>("SetConnectionData", (s =>
         {
@@ -98,6 +76,17 @@ public class ConnectionController : MonoBehaviour
         clientMessager = new ClientMessageHandler(Connection); 
 
         await Connection.StartAsync();
+    }
+
+    private void RegisterStringEventListener(string msg)
+    {
+        Connection.On<string>(msg, (s =>
+        {
+            UnityMainThreadDispatcher.Instance().Enqueue(() =>
+            {
+                OnMessageReceived?.Invoke(msg, s);
+            });
+        }));
     }
 
 

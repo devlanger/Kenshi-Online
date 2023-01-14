@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Kenshi.Shared.Models;
 using Newtonsoft.Json;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,8 +18,14 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private Button joinGameButton;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button refreshGameButton;
+    
+    [Header("Game Room List")]
     [SerializeField] private GameRoomListItem gameRoomListItemPrefab;
     [SerializeField] private ContentList roomsList;
+    
+    [Header("Players List")]
+    [SerializeField] private OnlinePlayerListItem _playerListItem;
+    [SerializeField] private ContentList playersList;
     
     void Awake()
     {
@@ -45,6 +52,11 @@ public class MenuUI : MonoBehaviour
 
     private void ConnectionControllerOnOnLogged(ConnectionDto obj)
     {
+        if (obj == null)
+        {
+            return;
+        }
+        
         nicknameLabel.SetText(obj.nickname);
     }
 
@@ -62,6 +74,15 @@ public class MenuUI : MonoBehaviour
     {
         switch (arg1)
         {
+            case "UpdatePlayersList":
+                var dto = JsonConvert.DeserializeObject<List<string>>(arg2);
+                playersList.Clear();
+                foreach (var item in dto)
+                {
+                    var inst = playersList.SpawnItem(_playerListItem);
+                    inst.Fill(item);
+                }
+                break;
             case "ListGameRooms":
                 roomsList.Clear();
                 ContainerDto[] list = JsonConvert.DeserializeObject<ContainerDto[]>(arg2);
@@ -101,6 +122,8 @@ public class MenuUI : MonoBehaviour
 
     private async void Start()
     {
+        ConnectionControllerOnOnLogged(ConnectionController.Instance.connectionDto);
+
         await connectionController.ExecuteCommand("games");
     }
 }

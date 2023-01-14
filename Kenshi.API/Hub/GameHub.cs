@@ -111,7 +111,27 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     
     public async Task SendChatMessageToAll(string message)
     {
-        string msg = $"{GetUsername()}: {message}";
+        string msg = "";
+        string[] msgParams = message.Split(" ");
+        switch (msgParams[0])
+        {
+            case "/w":
+                if (msgParams.Length > 2)
+                {
+                    if (UserService.IsUserLogged(msgParams[1]))
+                    {
+                        int length = msgParams[0].Length + msgParams[1].Length;
+                        string content = message.Substring(length, message.Length);
+                        
+                        msg = $"[PRIV] {GetUsername()}: {content}";
+                        await Clients.Clients(GetUserConnectionIds(new List<string> {msgParams[1]})).SendAsync("ShowChatMessage", msg);
+                        return;
+                    }
+                }
+                break;
+        }
+        
+        msg = $"{GetUsername()}: {message}";
         var roomInstance = _gameRoomService.GetRoomForUsername(GetUsername());
         
         if (roomInstance != null)
@@ -183,14 +203,22 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         }
     }
 
+    private async Task BroadcastLobbyUsersList()
+    {
+        await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("UpdatePlayersList",
+            JsonConvert.SerializeObject(UserService.LoggedUsers));
+    }
+    
     public override async Task OnConnectedAsync()
     {
         var username = $"User-{new Random().Next(10000).ToString()}";
         Console.WriteLine($"{Context.ConnectionId}: {username} has joined");
         Context.Items["username"] = username;
         UserService.UsersInLobby.Add(username);
+        UserService.LoggedUsers.Add(username);
         UserService.userIds[username] = Context.ConnectionId;
         var token = _tokenService.GenerateToken(GetUsername());
+        await BroadcastLobbyUsersList();
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {username} has joined lobby");
         await Clients.Client(Context.ConnectionId).SendAsync("SetConnectionData", JsonConvert.SerializeObject(new ConnectionDto
         {
@@ -203,6 +231,9 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {GetUsername()} has left lobby");
         UserService.UsersInLobby.Remove(GetUsername());
+        UserService.LoggedUsers.Remove(GetUsername());
+        await BroadcastLobbyUsersList();
+
         Console.WriteLine($"{Context.ConnectionId} has left");
     }
 }
