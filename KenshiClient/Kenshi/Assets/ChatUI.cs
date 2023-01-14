@@ -30,6 +30,8 @@ public class ChatUI : MonoBehaviour
     [SerializeField] private Button sendButton;
     [SerializeField] private ChatController chat;
 
+    public string GetHourMinute() => DateTime.Now.ToString("HH:mm");
+    
     private void Awake()
     {
         FindObjectOfType<ConnectionController>().OnMessageReceived += ChatReceived;
@@ -60,7 +62,7 @@ public class ChatUI : MonoBehaviour
     {
         if (arg1 == "ShowChatMessage")
         {
-            chat.PushMessage(arg2);
+            chat.PushMessage($"[{GetHourMinute()}] {arg2}");
         }
     }
 }
