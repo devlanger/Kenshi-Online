@@ -5,6 +5,8 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using ENet;
+using Kenshi.Shared;
+using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
 using UnityEngine;
@@ -98,9 +100,12 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         var x = _myPlayer.transform.position.x;
         var y = _myPlayer.transform.position.y;
         var z = _myPlayer.transform.position.z;
+        var rotY = (byte)(_myPlayer.transform.eulerAngles.y / 5);
 
+        var packet = new PositionUpdatePacket(_myPlayerId, x, y, z, rotY);
         var protocol = new Protocol();
-        var buffer = protocol.Serialize((byte)PacketId.PositionUpdateRequest, _myPlayerId, x, y, z);
+        
+        var buffer = protocol.Serialize(packet);
         _netClient.FirstPeer.Send(buffer, DeliveryMethod.Unreliable);
     }
 
@@ -108,15 +113,16 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     {
         Debug.Log("SendLogin");
         var protocol = new Protocol();
-        var buffer = protocol.Serialize((byte)PacketId.LoginRequest, 0);
+        var buffer = protocol.Serialize(new LoginRequestPacket()
+        {
+            _playerId = 0
+        });
         _netClient.FirstPeer.Send(buffer, DeliveryMethod.ReliableOrdered);
     }
 
     private void ParsePacket(NetPacketReader reader)
     {
         var packetId = (PacketId)reader.GetByte();
-
-        //Debug.Log("ParsePacket received: " + packetId);
 
         if (packetId == PacketId.LoginResponse)
         {
@@ -135,7 +141,9 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             var x = reader.GetFloat();
             var y = reader.GetFloat();
             var z = reader.GetFloat();
-            UpdatePosition(playerId, x, y, z);
+            var rotY  = reader.GetByte();
+            
+            UpdatePosition(playerId, x, y, z, rotY);
         }
         else if (packetId == PacketId.LogoutEvent)
         {
@@ -158,7 +166,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         _players[playerId] = newPlayer;
     }
 
-    private void UpdatePosition(uint playerId, float x, float y, float z)
+    private void UpdatePosition(uint playerId, float x, float y, float z, byte rotY)
     {
         if (playerId == _myPlayerId)
             return;
@@ -168,7 +176,9 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         {
             return;
         }
+        
         _players[playerId].transform.position = new Vector3(x, y, z);
+        _players[playerId].transform.eulerAngles = new Vector3(0, rotY * 5, 0);
     }
 
     public void OnPeerConnected(NetPeer peer)

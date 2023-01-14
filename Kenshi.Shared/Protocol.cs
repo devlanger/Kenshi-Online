@@ -2,9 +2,9 @@ using System;
 using System.IO;
 using Kenshi.Shared.Packets.GameServer;
 
-namespace Kenshi.Backend.GameServer
+namespace Kenshi.Shared
 {
-    class Protocol
+    public class Protocol
     {
         private void InitWriter()
         {

@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Security.Claims;
 using Kenshi.Backend.Shared.Models;
+using Kenshi.Shared;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
@@ -195,8 +196,9 @@ namespace Kenshi.Backend.GameServer
                 var x = reader.GetFloat();
                 var y = reader.GetFloat();
                 var z = reader.GetFloat();
+                var rotY = reader.GetByte();
                 //Console.WriteLine($"ID: {playerId}, Pos: {x}, {y}");
-                SendPacketToAll(new PositionUpdatePacket(playerId, x, y, z));
+                SendPacketToAll(new PositionUpdatePacket(playerId, x, y, z, rotY));
             }
         }
 
