@@ -16,6 +16,7 @@ public static class ApplicationServicesExtension
         services.AddTransient<KubernetesService>();
         services.AddTransient<JwtTokenService>();
         services.AddTransient<IGameRoomService, GameRoomService>();
+        services.AddTransient<UserService>();
         
         Console.WriteLine(configuration["ConnectionStrings:rabbitmq"]);
         services.AddHostedService<RabbitConsumer>();
@@ -27,6 +28,23 @@ public static class ApplicationServicesExtension
         }).AddJwtBearer(opts =>
         {
             opts.TokenValidationParameters = JwtTokenService.GetTokenValidationParameters(configuration);
+            opts.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    //var accessToken = context.Request.Query["access_token"];
+//
+                    //// If the request is for our hub...
+                    //var path = context.HttpContext.Request.Path;
+                    //if (!string.IsNullOrEmpty(accessToken) &&
+                    //    (path.StartsWithSegments("/gameHub")))
+                    //{
+                    //    // Read the token out of the query string
+                    //    context.Token = accessToken;
+                    //}
+                    return Task.CompletedTask;
+                }
+            };
         });
         
         services.AddHangfire(config =>

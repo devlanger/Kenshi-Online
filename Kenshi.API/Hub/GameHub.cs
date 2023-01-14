@@ -15,6 +15,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly IConfiguration _config;
     private readonly JwtTokenService _tokenService;
     private readonly IGameRoomService _gameRoomService;
+    private readonly UserService _userService;
     private readonly ConnectionMultiplexer redis;
 
     public static string RedisString(IConfiguration config) =>
@@ -22,7 +23,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     
     private string GetUsername() => (string)Context.Items["username"];
     
-    public GameHub(KubernetesService service, IConfiguration config, JwtTokenService tokenService, IGameRoomService gameRoomService)
+    public GameHub(KubernetesService service, IConfiguration config, JwtTokenService tokenService, IGameRoomService gameRoomService, UserService userService)
     {   
         redis = ConnectionMultiplexer.Connect(RedisString(config));
 
@@ -30,6 +31,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _config = config;
         _tokenService = tokenService;
         _gameRoomService = gameRoomService;
+        _userService = userService;
     }
     
     public async Task DeleteAllGameRooms()
@@ -110,7 +112,6 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     public async Task SendChatMessageToAll(string message)
     {
         string msg = $"{GetUsername()}: {message}";
-        
         var roomInstance = _gameRoomService.GetRoomForUsername(GetUsername());
         
         if (roomInstance != null)
@@ -122,14 +123,20 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
                 Console.WriteLine($"{u}");
             }
 
-            await Clients.Users(users).SendAsync("ShowChatMessage", msg);
+            await Clients.Users(GetUserConnectionIds(users)).SendAsync("ShowChatMessage", msg);
         }
         else
         {
+            Console.WriteLine("Send lobby message");
             await Clients.All.SendAsync("ShowChatMessage", msg);
         }
     }
-    
+
+    private static List<string> GetUserConnectionIds(List<string> users)
+    {
+        return UserService.userIds.Where(v => users.Contains(v.Key)).Select(v => v.Value).ToList();
+    }
+
     public List<string> GetPlayersInRoom(string port)
     {
         return redis.GetDatabase().ListRange($"gameroom-{port}").Select(x => x.ToString()).ToList();
@@ -175,6 +182,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         var username = $"User-{new Random().Next(10000).ToString()}";
         Console.WriteLine($"{Context.ConnectionId}: {username} has joined");
         Context.Items["username"] = username;
+        UserService.userIds["username"] = Context.ConnectionId;
         var token = _tokenService.GenerateToken(GetUsername());
         await Clients.All.SendAsync("ShowChatMessage", $"[SYS] {username} has joined");
         await Clients.Client(Context.ConnectionId).SendAsync("SetConnectionData", JsonConvert.SerializeObject(new ConnectionDto

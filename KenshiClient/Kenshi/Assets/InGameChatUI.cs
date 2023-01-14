@@ -14,7 +14,6 @@ public class InGameChatUI : MonoBehaviour
 
     public bool IsChatActive { get; set; }
     
-    // Start is called before the first frame update
     void Start()
     {
         IsChatActive = false;

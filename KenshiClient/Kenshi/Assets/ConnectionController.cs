@@ -79,8 +79,11 @@ public class ConnectionController : MonoBehaviour
         
         Connection.On<string>("ShowChatMessage", (s =>
         {
+            Console.WriteLine(s);
             UnityMainThreadDispatcher.Instance().Enqueue(() =>
             {
+                Console.WriteLine(s);
+
                 OnMessageReceived?.Invoke("ShowChatMessage", s);
             });
         }));
