@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,8 +21,22 @@ public enum MovementState
     JUMP = 3,
     DASH_LEFT = 4,
     DASH_RIGHT = 5,
-    DASH_BACK = 5,
-    DASH_FORWARD = 5,
+    DASH_BACK = 6,
+    DASH_FORWARD = 7,
+}
+
+[System.Serializable]
+public class DashState
+{
+    public KeyCode lastKey;
+    public float keyTime;
+
+    public Dictionary<KeyCode, MovementState> keys = new Dictionary<KeyCode, MovementState>()
+    {
+        {KeyCode.A, MovementState.DASH_LEFT}, {KeyCode.W, MovementState.DASH_FORWARD}, { KeyCode.S, MovementState.DASH_BACK }, {KeyCode.D, MovementState.DASH_RIGHT}
+    };
+    
+    public bool IsDashing => keys.Keys.Contains(lastKey) && Time.time < keyTime + 0.2f;
 }
 
 public class PlayerController : MonoBehaviour
@@ -38,16 +53,21 @@ public class PlayerController : MonoBehaviour
     private PlayerStateMachine<PlayerState> playerState;
     private PlayerStateMachine<MovementState> movementState;
 
+    private DashState dashState = new DashState();
+    
     private Animator animator;
     private int attackIndex = 0;
     private float lastAttackTime = 0;
 
     private void Awake()
     {
-        playerState = new PlayerStateMachine<PlayerState>();
-        movementState = new PlayerStateMachine<MovementState>();
+        playerState = new PlayerStateMachine<PlayerState>(PlayerState.IDLE);
+        movementState = new PlayerStateMachine<MovementState>(MovementState.STAND);
         playerState.OnStateEnter += PlayerStateOnOnStateEnter;
         playerState.OnStateExit += PlayerStateOnOnStateExit;
+        
+        movementState.OnStateEnter += MovementStateOnOnStateEnter;
+        movementState.OnStateExit += MovementStateOnOnStateExit;
 
         animator = localPlayer.GetComponent<Animator>();
 
@@ -57,7 +77,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {        
         UpdatePlayerState();
-
+        UpdateMovementState();
+        
         if (attackIndex > 0 && Time.time > lastAttackTime + 1)
         {
             attackIndex = 0;
@@ -65,6 +86,118 @@ public class PlayerController : MonoBehaviour
         
         _input.rightClick = false;
         _input.leftClick = false;
+        _input.dashing = false;
+    }
+
+    private void MovementStateOnOnStateExit(MovementState obj)
+    {
+        switch (movementState.state)
+        {
+            case MovementState.STAND:
+                break;
+            case MovementState.MOVING:
+                break;
+            case MovementState.DASH_BACK:
+
+                break;
+            case MovementState.DASH_FORWARD:
+
+                break;
+            case MovementState.DASH_LEFT:
+
+                break;
+            case MovementState.DASH_RIGHT:
+
+                break;
+        }
+    }
+
+    private void MovementStateOnOnStateEnter(MovementState obj)
+    {
+        switch (movementState.state)
+        {
+            case MovementState.STAND:
+                break;
+            case MovementState.MOVING:
+                break;
+            case MovementState.DASH_BACK:
+
+                break;
+            case MovementState.DASH_FORWARD:
+
+                break;
+            case MovementState.DASH_LEFT:
+
+                break;
+            case MovementState.DASH_RIGHT:
+
+                break;
+        }
+    }
+    
+    private void UpdateMovementState()
+    {
+        switch (movementState.state)
+        {
+            case MovementState.STAND:
+                UpdateDashState();
+                tpsController.UpdateGravity();
+                tpsController.UpdateMovement();
+                break;
+            case MovementState.MOVING:
+                tpsController.UpdateGravity();
+                tpsController.UpdateMovement();
+                break;
+            case MovementState.DASH_BACK:
+                if (dashFinished(movementState.ElapsedTime))
+                {
+                    movementState.ChangeState(MovementState.STAND);
+                }
+                localPlayer.transform.position -= camera.transform.forward * 10 * Time.deltaTime;
+                break;
+            case MovementState.DASH_FORWARD:
+                if (dashFinished(movementState.ElapsedTime))
+                {
+                    movementState.ChangeState(MovementState.STAND);
+                }
+                localPlayer.transform.position += camera.transform.forward * 10 * Time.deltaTime;
+                break;
+            case MovementState.DASH_LEFT:
+                if (dashFinished(movementState.ElapsedTime))
+                {
+                    movementState.ChangeState(MovementState.STAND);
+                }
+                localPlayer.transform.position -= camera.transform.right * 10 * Time.deltaTime;
+                break;
+            case MovementState.DASH_RIGHT:
+                if (dashFinished(movementState.ElapsedTime))
+                {
+                    movementState.ChangeState(MovementState.STAND);
+                }
+                localPlayer.transform.position += camera.transform.right * 10 * Time.deltaTime;
+                break;
+        }
+    }
+
+    private bool dashFinished(float elapsedTime) => elapsedTime > 0.4f;
+    
+    private void UpdateDashState()
+    {
+        foreach (var key in dashState.keys)
+        {
+            if (UnityEngine.Input.GetKeyDown(key.Key))
+            {
+                if (dashState.IsDashing)
+                {
+                    dashState.lastKey = KeyCode.None;
+                    _input.dashing = true;
+                    movementState.ChangeState(key.Value);
+                }
+                
+                dashState.lastKey = key.Key;
+                dashState.keyTime = Time.time;
+            }
+        }
     }
 
     private void PlayerStateOnOnStateExit(PlayerState obj)
@@ -92,7 +225,6 @@ public class PlayerController : MonoBehaviour
         switch (obj)
         {
             case PlayerState.IDLE:
-
                 break;
             case PlayerState.ATTACK:
                 attackIndex++;
@@ -119,25 +251,20 @@ public class PlayerController : MonoBehaviour
 
     private void UpdatePlayerState()
     {
-        switch (playerState.playerState)
+        switch (playerState.state)
         {
             case PlayerState.IDLE:
                 UpdateAttackInput();
                 if (_input.rightClick)
                 {
-                    playerState.ChangePlayerState(PlayerState.ABILITY_CAST);
+                    playerState.ChangeState(PlayerState.ABILITY_CAST);
                 }
-                tpsController.UpdateGravity();
-                tpsController.UpdateMovement();
                 break;
             case PlayerState.ABILITY_CAST:
                 if (playerState.ElapsedTime > 0.3f)
                 {
-                    playerState.ChangePlayerState(PlayerState.IDLE);
+                    playerState.ChangeState(PlayerState.IDLE);
                 }
-                
-                tpsController.UpdateGravity();
-                tpsController.UpdateMovement();
                 break;
             case PlayerState.ATTACK:
                 Vector3 forward = camera.transform.forward;
@@ -152,13 +279,10 @@ public class PlayerController : MonoBehaviour
                     {
                         if (playerState.ElapsedTime > (lastAttack ? 1 : 0.6f))
                         {
-                            playerState.ChangePlayerState(PlayerState.IDLE);
+                            playerState.ChangeState(PlayerState.IDLE);
                         }  
                     }
                 }
-                
-                tpsController.UpdateGravity();
-                //tpsController.UpdateMovement();
                 break;
         }
     }
@@ -167,7 +291,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_input.leftClick)
         {
-            playerState.ChangePlayerState(PlayerState.ATTACK);
+            playerState.ChangeState(PlayerState.ATTACK);
             return true;
         }
 
@@ -177,21 +301,25 @@ public class PlayerController : MonoBehaviour
 
 public class PlayerStateMachine<T> where T : IComparable
 {
-    public T playerState;
-    public MovementState MovementState;
+    public T state;
     private float enterTime;
 
     public float ElapsedTime => Time.time - enterTime;
 
     public event Action<T> OnStateExit; 
     public event Action<T> OnStateEnter;
+
+    public PlayerStateMachine(T startState)
+    {
+        state = startState;
+    }
     
-    public void ChangePlayerState(T state)
+    public void ChangeState(T state)
     {
         enterTime = Time.time;
-        OnStateExit?.Invoke(playerState);
+        OnStateExit?.Invoke(this.state);
         
-        this.playerState = state;
+        this.state = state;
 
         OnStateEnter?.Invoke(state);
     }

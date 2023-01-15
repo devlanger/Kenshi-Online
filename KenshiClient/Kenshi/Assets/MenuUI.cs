@@ -27,8 +27,12 @@ public class MenuUI : MonoBehaviour
     [SerializeField] private OnlinePlayerListItem _playerListItem;
     [SerializeField] private ContentList playersList;
     
+    [SerializeField] private Canvas connectingCanvas;
+    
     void Awake()
     {
+        connectingCanvas.enabled = true;
+        
         connectionController = FindObjectOfType<ConnectionController>();
         connectionController.OnMessageReceived += ConnectionControllerOnOnMessageReceived;
         connectionController.OnLogged += ConnectionControllerOnOnLogged;
@@ -58,6 +62,7 @@ public class MenuUI : MonoBehaviour
         }
         
         nicknameLabel.SetText(obj.nickname);
+        connectingCanvas.enabled = false;
     }
 
     private async void RefreshGameClick()
