@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 
 namespace StarterAssets
 {
-	public class StarterAssetsInputs : MonoBehaviour
+	[System.Serializable]
+	public class StarterAssetsInputs
 	{
 		public bool rightClick;
 		public bool leftClick;
@@ -25,53 +26,7 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 		public bool dashing = false;
-
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
-		public void OnMove(InputValue value)
-		{
-			MoveInput(value.Get<Vector2>());
-		}
-
-		public void OnLook(InputValue value)
-		{
-			if(cursorInputForLook)
-			{
-				LookInput(value.Get<Vector2>());
-			}
-		}
-
-		public void OnJump(InputValue value)
-		{
-			JumpInput(value.isPressed);
-		}
-
-		public void OnMouseRight(InputValue value)
-		{
-			RightClickInput(value.isPressed);
-		}
 		
-		public void OnMouseLeft(InputValue value)
-		{
-			LeftClickInput(value.isPressed);
-		}
-		
-		public void OnTab(InputValue value)
-		{
-			TabInput(value.isPressed);
-		}
-
-		private void TabInput(bool valueIsPressed)
-		{
-			tab = valueIsPressed;
-		}
-
-		public void OnSprint(InputValue value)
-		{
-			SprintInput(value.isPressed);
-		}
-#endif
-
-
 		public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
@@ -112,5 +67,4 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 	}
-	
 }

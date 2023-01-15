@@ -99,10 +99,12 @@ namespace StarterAssets
 #endif
         private Animator _animator;
         private CharacterController _controller;
-        private StarterAssetsInputs _input;
         private GameObject _mainCamera;
 
-        private Transform target;
+        private Player target;
+        
+        private StarterAssetsInputs _input => target.Input;
+
         
         private const float _threshold = 0.01f;
 
@@ -134,14 +136,13 @@ namespace StarterAssets
             }
         }
 
-        public void SetPlayer(Transform player)
+        public void SetPlayer(Player player)
         {
             target = player;
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = player.TryGetComponent(out _animator);
             _controller = player.GetComponent<CharacterController>();
-            _input = GetComponent<StarterAssetsInputs>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
 #else

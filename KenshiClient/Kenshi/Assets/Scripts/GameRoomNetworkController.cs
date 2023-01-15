@@ -16,16 +16,16 @@ using ConnectionState = LiteNetLib.ConnectionState;
 
 public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 {
-    public GameObject myPlayerFactory;
-    public GameObject otherPlayerFactory;
+    public Player myPlayerFactory;
+    public Player otherPlayerFactory;
 
-    private GameObject _myPlayer;
+    private Player _myPlayer;
     private uint _myPlayerId;
     
     private NetManager _netClient;
 
     private int _skipFrame = 0;
-    private Dictionary<uint, GameObject> _players = new Dictionary<uint, GameObject>();
+    private Dictionary<uint, Player> _players = new Dictionary<uint, Player>();
 
     const int channelID = 0;
 
@@ -36,7 +36,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         Application.runInBackground = true;
         InitENet();
         _myPlayer = myPlayerFactory;     //Instantiate(myPlayerFactory);
-        FindObjectOfType<ThirdPersonController>().SetPlayer(_myPlayer.transform);
+        FindObjectOfType<ThirdPersonController>().SetPlayer(_myPlayer);
     }
 
 	void Update ()
