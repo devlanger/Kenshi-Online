@@ -26,15 +26,18 @@ public class PlayerController : MonoBehaviour
 
     private PlayerStateMachine playerStateMachine;
     private PlayerStateMachine movementStateMachine;
-    private DashState dashState = new DashState();
 
     private void Awake()
     {
         playerStateMachine = new PlayerStateMachine();
+        playerStateMachine.Target = localPlayer;
+        playerStateMachine.Variables = localPlayer.GetComponent<StateMachineVariables>();
         playerStateMachine.ChangeState(new IdleState());
         
         movementStateMachine = new PlayerStateMachine();
         movementStateMachine.ChangeState(new StandState());
+        movementStateMachine.Variables = localPlayer.GetComponent<StateMachineVariables>();
+        movementStateMachine.Target = localPlayer;
 
         localPlayer.gameObject.layer = 10;
     }

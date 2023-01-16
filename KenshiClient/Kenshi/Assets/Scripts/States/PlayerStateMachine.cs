@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace StarterAssets
@@ -12,8 +13,23 @@ namespace StarterAssets
         
         public void ChangeState(FSMState newState)
         {
-            CurrentState?.Exit(this);
-            newState?.Enter(this);
+            try
+            {
+                Debug.Log(newState);
+                
+                if(CurrentState != null)
+                    CurrentState.Exit(this);
+                
+                CurrentState = newState;
+                
+                if(newState != null)
+                    newState.Enter(this);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                //throw;
+            }
         }
     }
 }

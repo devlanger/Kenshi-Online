@@ -42,6 +42,7 @@ namespace StarterAssets.CombatStates
             stateMachine.Target.GetComponent<Animator>().SetInteger("attack_id", stateMachine.Variables.attackIndex);
             if (stateMachine.Variables.attackIndex == 4)
             {
+                stateMachine.Variables.lastAttackTime = Time.time;
                 stateMachine.Variables.attackIndex = 0;
             }
         }
@@ -50,7 +51,6 @@ namespace StarterAssets.CombatStates
         {
             stateMachine.Target.GetComponent<Animator>().SetTrigger("attack");
             stateMachine.Target.GetComponent<Animator>().SetInteger("attack_id", 0);
-            stateMachine.Variables.lastAttackTime = Time.time;
         }
     }
 }

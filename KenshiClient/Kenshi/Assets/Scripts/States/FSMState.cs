@@ -20,7 +20,7 @@ namespace StarterAssets
         
         public void Exit(PlayerStateMachine stateMachine)
         {
-            Exit(stateMachine);
+            OnExit(stateMachine);
         }
         
         protected abstract void OnUpdate(PlayerStateMachine stateMachine);
