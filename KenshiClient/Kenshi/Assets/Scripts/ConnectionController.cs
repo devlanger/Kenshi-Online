@@ -53,7 +53,7 @@ public class ConnectionController : MonoBehaviour
     private async void Start()
     {
         Connection = new HubConnectionBuilder()
-            .WithUrl($"http://localhost:3330/gameHub")
+            .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub")
             .Build();
 
         NetworkCommandProcessor.RegisterCommand("connect", (string[] param) =>

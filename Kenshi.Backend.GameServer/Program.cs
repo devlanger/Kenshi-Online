@@ -35,6 +35,17 @@ namespace Kenshi.Backend.GameServer
         private static IDockerClient _client;
 
         private static ConnectionMultiplexer redis;
+
+        private static EventBasedNetListener listener;
+        private static NetManager server;
+        private static ushort port;
+        private static Dictionary<int, string> tokens = new Dictionary<int, string>();
+
+        public class ClaimsDto
+        {
+            public string Name { get; set; }
+        }
+
         
         private static bool UpdatePlayersAmount(int i)
         {
@@ -51,17 +62,6 @@ namespace Kenshi.Backend.GameServer
                 return false;
             }
         }
-
-        private static EventBasedNetListener listener;
-        private static NetManager server;
-        private static ushort port;
-        private static Dictionary<int, string> tokens = new Dictionary<int, string>();
-
-        public class ClaimsDto
-        {
-            public string Name { get; set; }
-        }
-        
         public static ClaimsDto GetUserClaims(int playerId)
         {
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokens[playerId]);

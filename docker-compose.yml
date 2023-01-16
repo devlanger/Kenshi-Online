@@ -6,7 +6,7 @@ networks:
 
 services:
   kenshiapi:
-    #platform: linux/amd64 #set to work on ubuntu
+    platform: linux/amd64 #set to work on ubuntu
     depends_on:
       - redis
       - kenshirabbitmq

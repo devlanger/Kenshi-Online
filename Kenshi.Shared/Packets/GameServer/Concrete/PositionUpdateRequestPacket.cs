@@ -4,7 +4,7 @@ using Kenshi.Shared.Packets.GameServer.Interfaces;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
-    public class PositionUpdatePacket : SendablePacket
+    public class PositionUpdateRequestPacket : SendablePacket
     {
         public int playerId;
         public float x;
@@ -12,12 +12,12 @@ namespace Kenshi.Shared.Packets.GameServer
         public float z;
         public byte rotY;
 
-        public PositionUpdatePacket() : base(PacketId.PositionUpdateEvent)
+        public PositionUpdateRequestPacket() : base(PacketId.PositionUpdateRequest)
         {
             
         }
         
-        public PositionUpdatePacket(int playerId, float x, float y, float z, byte rotY) : base(PacketId.PositionUpdateEvent)
+        public PositionUpdateRequestPacket(int playerId, float x, float y, float z, byte rotY) : base(PacketId.PositionUpdateRequest)
         {
             this.playerId = playerId;
             this.x = x;

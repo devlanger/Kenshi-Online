@@ -20,12 +20,12 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public Player otherPlayerFactory;
 
     private Player _myPlayer;
-    private uint _myPlayerId;
+    private int _myPlayerId;
     
     private NetManager _netClient;
 
     private int _skipFrame = 0;
-    private Dictionary<uint, Player> _players = new Dictionary<uint, Player>();
+    private Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
     const int channelID = 0;
 
@@ -74,15 +74,6 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     private void UpdateENet()
     {
         _netClient.PollEvents();
-
-        var peer = _netClient.FirstPeer;
-        if (peer != null && peer.ConnectionState == ConnectionState.Connected)
-        {
-        }
-        else
-        {
-            _netClient.SendBroadcast(new byte[] {1}, 5000);
-        }
     }
 
     enum PacketId : byte
@@ -102,7 +93,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         var z = _myPlayer.transform.position.z;
         var rotY = (byte)(_myPlayer.transform.eulerAngles.y / 5);
 
-        var packet = new PositionUpdatePacket(_myPlayerId, x, y, z, rotY);
+        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY);
         var protocol = new Protocol();
         
         var buffer = protocol.Serialize(packet);
@@ -126,18 +117,18 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
         if (packetId == PacketId.LoginResponse)
         {
-            _myPlayerId = reader.GetUInt();
+            _myPlayerId = reader.GetInt();
             Debug.Log("MyPlayerId: " + _myPlayerId);
         }
         else if (packetId == PacketId.LoginEvent)
         {
-            var playerId = reader.GetUInt();
+            var playerId = reader.GetInt();
             Debug.Log("OtherPlayerId: " + playerId);
             SpawnOtherPlayer(playerId);
         }
         else if (packetId == PacketId.PositionUpdateEvent)
         {
-            var playerId = reader.GetUInt();
+            var playerId = reader.GetInt();
             var x = reader.GetFloat();
             var y = reader.GetFloat();
             var z = reader.GetFloat();
@@ -147,7 +138,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
         else if (packetId == PacketId.LogoutEvent)
         {
-            var playerId = reader.GetUInt();
+            var playerId = reader.GetInt();
+            Debug.Log($"logout user [{playerId}]");
             if (_players.ContainsKey(playerId))
             {
                 Destroy(_players[playerId]);
@@ -156,7 +148,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
     }
 
-    private void SpawnOtherPlayer(uint playerId)
+    private void SpawnOtherPlayer(int playerId)
     {
         if (playerId == _myPlayerId)
             return;
@@ -166,12 +158,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         _players[playerId] = newPlayer;
     }
 
-    private void UpdatePosition(uint playerId, float x, float y, float z, byte rotY)
+    private void UpdatePosition(int playerId, float x, float y, float z, byte rotY)
     {
         if (playerId == _myPlayerId)
             return;
 
-        Debug.Log($"UpdatePosition {x} {y} {z}");
         if (!_players.ContainsKey(playerId))
         {
             return;

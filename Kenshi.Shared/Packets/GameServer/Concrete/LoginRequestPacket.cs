@@ -13,10 +13,10 @@ namespace Kenshi.Shared.Packets.GameServer
         public override void Deserialize(BinaryReader reader)
         {
             base.Deserialize(reader);
-            _playerId = reader.ReadUInt32();
+            _playerId = reader.ReadInt32();
         }
 
-        public uint _playerId { get; set; }
+        public int _playerId { get; set; }
 
         public override void Serialize(BinaryWriter writer)
         {

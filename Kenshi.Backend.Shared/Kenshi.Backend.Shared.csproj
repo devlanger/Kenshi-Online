@@ -4,4 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
     </PropertyGroup>
 
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Copy SourceFiles="$(TargetDir)$(TargetName).dll" DestinationFolder="/Users/piotrlanger/RiderProjects/KenshiBackend/KenshiClient/Kenshi/Assets/Plugins/" />
+    </Target>
 </Project>
