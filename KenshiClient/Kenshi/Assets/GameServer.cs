@@ -15,7 +15,6 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using UnityEngine.UIElements;
 
 public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 {
@@ -25,36 +24,40 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
     private static Dictionary<int, Vector3> _players = new Dictionary<int, Vector3>();
 
-    private static string containerName = "test";
     private static int players = 0;
     
     private static IDockerClient _client;
     private static ConnectionMultiplexer redis;
 
-    private static ushort port;
     private static Dictionary<int, string> tokens = new Dictionary<int, string>();
-    private string jwtSecretKey;
+    private bool started;
+
+    public static Config Configuration = new Config();
     
     public class ClaimsDto
     {
         public string Name { get; set; }
     }
-    
-    void Start()
-    {
-        jwtSecretKey = Environment.GetEnvironmentVariable("JWT_SECRET");
 
-        containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test";
-        port = 5001;
+    public class Config
+    {
+        public string jwtSecretKey;
+        public string containerName;
+        public ushort port;
+        public string redis;
+    }
+    
+    public void StartServer()
+    {
         try
         {
-            redis = ConnectionMultiplexer.Connect(Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redis");
+            redis = ConnectionMultiplexer.Connect(Configuration.redis);
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
-        port = ushort.Parse(Environment.GetEnvironmentVariable("GAME_SERVER_PORT") ?? "5001");
+        
         if (UpdatePlayersAmount(0))
         {
             Debug.Log("Successfully connected to redis and initialized server parameters.");
@@ -63,11 +66,12 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         NetDebug.Logger = this;
         _dataWriter = new NetDataWriter();
         _netServer = new NetManager(this);
-        _netServer.Start(port);
+        _netServer.Start(Configuration.port);
         _netServer.BroadcastReceiveEnabled = true;
         _netServer.UpdateTime = 15;
         
-        Debug.Log($"Circle ENet Server started on {port}");
+        Debug.Log($"Circle ENet Server started on {Configuration.port}");
+        started = true;
     }
 
     private static bool UpdatePlayersAmount(int i)
@@ -75,8 +79,8 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         try
         {
             var db = redis.GetDatabase();
-            db.StringSet($"{containerName}_players", i.ToString());
-            Debug.Log("Players Count: " + db.StringGet($"{containerName}_players"));
+            db.StringSet($"{Configuration.containerName}_players", i.ToString());
+            Debug.Log("Players Count: " + db.StringGet($"{Configuration.containerName}_players"));
             return true;
         }
         catch (Exception e)
@@ -88,18 +92,8 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     
     void Update()
     {
-        _netServer.PollEvents();
-    }
-
-    void FixedUpdate()
-    {
-        if (_ourPeer != null)
-        {
-            // _serverBall.transform.Translate(1f * Time.fixedDeltaTime, 0f, 0f);
-            // _dataWriter.Reset();
-            // _dataWriter.Put(_serverBall.transform.position.x);
-            // _ourPeer.Send(_dataWriter, DeliveryMethod.Sequenced);
-        }
+        if(started)
+            _netServer.PollEvents();
     }
 
     void OnDestroy()
@@ -169,17 +163,17 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
         public static void AddPlayer(string player)
         {
-            redis.GetDatabase().ListLeftPush(GetRoomId(port), player);
+            redis.GetDatabase().ListLeftPush(GetRoomId(Configuration.port), player);
         }
         
         public static void RemovePlayer(string player)
         {
-            redis.GetDatabase().ListRemove(GetRoomId(port), player);
+            redis.GetDatabase().ListRemove(GetRoomId(Configuration.port), player);
         }
 
         public static List<string> GetPlayers(string room)
         {
-            return redis.GetDatabase().ListRange(GetRoomId(port)).Select(x => x.ToString()).ToList();
+            return redis.GetDatabase().ListRange(GetRoomId(Configuration.port)).Select(x => x.ToString()).ToList();
         }
 
 
@@ -192,7 +186,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
             {
                 State = RoomEventState.Left,
-                RoomId = GetRoomId(port),
+                RoomId = GetRoomId(Configuration.port),
                 Username = username
             });
             new RabbitMqClient().SendConnectedUser("disconnected_user",json);
@@ -215,7 +209,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
         {
             State = RoomEventState.Joined,
-            RoomId = GetRoomId(port),
+            RoomId = GetRoomId(Configuration.port),
             Username = claims.Name
         });
         client.SendConnectedUser("connected_user",json);
@@ -257,7 +251,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         if (_netServer.ConnectedPeersCount < 100)
         {
             string token = request.Data.GetString();
-            if (JwtTokenService.VerifyToken(jwtSecretKey, token))   
+            if (JwtTokenService.VerifyToken(Configuration.jwtSecretKey, token))   
             {
                 var peer = request.Accept();
                 tokens.Add(peer.Id, token);

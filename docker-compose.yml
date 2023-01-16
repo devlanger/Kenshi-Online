@@ -6,7 +6,7 @@ networks:
 
 services:
   kenshiapi:
-    platform: linux/amd64 #set to work on ubuntu
+    #platform: linux/amd64 #set to work on ubuntu
     depends_on:
       - redis
       - kenshirabbitmq
@@ -54,9 +54,6 @@ services:
     platform: linux/amd64
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    build:
-      context: .
-      dockerfile: Kenshi.Backend.GameServer/Dockerfile
     image: piotrlanger/kenshigameserver
     environment:
       - "REDIS_HOST=redis"

@@ -187,13 +187,20 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         try
         {
-            var port = _service.ListPods().Result.Find(p => roomId == p.Id).Port;
+            var port = _service.ListPods()?.Result?.Find(p => roomId == p.Id)?.Port;
 
-            Console.WriteLine($"{Context.ConnectionId} has joined room port: {port}");        
-            await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", port);
-            foreach (var playerName in GetPlayersInRoom(port))
+            if (port != null)
             {
-                Console.WriteLine(playerName);
+                Console.WriteLine($"{Context.ConnectionId} has joined room port: {port}");
+                await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", port);
+                foreach (var playerName in GetPlayersInRoom(port))
+                {
+                    Console.WriteLine(playerName);
+                }
+            }
+            else
+            {
+                await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", roomId);
             }
         }
         catch (Exception e)

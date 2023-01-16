@@ -142,7 +142,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             Debug.Log($"logout user [{playerId}]");
             if (_players.ContainsKey(playerId))
             {
-                Destroy(_players[playerId]);
+                Destroy(_players[playerId].gameObject);
                 _players.Remove(playerId);
             }
         }
