@@ -850,6 +850,7 @@ GameObject:
   - component: {fileID: 192508591}
   - component: {fileID: 192508593}
   - component: {fileID: 192508592}
+  - component: {fileID: 192508594}
   m_Layer: 5
   m_Name: PlayerStatsView
   m_TagString: Untagged
@@ -920,6 +921,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192508590}
   m_CullTransparentMesh: 1
+--- !u!114 &192508594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192508590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4c4a4e24d72f4bf990886cdf4af4427, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nicknameText: {fileID: 293555513}
 --- !u!1001 &194355764
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -33,6 +33,10 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     private bool started;
 
     public static Config Configuration = new Config();
+
+    public event Action<int, Vector3> OnPlayerSpawned;
+    public event Action<int, Vector3> OnPlayerPositionUpdate;
+    public event Action<int> OnPlayerDespawned;
     
     public class ClaimsDto
     {
@@ -128,6 +132,8 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                 var y = reader.GetFloat();
                 var z = reader.GetFloat();
                 var rotY = reader.GetByte();
+                
+                OnPlayerPositionUpdate?.Invoke(playerId, new Vector3(x, y, z));
                 SendPacketToAll(new PositionUpdatePacket(playerId, x, y, z, rotY));
             }
         }
@@ -193,6 +199,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             RemovePlayer(username);
             tokens.Remove(playerId);
             _players.Remove(playerId);
+            OnPlayerDespawned?.Invoke(playerId);
             SendPacketToAll(new LogoutEventPacket(playerId));
             players--;
             UpdatePlayersAmount(players);
@@ -217,6 +224,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         players++;
         UpdatePlayersAmount(players);
         
+        OnPlayerSpawned?.Invoke(peer.Id, Vector3.zero);
         _ourPeer = peer;
     }
 
