@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class Player : Mob
 {
+    public PlayerInterpolation Interpolation;
+    
     public StarterAssetsInputs Input = new StarterAssetsInputs();
     public bool IsLocalPlayer { get; set; }
 

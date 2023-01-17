@@ -2,6 +2,7 @@ using System.IO;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer.Interfaces;
 using LiteNetLib.Utils;
+using UnityEngine;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
@@ -14,6 +15,8 @@ namespace Kenshi.Shared.Packets.GameServer
         public float z;
         public byte rotY;
 
+        public Vector3 Position => new Vector3(x, y, z); 
+        
         public PositionUpdatePacket()
         {
             

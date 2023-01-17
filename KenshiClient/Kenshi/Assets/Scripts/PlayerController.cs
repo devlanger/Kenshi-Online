@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     {
         localPlayer.gameObject.layer = 10;
         localPlayer.IsLocalPlayer = true;
+        localPlayer.Interpolation.enabled = false;
     }
 
     private void Update()

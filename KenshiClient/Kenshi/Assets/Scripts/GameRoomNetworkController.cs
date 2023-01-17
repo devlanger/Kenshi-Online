@@ -203,7 +203,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             return;
         }
         
-        _players[packet.playerId].transform.position = new Vector3(packet.x, packet.y, packet.z);
+        _players[packet.playerId].Interpolation.Push(new PositionUpdateSnapshot()
+        {
+            packet = packet
+        });
+        //_players[packet.playerId].transform.position = new Vector3(packet.x, packet.y, packet.z);
         _players[packet.playerId].transform.eulerAngles = new Vector3(0, packet.rotY * 5, 0);
     }
 

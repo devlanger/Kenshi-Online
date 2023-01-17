@@ -182,7 +182,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             return redis.GetDatabase().ListRange(GetRoomId(Configuration.port)).Select(x => x.ToString()).ToList();
         }
 
-
         private void HandleLogout(int playerId)
         {
             if (!_players.ContainsKey(playerId))
