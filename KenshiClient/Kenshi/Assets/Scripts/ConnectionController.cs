@@ -28,6 +28,9 @@ public class ConnectionController : MonoBehaviour
     public static string Host => Instance.useLocal ? "127.0.0.1" : Instance.host;
     public static string Ip => Instance.useLocal ? $"http://127.0.0.1:3330" : $"http://{Instance.host}:3330";
     public event Action<ConnectionDto> OnLogged;
+    public event Action OnUsersUpdated;
+
+    public List<string> LoggedUsers = new List<string>();
 
     private void Awake()
     {
@@ -66,6 +69,8 @@ public class ConnectionController : MonoBehaviour
         RegisterStringEventListener("JoinGameRoom");
         RegisterStringEventListener("ShowChatMessage");
         
+        OnMessageReceived += OnOnMessageReceived;
+        
         Connection.On<string>("SetConnectionData", (s =>
         {
             var data = JsonConvert.DeserializeObject<ConnectionDto>(s);
@@ -76,6 +81,18 @@ public class ConnectionController : MonoBehaviour
         clientMessager = new ClientMessageHandler(Connection); 
 
         await Connection.StartAsync();
+    }
+
+    private void OnOnMessageReceived(string arg1, string arg2)
+    {
+        switch (arg1)
+        {
+            case "UpdatePlayersList":
+                var dto = JsonConvert.DeserializeObject<List<string>>(arg2);
+                LoggedUsers = dto;
+                OnUsersUpdated?.Invoke();
+                break;
+        }
     }
 
     private void RegisterStringEventListener(string msg)

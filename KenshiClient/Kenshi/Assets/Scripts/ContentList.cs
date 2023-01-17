@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 public class ContentList : MonoBehaviour
 {
     [SerializeField] private int maxItems = 50;

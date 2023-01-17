@@ -102,6 +102,7 @@ public class RabbitConsumer : IHostedService
                 Console.WriteLine($"{json}");
                 _gameRoomService.RemovePlayerFromRoom(dto.RoomId, dto.Username);
                 UserService.UsersInLobby.Add(dto.Username);
+                _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("UpdatePlayersList", JsonConvert.SerializeObject(UserService.LoggedUsers));
                 var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);
                 _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(users)).SendAsync("ShowChatMessage", $"[SYS] {dto.Username} has left the room");
                 _disconnectedChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);

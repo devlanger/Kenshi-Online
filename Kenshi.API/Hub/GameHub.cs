@@ -158,9 +158,14 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         }
     }
 
-    public static List<string> GetUserConnectionIds(List<string> users)
+    public static List<string>? GetUserConnectionIds(List<string> users)
     {
-        return UserService.userIds.Where(v => users.Contains(v.Key)).Select(v => v.Value).ToList();
+        if (users.Count == 0)
+        {
+            return new List<string>();
+        }
+        
+        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value)?.ToList();
     }
 
     public List<string> GetPlayersInRoom(string port)
@@ -210,7 +215,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         }
     }
 
-    private async Task BroadcastLobbyUsersList()
+    public async Task BroadcastLobbyUsersList()
     {
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("UpdatePlayersList",
             JsonConvert.SerializeObject(UserService.LoggedUsers));

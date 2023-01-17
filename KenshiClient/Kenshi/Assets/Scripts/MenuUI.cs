@@ -41,6 +41,18 @@ public class MenuUI : MonoBehaviour
         joinGameButton.onClick.AddListener(JoinGameClick);
         exitGameButton.onClick.AddListener(ExitGameClick);
         refreshGameButton.onClick.AddListener(RefreshGameClick);
+        
+        connectionController.OnUsersUpdated += ConnectionControllerOnOnUsersUpdated;
+    }
+
+    private void OnEnable()
+    {
+        RefreshUsersLogged();
+    }
+
+    private void ConnectionControllerOnOnUsersUpdated()
+    {
+        RefreshUsersLogged();
     }
 
     private void OnDestroy()
@@ -49,8 +61,9 @@ public class MenuUI : MonoBehaviour
 
         if (connectionController != null)
         {
-            FindObjectOfType<ConnectionController>().OnMessageReceived -= ConnectionControllerOnOnMessageReceived;
-            FindObjectOfType<ConnectionController>().OnLogged -= ConnectionControllerOnOnLogged;
+            connectionController.OnMessageReceived -= ConnectionControllerOnOnMessageReceived;
+            connectionController.OnLogged -= ConnectionControllerOnOnLogged;
+            connectionController.OnUsersUpdated -= ConnectionControllerOnOnUsersUpdated;
         }
     }
 
@@ -69,7 +82,7 @@ public class MenuUI : MonoBehaviour
     {
         await connectionController.ExecuteCommand("games");
     }
-
+    
     private void ExitGameClick()
     {
         Application.Quit();
@@ -79,15 +92,6 @@ public class MenuUI : MonoBehaviour
     {
         switch (arg1)
         {
-            case "UpdatePlayersList":
-                var dto = JsonConvert.DeserializeObject<List<string>>(arg2);
-                playersList.Clear();
-                foreach (var item in dto)
-                {
-                    var inst = playersList.SpawnItem(_playerListItem);
-                    inst.Fill(item);
-                }
-                break;
             case "ListGameRooms":
                 roomsList.Clear();
                 ContainerDto[] list = JsonConvert.DeserializeObject<ContainerDto[]>(arg2);
@@ -101,6 +105,16 @@ public class MenuUI : MonoBehaviour
                 GameRoomNetworkController.Port = ushort.Parse(port);
                 SceneManager.LoadScene(1);
                 break;
+        }
+    }
+
+    private void RefreshUsersLogged()
+    {
+        playersList.Clear();
+        foreach (var item in ConnectionController.Instance.LoggedUsers)
+        {
+            var inst = playersList.SpawnItem(_playerListItem);
+            inst.Fill(item);
         }
     }
 
