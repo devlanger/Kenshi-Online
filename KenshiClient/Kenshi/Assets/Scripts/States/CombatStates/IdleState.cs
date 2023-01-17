@@ -1,12 +1,15 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets.CombatStates
 {
     public class IdleState : FSMState
     {
+        public override FSMStateId Id => FSMStateId.idle;
+
         private bool UpdateAttackInput(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Target.Input.leftClick)
+            if (stateMachine.Target.Input.leftClick && stateMachine.IsLocal)
             {
                 stateMachine.ChangeState(new AttackState());
                 return true;
@@ -18,7 +21,7 @@ namespace StarterAssets.CombatStates
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
             UpdateAttackInput(stateMachine);
-            if (stateMachine.Target.Input.rightClick)
+            if (stateMachine.Target.Input.rightClick && stateMachine.IsLocal)
             {
                 stateMachine.ChangeState(new AbilityCastState());
             }

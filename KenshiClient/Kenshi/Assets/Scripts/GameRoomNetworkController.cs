@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using ENet;
 using Kenshi.Shared;
+using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
@@ -27,10 +28,19 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     private int _skipFrame = 0;
     private Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
+    private NetPeer MyPeer => _netClient.FirstPeer;
+    
     const int channelID = 0;
 
     public static ushort Port = 5001;
-    
+
+    public static GameRoomNetworkController Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start ()
     {
         Application.runInBackground = true;
@@ -76,74 +86,98 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         _netClient.PollEvents();
     }
 
-    enum PacketId : byte
-    {
-        LoginRequest = 1,
-        LoginResponse = 2,
-        LoginEvent = 3,
-        PositionUpdateRequest = 4,
-        PositionUpdateEvent = 5,
-        LogoutEvent = 6
-    }
-
     private void SendPositionUpdate()
     {
         var x = _myPlayer.transform.position.x;
         var y = _myPlayer.transform.position.y;
         var z = _myPlayer.transform.position.z;
         var rotY = (byte)(_myPlayer.transform.eulerAngles.y / 5);
-
-        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY);
-        var protocol = new Protocol();
         
-        var buffer = protocol.Serialize(packet);
-        _netClient.FirstPeer.Send(buffer, DeliveryMethod.Unreliable);
+        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY);
+        SendPacket(MyPeer, packet, DeliveryMethod.Unreliable);
     }
-
+    
     private void SendLogin()
     {
         Debug.Log("SendLogin");
-        var protocol = new Protocol();
-        var buffer = protocol.Serialize(new LoginRequestPacket()
+        SendPacket(MyPeer, new LoginRequestPacket()
         {
             _playerId = 0
-        });
-        _netClient.FirstPeer.Send(buffer, DeliveryMethod.ReliableOrdered);
+        }, DeliveryMethod.ReliableOrdered);
     }
 
+    public Dictionary<PacketId, Type> packetTypes = new Dictionary<PacketId, Type>
+    {
+        { PacketId.LoginEvent, typeof(LoginEventPacket) },
+        { PacketId.LogoutEvent, typeof(LogoutEventPacket) },
+        { PacketId.LoginResponse, typeof(LoginResponsePacket) },
+        { PacketId.LoginRequest, typeof(LoginRequestPacket) },
+        { PacketId.PositionUpdateEvent, typeof(PositionUpdatePacket) },
+        { PacketId.PositionUpdateRequest, typeof(PositionUpdateRequestPacket) },
+    };
+
+    public static void SendPacketToMany(IEnumerable<NetPeer> peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        PacketId packetId = (PacketId)packet.packetId;
+        Debug.Log($"Send to many [{packetId}]");
+        packet.writer.Put((byte)packetId);
+        packet.Serialize(packet.writer);
+        foreach (var item in peer)
+        {
+            item.Send(packet.writer, deliveryMethod);
+        }
+    }
+    
+    public static void SendPacket(NetPeer peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        PacketId packetId = (PacketId)packet.packetId;
+        Debug.Log($"Send to {peer.Id} packet [{packetId}]");
+        packet.writer.Put((byte)packetId);
+        packet.Serialize(packet.writer);
+        peer.Send(packet.writer, deliveryMethod);
+    }
+    
     private void ParsePacket(NetPacketReader reader)
     {
-        var packetId = (PacketId)reader.GetByte();
+        while (!reader.EndOfData)
+        {
+            PacketId packetId = (PacketId)reader.GetByte();
 
-        if (packetId == PacketId.LoginResponse)
-        {
-            _myPlayerId = reader.GetInt();
-            Debug.Log("MyPlayerId: " + _myPlayerId);
-        }
-        else if (packetId == PacketId.LoginEvent)
-        {
-            var playerId = reader.GetInt();
-            Debug.Log("OtherPlayerId: " + playerId);
-            SpawnOtherPlayer(playerId);
-        }
-        else if (packetId == PacketId.PositionUpdateEvent)
-        {
-            var playerId = reader.GetInt();
-            var x = reader.GetFloat();
-            var y = reader.GetFloat();
-            var z = reader.GetFloat();
-            var rotY  = reader.GetByte();
-            
-            UpdatePosition(playerId, x, y, z, rotY);
-        }
-        else if (packetId == PacketId.LogoutEvent)
-        {
-            var playerId = reader.GetInt();
-            Debug.Log($"logout user [{playerId}]");
-            if (_players.ContainsKey(playerId))
+            if (packetId == PacketId.LoginResponse)
             {
-                Destroy(_players[playerId].gameObject);
-                _players.Remove(playerId);
+                var packet = SendablePacket.Deserialize<LoginResponsePacket>(packetId, reader);
+                _myPlayerId = packet._playerId;
+                Debug.Log("MyPlayerId: " + packet._playerId);
+            }
+            else if (packetId == PacketId.LoginEvent)
+            {
+                var packet = SendablePacket.Deserialize<LoginEventPacket>(packetId, reader);
+
+                UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                {
+                    Debug.Log("OtherPlayerId: " + packet._playerId);
+                    SpawnOtherPlayer(packet._playerId);
+                });
+            }
+            else if (packetId == PacketId.PositionUpdateEvent)
+            {
+                var packet = SendablePacket.Deserialize<PositionUpdatePacket>(packetId, reader);
+
+                UnityMainThreadDispatcher.Instance().Enqueue(() => { UpdatePosition(packet); });
+            }
+            else if (packetId == PacketId.LogoutEvent)
+            {
+                var packet = SendablePacket.Deserialize<LogoutEventPacket>(packetId, reader);
+
+                UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                {
+                    Debug.Log($"logout user [{packet.PlayerId}]");
+                    if (_players.ContainsKey(packet.PlayerId))
+                    {
+                        Destroy(_players[packet.PlayerId].gameObject);
+                        _players.Remove(packet.PlayerId);
+                    }
+                });
             }
         }
     }
@@ -152,24 +186,25 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     {
         if (playerId == _myPlayerId)
             return;
+        
         var newPlayer = Instantiate(otherPlayerFactory);
         newPlayer.transform.position = newPlayer.GetComponent<Rigidbody>().position + new Vector3(UnityEngine.Random.Range(-5.0f, 5.0f), UnityEngine.Random.Range(-5.0f, 5.0f));
         Debug.Log("Spawn other object " + playerId);
         _players[playerId] = newPlayer;
     }
 
-    private void UpdatePosition(int playerId, float x, float y, float z, byte rotY)
+    private void UpdatePosition(PositionUpdatePacket packet)
     {
-        if (playerId == _myPlayerId)
+        if (packet.playerId == _myPlayerId)
             return;
 
-        if (!_players.ContainsKey(playerId))
+        if (!_players.ContainsKey(packet.playerId))
         {
             return;
         }
         
-        _players[playerId].transform.position = new Vector3(x, y, z);
-        _players[playerId].transform.eulerAngles = new Vector3(0, rotY * 5, 0);
+        _players[packet.playerId].transform.position = new Vector3(packet.x, packet.y, packet.z);
+        _players[packet.playerId].transform.eulerAngles = new Vector3(0, packet.rotY * 5, 0);
     }
 
     public void OnPeerConnected(NetPeer peer)

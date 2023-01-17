@@ -24,29 +24,14 @@ public class PlayerController : MonoBehaviour
 {
     public Player localPlayer;
 
-    private PlayerStateMachine playerStateMachine;
-    private PlayerStateMachine movementStateMachine;
-
     private void Awake()
     {
-        playerStateMachine = new PlayerStateMachine();
-        playerStateMachine.Target = localPlayer;
-        playerStateMachine.Variables = localPlayer.GetComponent<StateMachineVariables>();
-        playerStateMachine.ChangeState(new IdleState());
-        
-        movementStateMachine = new PlayerStateMachine();
-        movementStateMachine.ChangeState(new StandState());
-        movementStateMachine.Variables = localPlayer.GetComponent<StateMachineVariables>();
-        movementStateMachine.Target = localPlayer;
-
         localPlayer.gameObject.layer = 10;
+        localPlayer.IsLocalPlayer = true;
     }
 
     private void Update()
     {        
-        playerStateMachine.CurrentState?.Update(playerStateMachine);
-        movementStateMachine.CurrentState?.Update(movementStateMachine);
-        
         localPlayer.Input.rightClick = false;
         localPlayer.Input.leftClick = false;
         localPlayer.Input.dashing = false;

@@ -1,23 +1,25 @@
 using System.IO;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer.Interfaces;
+using LiteNetLib.Utils;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
     public class PositionUpdatePacket : SendablePacket
     {
+        public override PacketId packetId => PacketId.PositionUpdateEvent;
         public int playerId;
         public float x;
         public float y;
         public float z;
         public byte rotY;
 
-        public PositionUpdatePacket() : base(PacketId.PositionUpdateEvent)
+        public PositionUpdatePacket()
         {
             
         }
         
-        public PositionUpdatePacket(int playerId, float x, float y, float z, byte rotY) : base(PacketId.PositionUpdateEvent)
+        public PositionUpdatePacket(int playerId, float x, float y, float z, byte rotY)
         {
             this.playerId = playerId;
             this.x = x;
@@ -26,26 +28,26 @@ namespace Kenshi.Shared.Packets.GameServer
             this.rotY = rotY;
         }
         
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(NetDataWriter writer)
         {
             base.Serialize(writer);
             
-            writer.Write(playerId);
-            writer.Write(x);
-            writer.Write(y);
-            writer.Write(z);
-            writer.Write(rotY);
+            writer.Put(playerId);
+            writer.Put(x);
+            writer.Put(y);
+            writer.Put(z);
+            writer.Put(rotY);
         }
         
-        public override void Deserialize(BinaryReader reader)
+        public override void Deserialize(NetDataReader reader)
         {
             base.Deserialize(reader);
 
-            playerId = reader.ReadInt32();
-            x = reader.ReadSingle();
-            y = reader.ReadSingle();
-            z = reader.ReadSingle();
-            rotY = reader.ReadByte();
+            playerId = reader.GetInt();
+            x = reader.GetFloat();
+            y = reader.GetFloat();
+            z = reader.GetFloat();
+            rotY = reader.GetByte();
         }
     }
 }

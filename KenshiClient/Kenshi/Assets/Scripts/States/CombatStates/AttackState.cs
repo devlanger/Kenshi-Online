@@ -1,11 +1,19 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets.CombatStates
 {
     public class AttackState : FSMState
     {
+        public override FSMStateId Id => FSMStateId.attack;
+
         private bool UpdateAttackInput(PlayerStateMachine machine)
         {
+            if (!machine.IsLocal)
+            {
+                return false;
+            }
+            
             if (machine.Target.Input.leftClick)
             {
                 machine.ChangeState(new AttackState());
@@ -14,7 +22,8 @@ namespace StarterAssets.CombatStates
 
             return false;
         }
-        
+
+
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
             Vector3 forward = Camera.main.transform.forward;
@@ -38,8 +47,8 @@ namespace StarterAssets.CombatStates
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
             stateMachine.Variables.attackIndex++;
-            stateMachine.Target.GetComponent<Animator>().SetTrigger("attack");
-            stateMachine.Target.GetComponent<Animator>().SetInteger("attack_id", stateMachine.Variables.attackIndex);
+            stateMachine.Target.GetComponent<Animator>()?.SetTrigger("attack");
+            stateMachine.Target.GetComponent<Animator>()?.SetInteger("attack_id", stateMachine.Variables.attackIndex);
             if (stateMachine.Variables.attackIndex == 4)
             {
                 stateMachine.Variables.lastAttackTime = Time.time;

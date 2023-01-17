@@ -1,9 +1,12 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets
 {
     public abstract class FSMState
     {
+        public abstract FSMStateId Id { get; }
+        
         public float ElapsedTime => Time.time - startTime;
         private float startTime;
         

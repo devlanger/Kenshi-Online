@@ -7,6 +7,7 @@ namespace Kenshi.Shared.Enums
         LoginEvent = 3,
         PositionUpdateRequest = 4,
         PositionUpdateEvent = 5,
-        LogoutEvent = 6
+        LogoutEvent = 6,
+        FsmUpdate = 7,
     }
 }

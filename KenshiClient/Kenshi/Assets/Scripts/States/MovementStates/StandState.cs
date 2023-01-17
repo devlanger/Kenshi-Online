@@ -1,13 +1,20 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets
 {
     public class StandState : FSMState
     {
+        public override FSMStateId Id => FSMStateId.stand;
+
         private ThirdPersonController tpsController;
 
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
+            if (tpsController == null || !stateMachine.IsLocal)
+            {
+                return;
+            }
             tpsController.UpdateGravity();
             tpsController.UpdateMovement();
         }

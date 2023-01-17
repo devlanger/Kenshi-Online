@@ -1,27 +1,30 @@
 using System.IO;
 using Kenshi.Shared.Enums;
+using LiteNetLib.Utils;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
     public class LoginRequestPacket : SendablePacket
     {
-        public LoginRequestPacket() : base(PacketId.LoginRequest)
+        
+        public override PacketId packetId => PacketId.LoginRequest;
+        public LoginRequestPacket()
         {
             
         }
         
-        public override void Deserialize(BinaryReader reader)
+        public override void Deserialize(NetDataReader reader)
         {
             base.Deserialize(reader);
-            _playerId = reader.ReadInt32();
+            _playerId = reader.GetInt();
         }
 
         public int _playerId { get; set; }
 
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(NetDataWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(_playerId);
+            writer.Put(_playerId);
         }
     }
 }

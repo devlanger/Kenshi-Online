@@ -1,14 +1,18 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets
 {
     public class DashState : FSMState
     {
+        public override FSMStateId Id => FSMStateId.dash;
+
         public DashState()
         {
             
         }
-        
+
+
         protected override void OnUpdate(PlayerStateMachine machine)
         {
             if (ElapsedTime > 0.4f)

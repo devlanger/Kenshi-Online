@@ -1,32 +1,34 @@
 using System.IO;
 using Kenshi.Shared.Enums;
+using LiteNetLib.Utils;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
     public class LogoutEventPacket : SendablePacket
     {
+        public override PacketId packetId => PacketId.LogoutEvent;
         public int PlayerId { get; set; }
 
-        public LogoutEventPacket() : base(PacketId.LogoutEvent)
+        public LogoutEventPacket()
         {
             
         }
 
-        public LogoutEventPacket(int playerId) : base(PacketId.LogoutEvent)
+        public LogoutEventPacket(int playerId)
         {
             PlayerId = playerId;
         }
 
-        public override void Deserialize(BinaryReader reader)
+        public override void Deserialize(NetDataReader reader)
         {
             base.Deserialize(reader);
-            PlayerId = reader.ReadInt32();
+            PlayerId = reader.GetInt();
         }
 
-        public override void Serialize(BinaryWriter writer)
+        public override void Serialize(NetDataWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(PlayerId);
+            writer.Put(PlayerId);
         }
     }
 }

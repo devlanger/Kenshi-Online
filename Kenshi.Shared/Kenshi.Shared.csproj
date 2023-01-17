@@ -5,11 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="LiteNetLib" Version="1.0.0-rc.3" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="3.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Packets\SignalR" />
+      <Folder Include="GameServer" />
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">

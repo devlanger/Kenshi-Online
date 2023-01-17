@@ -1,9 +1,12 @@
+using Kenshi.Shared.Enums;
 using UnityEngine;
 
 namespace StarterAssets.CombatStates
 {
     public class AbilityCastState : FSMState
     {
+        public override FSMStateId Id => FSMStateId.ability_cast;
+
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
             if (ElapsedTime > 0.3f)

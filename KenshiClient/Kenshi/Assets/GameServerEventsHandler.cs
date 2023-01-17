@@ -10,7 +10,7 @@ public class GameServerEventsHandler : MonoBehaviour
     
     [SerializeField] private Player playerObject;
 
-    private Dictionary<int, Player> _players = new Dictionary<int, Player>();
+    public Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
     private void Awake()
     {
@@ -41,11 +41,7 @@ public class GameServerEventsHandler : MonoBehaviour
 
     private void ServerOnOnPlayerDespawned(int obj)
     {
-        if (!_players.ContainsKey(obj))
-        {
-            return;
-        }
-
         Destroy(_players[obj].gameObject);
+        _players.Remove(obj);
     }
 }

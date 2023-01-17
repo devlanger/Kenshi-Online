@@ -7,6 +7,8 @@ namespace StarterAssets
     public class PlayerStateMachine
     {
         public Player Target;
+
+        public bool IsLocal => Target.IsLocalPlayer;
         
         public FSMState CurrentState;
         public StateMachineVariables Variables;

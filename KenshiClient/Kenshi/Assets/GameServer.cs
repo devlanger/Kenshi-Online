@@ -20,9 +20,9 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 {
     private NetManager _netServer;
     private NetPeer _ourPeer;
-    private NetDataWriter _dataWriter;
+    [SerializeField] private GameServerEventsHandler handler;
 
-    private static Dictionary<int, Vector3> _players = new Dictionary<int, Vector3>();
+    private Dictionary<int, Player> _players => handler._players;
 
     private static int players = 0;
     
@@ -68,7 +68,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         }
         
         NetDebug.Logger = this;
-        _dataWriter = new NetDataWriter();
         _netServer = new NetManager(this);
         _netServer.Start(Configuration.port);
         _netServer.BroadcastReceiveEnabled = true;
@@ -113,47 +112,48 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
             if (packetId != PacketId.PositionUpdateRequest)
                 Debug.Log($"HandlePacket received: {packetId}");
-
-            if (packetId == PacketId.LoginRequest)
+            switch (packetId)
             {
-                var playerId = peer.Id;
-                SendPacket(playerId, new LoginResponsePacket(playerId));
-                SendPacketToAll(new LoginEventPacket(playerId));
-                foreach (var p in _players)
-                {
-                    SendPacket(playerId, new LoginEventPacket(p.Key));
-                }
-                _players.Add(playerId, new Vector3() { x = 0.0f, y = 0.0f, z = 0.0f });
-            }
-            else if (packetId == PacketId.PositionUpdateRequest)
-            {
-                var playerId = reader.GetInt();
-                var x = reader.GetFloat();
-                var y = reader.GetFloat();
-                var z = reader.GetFloat();
-                var rotY = reader.GetByte();
-                
-                OnPlayerPositionUpdate?.Invoke(playerId, new Vector3(x, y, z));
-                SendPacketToAll(new PositionUpdatePacket(playerId, x, y, z, rotY));
+                case PacketId.LoginRequest:
+                    var playerId = peer.Id;
+                    SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
+                    SendPacket(playerId, new LoginResponsePacket(playerId));
+                    SendPacketToAll(new LoginEventPacket(playerId));
+                    foreach (var p in _players)
+                    {
+                        SendPacket(playerId, new LoginEventPacket(p.Key));
+                    }
+                    break;
+                case PacketId.PositionUpdateRequest:
+                    var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
+                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        OnPlayerPositionUpdate?.Invoke(packet.playerId, new Vector3(packet.x, packet.y, packet.z));
+                    });
+                    SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z, packet.rotY));
+                    break;
             }
         }
 
-        private void SendPacket(int peerId, SendablePacket p)
+    private Player GetPlayerById(int playerId)
+    {
+        return _players[playerId];
+    }
+
+    private void SendPacket(int peerId, SendablePacket p)
         {
-            var protocol = new Protocol();
-            var buffer = protocol.Serialize(p);
-            
-            _netServer.GetPeerById(peerId).Send(buffer, DeliveryMethod.ReliableSequenced);
+            GameRoomNetworkController.SendPacket(_netServer.GetPeerById(peerId), p, DeliveryMethod.ReliableSequenced);
         }
 
         private void SendPacketToAll(SendablePacket p)
         {
-            var protocol = new Protocol();
-            var buffer = protocol.Serialize(p);
+            List<NetPeer> list = new List<NetPeer>();
             foreach (var id in _players)
             {
-                _netServer.GetPeerById(id.Key).Send(buffer, DeliveryMethod.ReliableSequenced);
+                list.Add(_netServer.GetPeerById(id.Key));
             }
+            
+            GameRoomNetworkController.SendPacketToMany(list, p, DeliveryMethod.ReliableSequenced);
         }
 
         public static ClaimsDto GetUserClaims(int playerId)
@@ -198,8 +198,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             new RabbitMqClient().SendConnectedUser("disconnected_user",json);
             RemovePlayer(username);
             tokens.Remove(playerId);
-            _players.Remove(playerId);
-            OnPlayerDespawned?.Invoke(playerId);
+            UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerDespawned?.Invoke(playerId); });
             SendPacketToAll(new LogoutEventPacket(playerId));
             players--;
             UpdatePlayersAmount(players);
@@ -224,7 +223,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         players++;
         UpdatePlayersAmount(players);
         
-        OnPlayerSpawned?.Invoke(peer.Id, Vector3.zero);
+        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer.Id, Vector3.zero); });
         _ourPeer = peer;
     }
 
@@ -262,7 +261,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             if (JwtTokenService.VerifyToken(Configuration.jwtSecretKey, token))   
             {
                 var peer = request.Accept();
-                tokens.Add(peer.Id, token);
+                tokens[peer.Id] = token;
                 AddPlayer(GetUserClaims(peer.Id).Name);
             }
             else
@@ -277,7 +276,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("[SERVER] peer disconnected " + peer.EndPoint + ", info: " + disconnectInfo.Reason);
-        //TODO: fix disconnection issue (peer.id shuffling)
         HandleLogout(peer.Id);
 
         if (peer == _ourPeer)
