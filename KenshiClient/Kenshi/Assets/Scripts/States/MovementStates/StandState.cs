@@ -20,6 +20,11 @@ namespace StarterAssets
                 return;
             }
 
+            if (stateMachine.Variables.IsAttacking)
+            {
+                stateMachine.Target.Input.move = Vector2.zero;
+            }
+            
             tpsController.UpdateGravity();
             tpsController.UpdateMovement();
         }

@@ -26,9 +26,6 @@ namespace StarterAssets.CombatStates
 
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
-            Vector3 forward = Camera.main.transform.forward;
-            forward.y = 0;
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation(forward); 
             stateMachine.Target.transform.position += stateMachine.Target.transform.forward * Time.deltaTime;
 
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
@@ -46,20 +43,24 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.transform.rotation = stateMachine.Target.Input.LocalRotation; 
+            stateMachine.Variables.IsAttacking = true;
             stateMachine.Variables.attackIndex++;
             stateMachine.Target.GetComponent<Animator>()?.SetTrigger("attack");
             stateMachine.Target.GetComponent<Animator>()?.SetInteger("attack_id", stateMachine.Variables.attackIndex);
             if (stateMachine.Variables.attackIndex == 4)
             {
-                stateMachine.Variables.lastAttackTime = Time.time;
                 stateMachine.Variables.attackIndex = 0;
             }
+            
+            stateMachine.Variables.lastAttackTime = Time.time;
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
             stateMachine.Target.GetComponent<Animator>().SetTrigger("attack");
             stateMachine.Target.GetComponent<Animator>().SetInteger("attack_id", 0);
+            stateMachine.Variables.IsAttacking = false;
         }
     }
 }

@@ -23,20 +23,27 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Player localPlayer;
-
+    
     private void Awake()
     {
         localPlayer.gameObject.layer = 10;
         localPlayer.IsLocalPlayer = true;
         localPlayer.Interpolation.enabled = false;
     }
+    
 
     private void Update()
-    {        
-        localPlayer.Input.rightClick = false;
-        localPlayer.Input.leftClick = false;
-        localPlayer.Input.dashing = false;
+    {
+        if (localPlayer.Input.InputDirection != Vector3.zero)
+        {
+            var inputDirection = localPlayer.Input.InputDirection;
+            float r = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + Camera.main.transform.eulerAngles.y;
+         
+            localPlayer.Input.RotationY = r;   
+        }
+
     }
+
 
     // private void UpdateDashState()
     // {

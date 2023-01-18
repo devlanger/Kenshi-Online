@@ -11,7 +11,15 @@ namespace StarterAssets
 	{
 		public bool rightClick;
 		public bool leftClick;
+
 		
+		public Vector3 InputDirection => new Vector3(move.x, 0.0f, move.y).normalized;
+		public float RotationY;
+
+		public Quaternion LocalRotation => Quaternion.Euler(0.0f, RotationY, 0.0f);
+		
+		public Vector3 LocalDirection;
+
 		[Header("Character Input Values")]
 		public Vector2 move;
 		public Vector2 look;

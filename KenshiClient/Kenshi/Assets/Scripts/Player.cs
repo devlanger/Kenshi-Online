@@ -34,5 +34,12 @@ public class Player : Mob
         playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);
         movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
+        
+        if (IsLocalPlayer)
+        {
+            Input.rightClick = false;
+            Input.leftClick = false;
+            Input.dashing = false;
+        }
     }
 }

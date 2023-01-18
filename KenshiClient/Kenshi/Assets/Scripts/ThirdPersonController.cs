@@ -168,11 +168,6 @@ namespace StarterAssets
             _hasAnimator = target.TryGetComponent(out _animator);
             Move();
         }
-        
-        private void LateUpdate()
-        {
-            CameraRotation();
-        }
 
         private void AssignAnimationIDs()
         {
@@ -212,7 +207,7 @@ namespace StarterAssets
             jumpIndex = 0;
         }
 
-        private void CameraRotation()
+        public void CameraRotation()
         {
             // if there is an input and camera position is not fixed
             if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
@@ -271,7 +266,7 @@ namespace StarterAssets
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
             // normalise input direction
-            Vector3 inputDirection = new Vector3(_input.move.x, 0.0f, _input.move.y).normalized;
+            Vector3 inputDirection = _input.InputDirection;
 
             // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is a move input rotate player when the player is moving
@@ -279,6 +274,7 @@ namespace StarterAssets
             {
                 _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                   _mainCamera.transform.eulerAngles.y;
+                
                 float rotation = Mathf.SmoothDampAngle(target.transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
                     RotationSmoothTime);
 
@@ -302,7 +298,6 @@ namespace StarterAssets
                 
                 Debug.DrawRay(target.transform.position, forward, Color.green);
             }
-            Debug.Log(velocity);
 
             // move the player
             _controller.velocity = velocity;
@@ -317,6 +312,18 @@ namespace StarterAssets
 
         public double _jumpTime = 0;
 
+        public Vector3 GetForwardPlanesDirection()
+        {
+            if (Physics.Raycast(target.transform.position, -target.transform.up, out RaycastHit hit, 0.1f,
+                    GroundLayers))
+            {
+                Vector3 forward = GetForwardTangent(transform.forward,hit.normal);
+                return forward;
+            }
+            
+            return transform.forward;
+        }
+        
         public Vector3 GetForwardTangent(Vector3 moveDir, Vector3 up)
         {
             Vector3 rght = Vector3.Cross(up,moveDir);
