@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class TargetController : MonoBehaviour
 {
+    [SerializeField] private Transform mainCamera;
     [SerializeField] private Transform camTarget;
     [SerializeField] private Animator cameraControllerAnimator;
     [SerializeField] private CinemachineVirtualCamera cam;
@@ -17,7 +18,9 @@ public class TargetController : MonoBehaviour
     
     private bool locked;
     public Player target;
+    public Player highlightTarget;
     public event Action<Player> OnTargetSet;
+    public event Action<Player> OnTargetHighlight;
 
     private void Awake()
     {
@@ -55,12 +58,35 @@ public class TargetController : MonoBehaviour
 
     void Update()
     {
+        if (Physics.SphereCast(mainCamera.transform.position, 1.5f, mainCamera.transform.forward, out var raycastHit, 25, charactersMask,
+                QueryTriggerInteraction.Ignore))
+        {
+            var c = raycastHit.collider;
+            var p = c.GetComponent<Player>();
+            if (p != null)
+            {
+                highlightTarget = p;
+                OnTargetHighlight?.Invoke(p);
+            }
+            else
+            {
+                highlightTarget = null;
+                OnTargetHighlight?.Invoke(null);
+            }
+        }
+        else
+        {
+            OnTargetHighlight?.Invoke(null);
+            highlightTarget = null;
+        }
+        
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (Physics.SphereCast(cam.transform.position, 5, cam.transform.forward, out var raycastHit, 25, charactersMask,
+            if (Physics.SphereCast(mainCamera.transform.position, 1.5f, mainCamera.transform.forward, out var raycastHit1, 25, charactersMask,
                     QueryTriggerInteraction.Ignore))
             {
-                var c = raycastHit.collider;
+                var c = raycastHit1.collider;
                 if (target == null)
                 {
                     var p = c.GetComponent<Player>();
