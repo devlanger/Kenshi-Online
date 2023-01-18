@@ -8,5 +8,8 @@
 1. Execute shell script **[<REPO_FOLDER_PATH>/tools/gameserver/deploy.sh]**
     - It will build & push docker image
 
-### 3. How to restart Backend on remote:
+### 3. (skip if only deploying game server) How to deploy Backend to remote:
+1. Execute shell script **[<REPO_FOLDER_PATH>/tools/backend/deploy.sh]**
+
+### 4. How to restart Backend on remote:
 1. Execute shell script **[<REPO_FOLDER_PATH>/tools/backend/restart_remote.sh]**

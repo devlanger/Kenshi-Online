@@ -21,12 +21,22 @@ namespace StarterAssets
             OnUpdate(stateMachine);
         }
         
+        public void FixedUpdate(PlayerStateMachine stateMachine)
+        {
+            OnFixedUpdate(stateMachine);
+        }
+        
         public void Exit(PlayerStateMachine stateMachine)
         {
             OnExit(stateMachine);
         }
         
         protected abstract void OnUpdate(PlayerStateMachine stateMachine);
+
+        protected virtual void OnFixedUpdate(PlayerStateMachine stateMachine)
+        {
+        }
+
         protected abstract void OnEnter(PlayerStateMachine stateMachine);
         protected abstract void OnExit(PlayerStateMachine stateMachine);
     }

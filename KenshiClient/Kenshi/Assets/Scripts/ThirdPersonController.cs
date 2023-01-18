@@ -98,7 +98,7 @@ namespace StarterAssets
         private PlayerInput _playerInput;
 #endif
         private Animator _animator;
-        private CharacterController _controller;
+        private Rigidbody _controller;
         private GameObject _mainCamera;
 
         private Player target;
@@ -142,7 +142,7 @@ namespace StarterAssets
             _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             
             _hasAnimator = player.TryGetComponent(out _animator);
-            _controller = player.GetComponent<CharacterController>();
+            _controller = player.GetComponent<Rigidbody>();
 #if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
             _playerInput = GetComponent<PlayerInput>();
 #else
@@ -190,6 +190,7 @@ namespace StarterAssets
             // set sphere position, with offset
             Vector3 spherePosition = new Vector3(target.transform.position.x, target.transform.position.y - GroundedOffset,
                 target.transform.position.z);
+            
             Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
                 QueryTriggerInteraction.Ignore);
 
@@ -203,6 +204,8 @@ namespace StarterAssets
                 _animator.SetBool(_animIDGrounded, Grounded);
             }
         }
+
+        public RaycastHit groundedHit;
 
         private void OnLand()
         {
@@ -286,9 +289,23 @@ namespace StarterAssets
 
             Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
+            var velocity = (targetDirection.normalized * _speed) +
+                           new Vector3(0.0f, _verticalVelocity, 0.0f);
+            
+            //Add parallel vector on slopes
+            if(Time.time > _jumpTime + 0.15f && _input.move != Vector2.zero && 
+               Physics.Raycast(target.transform.position, -target.transform.up, out RaycastHit hit, 0.1f, GroundLayers))
+            {
+                Debug.DrawRay(hit.point, hit.normal, Color.red, 1);
+                Vector3 forward = GetForwardTangent(velocity,hit.normal);
+                velocity = forward.normalized * (_input.sprint ? SprintSpeed : MoveSpeed);
+                
+                Debug.DrawRay(target.transform.position, forward, Color.green);
+            }
+            Debug.Log(velocity);
+
             // move the player
-            _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                             new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+            _controller.velocity = velocity;
 
             // update animator if using character
             if (_hasAnimator)
@@ -296,6 +313,15 @@ namespace StarterAssets
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
+        }
+
+        public double _jumpTime = 0;
+
+        public Vector3 GetForwardTangent(Vector3 moveDir, Vector3 up)
+        {
+            Vector3 rght = Vector3.Cross(up,moveDir);
+            Vector3 forw = Vector3.Cross(rght, up);
+            return forw;
         }
 
         private void JumpAndGravity()
@@ -314,6 +340,7 @@ namespace StarterAssets
                     _animator.SetBool(_animIDJump, true);
                 }
 
+                _jumpTime = Time.time;
                 _input.jump = false;
             }
             
@@ -332,7 +359,7 @@ namespace StarterAssets
                 // stop our velocity dropping infinitely when grounded
                 if (_verticalVelocity < 0.0f)
                 {
-                    _verticalVelocity = -2f;
+                    _verticalVelocity = 0f;
                 }
 
                 // jump timeout

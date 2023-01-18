@@ -67,7 +67,6 @@ public class RabbitConsumer : IHostedService
                 _gameRoomService.AddPlayerToRoom(dto.RoomId, dto.Username);
                 UserService.UsersInLobby.Remove(dto.Username);
                 Console.WriteLine($"{json}");
-                //TODO: fix
                 var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);
                 _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(users)).SendAsync("ShowChatMessage", $"[SYS] {dto.Username} has joined the room");
 

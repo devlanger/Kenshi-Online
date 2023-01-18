@@ -31,6 +31,8 @@ public class Player : Mob
     private void Update()
     {
         playerStateMachine.CurrentState?.Update(playerStateMachine);
+        playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);
+        movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
     }
 }

@@ -11,10 +11,15 @@ namespace StarterAssets
 
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
+        }
+
+        protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
+        {
             if (tpsController == null || !stateMachine.IsLocal)
             {
                 return;
             }
+
             tpsController.UpdateGravity();
             tpsController.UpdateMovement();
         }

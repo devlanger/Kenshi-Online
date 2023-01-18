@@ -71,14 +71,17 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     private void InitENet()
     {
-        _netClient = new NetManager(this);
-        _netClient.UnconnectedMessagesEnabled = true;
-        _netClient.UpdateTime = 15;
-        _netClient.Start();
-        string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
-        _netClient.Connect(host, Port, ConnectionController.Token);
-        
-        Debug.Log($"Connecting {host}:{Port}");
+        if (ConnectionController.Instance != null)
+        {
+            _netClient = new NetManager(this);
+            _netClient.UnconnectedMessagesEnabled = true;
+            _netClient.UpdateTime = 15;
+            _netClient.Start();
+            string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
+            _netClient.Connect(host, Port, ConnectionController.Token);
+
+            Debug.Log($"Connecting {host}:{Port}");
+        }
     }
 
     private void UpdateENet()
