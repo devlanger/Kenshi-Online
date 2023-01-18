@@ -11,5 +11,5 @@ public class StateMachineVariables : MonoBehaviour
     public int attackIndex = 0;
     public float lastAttackTime = 0;
     public bool IsAttacking = false;
-    public Vector3 forward;
+    public bool Grounded;
 }

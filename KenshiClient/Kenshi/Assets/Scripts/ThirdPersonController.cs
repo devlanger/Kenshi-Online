@@ -207,6 +207,11 @@ namespace StarterAssets
             jumpIndex = 0;
         }
 
+        private void Update()
+        {
+            target.playerStateMachine.Variables.Grounded = Grounded;
+        }
+
         public void CameraRotation()
         {
             // if there is an input and camera position is not fixed
@@ -428,6 +433,11 @@ namespace StarterAssets
             Gizmos.DrawSphere(
                 new Vector3(target.transform.position.x, target.transform.position.y - GroundedOffset, target.transform.position.z),
                 GroundedRadius);
+        }
+
+        public void StopMoving()
+        {
+            _controller.velocity = Vector3.zero;
         }
     }
 }

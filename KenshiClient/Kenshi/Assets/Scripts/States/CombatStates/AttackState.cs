@@ -43,7 +43,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.transform.rotation = stateMachine.Target.Input.LocalRotation; 
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
             stateMachine.Variables.IsAttacking = true;
             stateMachine.Variables.attackIndex++;
             stateMachine.Target.GetComponent<Animator>()?.SetTrigger("attack");

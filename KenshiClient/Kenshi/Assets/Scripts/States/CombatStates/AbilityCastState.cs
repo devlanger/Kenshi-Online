@@ -5,11 +5,13 @@ namespace StarterAssets.CombatStates
 {
     public class AbilityCastState : FSMState
     {
+        private float time = 0.3f;
+        
         public override FSMStateId Id => FSMStateId.ability_cast;
 
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
-            if (ElapsedTime > 0.3f)
+            if (ElapsedTime > time)
             {
                 stateMachine.ChangeState(new IdleState());
             }
@@ -17,6 +19,17 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            if (stateMachine.Variables.Grounded)
+            {
+                stateMachine.Variables.IsAttacking = true;
+            }
+            else
+            {
+                time = 0.175f;
+            }
+
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
+            
             var animator = stateMachine.Variables.Animator;
             Physics.Raycast(Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition), out RaycastHit hit, 100, stateMachine.Variables._aimLayerMask);
             animator.SetTrigger("ability");
@@ -35,6 +48,7 @@ namespace StarterAssets.CombatStates
 
             animator.SetTrigger("ability");
             animator.SetInteger("ability_id", 0);
+            stateMachine.Variables.IsAttacking = false;
         }
     }
 }

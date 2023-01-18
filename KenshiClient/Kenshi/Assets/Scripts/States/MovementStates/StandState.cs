@@ -22,7 +22,8 @@ namespace StarterAssets
 
             if (stateMachine.Variables.IsAttacking)
             {
-                stateMachine.Target.Input.move = Vector2.zero;
+                tpsController.StopMoving();
+                return;
             }
             
             tpsController.UpdateGravity();

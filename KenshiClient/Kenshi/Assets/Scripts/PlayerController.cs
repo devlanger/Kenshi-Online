@@ -42,6 +42,9 @@ public class PlayerController : MonoBehaviour
             localPlayer.Input.RotationY = r;   
         }
 
+        Vector3 forward = Camera.main.transform.forward;
+        forward.y = 0;
+        localPlayer.Input.CameraForward = forward;
     }
 
 
