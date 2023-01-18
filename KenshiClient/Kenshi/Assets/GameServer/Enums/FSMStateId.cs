@@ -9,5 +9,6 @@ namespace Kenshi.Shared.Enums
         move = 76,        
         jump = 77,     
         dash = 78,
+        freeze = 79,
     }
 }

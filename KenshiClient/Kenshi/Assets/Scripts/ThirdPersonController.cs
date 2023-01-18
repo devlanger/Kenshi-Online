@@ -210,6 +210,7 @@ namespace StarterAssets
         private void Update()
         {
             target.playerStateMachine.Variables.Grounded = Grounded;
+            target.playerStateMachine.Variables.Jumping = Time.time < _jumpTime + 0.15f;
         }
 
         public void CameraRotation()
@@ -437,6 +438,11 @@ namespace StarterAssets
 
         public void StopMoving()
         {
+            if (_hasAnimator)
+            {
+                _animator.SetFloat(_animIDSpeed, 0);
+                _animator.SetFloat(_animIDMotionSpeed, 0);
+            }
             _controller.velocity = Vector3.zero;
         }
     }

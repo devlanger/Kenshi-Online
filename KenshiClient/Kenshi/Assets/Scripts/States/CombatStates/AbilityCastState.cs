@@ -21,6 +21,7 @@ namespace StarterAssets.CombatStates
         {
             if (stateMachine.Variables.Grounded)
             {
+                stateMachine.Target.movementStateMachine.ChangeState(new StandState());
                 stateMachine.Variables.IsAttacking = true;
             }
             else

@@ -12,4 +12,5 @@ public class StateMachineVariables : MonoBehaviour
     public float lastAttackTime = 0;
     public bool IsAttacking = false;
     public bool Grounded;
+    public bool Jumping;
 }
