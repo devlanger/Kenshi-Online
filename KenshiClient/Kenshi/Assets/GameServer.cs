@@ -147,13 +147,20 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
         private void SendPacketToAll(SendablePacket p)
         {
+            if (_players.Count == 0)
+            {
+                return;
+            }
+            
             List<NetPeer> list = new List<NetPeer>();
-            foreach (var id in _players)
+            
+            foreach (var id in _players.Where(p => p.Value.NetworkId < 1000))
             {
                 list.Add(_netServer.GetPeerById(id.Key));
             }
             
-            GameRoomNetworkController.SendPacketToMany(list, p, DeliveryMethod.ReliableSequenced);
+            if(list.Count > 0)
+                GameRoomNetworkController.SendPacketToMany(list, p, DeliveryMethod.ReliableSequenced);
         }
 
         public static ClaimsDto GetUserClaims(int playerId)
