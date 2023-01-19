@@ -47,12 +47,16 @@ namespace StarterAssets
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
             tps = stateMachine.Target.tps;
-            stateMachine.Target.animator?.SetBool(_animIDFreeFall, true);
-            stateMachine.Target.animator?.SetBool(_animIDGrounded, false);
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator?.SetBool(_animIDFreeFall, true);
+                stateMachine.Target.animator?.SetBool(_animIDGrounded, false);
+            }
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
+            if(stateMachine.Target.animator != null)
             stateMachine.Target.animator?.SetBool(_animIDFreeFall, false);
         }
     }

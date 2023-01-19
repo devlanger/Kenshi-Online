@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace StarterAssets
@@ -12,25 +13,52 @@ namespace StarterAssets
         
         public FSMState CurrentState;
         public StateMachineVariables Variables;
-        
-        public void ChangeState(FSMState newState)
+        public float Ping => Target.peer.Ping;
+
+        public Queue<DelayedState> queuedStates = new Queue<DelayedState>();
+
+        public class DelayedState
+        {
+            public float dequeueTime;
+            public FSMState state;
+        }
+
+        public void ChangeState(FSMState newState, float delayTime = 0)
         {
             try
             {
-                Debug.Log(newState);
-                
-                if(CurrentState != null)
-                    CurrentState.Exit(this);
-                
-                CurrentState = newState;
-                
-                if(newState != null)
-                    newState.Enter(this);
+               queuedStates.Enqueue(new DelayedState{state = newState, dequeueTime = Time.time + delayTime});
             }
             catch (Exception e)
             {
                 Debug.LogError(e);
                 //throw;
+            }
+        }
+
+        private void ExecuteStateChange(FSMState newState)
+        {
+            Debug.Log(newState);
+
+            if (CurrentState != null)
+                CurrentState.Exit(this);
+
+            CurrentState = newState;
+
+            if (newState != null)
+                newState.Enter(this);
+        }
+
+        public void UpdateQueue()
+        {
+            if (queuedStates.Count > 0)
+            {
+                var peeked = queuedStates.Peek();
+                if (Time.time > peeked.dequeueTime)
+                {
+                    queuedStates.Dequeue();
+                    ExecuteStateChange(peeked.state);
+                }
             }
         }
     }

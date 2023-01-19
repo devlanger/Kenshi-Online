@@ -91,11 +91,19 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     private async Task<List<ContainerDto>> GetGamesRooms()
     {
-        var podsList = await _service.ListPods();
-        foreach (var item in podsList)
+        var podsList = new List<ContainerDto>();
+        foreach (var item in _gameRoomService.GetRooms())
         {
-            string playersCount = redis.GetDatabase().StringGet($"{item.Name}_players");
-            item.PlayersCount = string.IsNullOrEmpty(playersCount) ? 0 : int.Parse(playersCount);
+            var dto = new ContainerDto()
+            {
+                Id = item.RoomId,
+                Name = item.RoomId,
+                Port = item.Port.ToString(),
+                PlayersCount = item.Players.Count,
+                MaxPlayersCount = item.MaxPlayers
+            };
+            
+            podsList.Add(dto);
         }
 
         return podsList;

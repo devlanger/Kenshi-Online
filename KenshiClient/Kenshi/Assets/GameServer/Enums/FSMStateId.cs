@@ -4,7 +4,9 @@ namespace Kenshi.Shared.Enums
     {
         idle = 1,
         attack = 2,
-        ability_cast = 3,        
+        ability_cast = 3,
+        hit = 4,
+        
         stand = 75,        
         move = 76,        
         jump = 77,     

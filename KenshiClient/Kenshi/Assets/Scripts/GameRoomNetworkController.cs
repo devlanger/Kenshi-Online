@@ -10,6 +10,7 @@ using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
+using StarterAssets.CombatStates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = Unity.Mathematics.Random;
@@ -28,8 +29,9 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     private int _skipFrame = 0;
     private Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
-    private NetPeer MyPeer => _netClient.FirstPeer;
-    
+    private NetPeer MyPeer => _netClient == null ? null : _netClient.FirstPeer;
+    public float Ping => MyPeer == null ? 0.15f : MyPeer.Ping;
+
     const int channelID = 0;
 
     public static ushort Port = 5001;
@@ -86,7 +88,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     private void UpdateENet()
     {
-        _netClient.PollEvents();
+        if (ConnectionController.Instance != null)
+            _netClient.PollEvents();
     }
 
     private void SendPositionUpdate()
@@ -131,6 +134,22 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
     }
     
+    public static void SendPacketToAll(SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        List<NetPeer> list = new List<NetPeer>();
+        GameServer.Instance._netServer.GetPeersNonAlloc(list, ConnectionState.Connected);
+        SendPacketToMany(list, packet, deliveryMethod);
+    }
+    
+    // public static void SendPacket(int peerId, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    // {
+    //     var peer = GameRoomNetworkController.Instance._netClient.GetPeerById(peerId);
+    //     if (peer != null)
+    //     {
+    //         SendPacket(peer, packet, deliveryMethod);
+    //     }
+    // }
+    
     public static void SendPacket(NetPeer peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
         PacketId packetId = (PacketId)packet.packetId;
@@ -150,6 +169,9 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             {
                 var packet = SendablePacket.Deserialize<LoginResponsePacket>(packetId, reader);
                 _myPlayerId = packet._playerId;
+                _myPlayer.NetworkId = _myPlayerId;
+                _players[_myPlayerId] = _myPlayer;
+
                 Debug.Log("MyPlayerId: " + packet._playerId);
             }
             else if (packetId == PacketId.LoginEvent)
@@ -182,6 +204,27 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                     }
                 });
             }
+            else if (packetId == PacketId.FsmUpdate)
+            {
+                var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
+                
+                switch (fsmPacket.stateId)
+                {
+                    case FSMStateId.attack:
+                        if (_players.TryGetValue(fsmPacket.targetId, out var player) && !player.IsLocalPlayer)
+                        {
+                            player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
+                        }
+                        break;
+                    
+                    case FSMStateId.hit:
+                        if (_players.TryGetValue(fsmPacket.hitData.targetId, out var p))
+                        {
+                            p.playerStateMachine.ChangeState(new HitState(fsmPacket.hitData));
+                        }
+                        break;
+                }
+            }
         }
     }
 
@@ -194,6 +237,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         newPlayer.transform.position = newPlayer.GetComponent<Rigidbody>().position + new Vector3(UnityEngine.Random.Range(-5.0f, 5.0f), UnityEngine.Random.Range(-5.0f, 5.0f));
         Debug.Log("Spawn other object " + playerId);
         _players[playerId] = newPlayer;
+        newPlayer.NetworkId = playerId;
     }
 
     private void UpdatePosition(PositionUpdatePacket packet)
@@ -245,5 +289,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     public void OnConnectionRequest(ConnectionRequest request)
     {
+    }
+
+    public static void SendPacketToServer(SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        SendPacket(GameRoomNetworkController.Instance.MyPeer, packet, deliveryMethod);
     }
 }

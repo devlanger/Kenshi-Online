@@ -8,8 +8,8 @@ namespace StarterAssets
         public ThirdPersonController tpsController { get; set; }
 
         int _animIDJump = Animator.StringToHash("Jump");
-        
-        public override FSMStateId Id { get; }
+
+        public override FSMStateId Id => FSMStateId.jump;
         
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {

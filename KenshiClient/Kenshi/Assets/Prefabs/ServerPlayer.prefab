@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1031661745393082111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6172567620665178280}
+  m_Layer: 8
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6172567620665178280
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031661745393082111}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3893294197879345259}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4416926081852918481
 GameObject:
   m_ObjectHideFlags: 0
@@ -13,6 +44,7 @@ GameObject:
   - component: {fileID: 4172046711011271359}
   - component: {fileID: 3012513334476820547}
   - component: {fileID: 5558266306602655100}
+  - component: {fileID: 5924514504045062219}
   m_Layer: 8
   m_Name: ServerPlayer
   m_TagString: Player
@@ -31,7 +63,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6172567620665178280}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -64,9 +97,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7516936c5fa92478caabb83c94131e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Interpolation: {fileID: 0}
+  tps: {fileID: 5924514504045062219}
   Input:
     rightClick: 0
     leftClick: 0
+    RotationY: 0
+    CameraForward: {x: 0, y: 0, z: 0}
+    LocalDirection: {x: 0, y: 0, z: 0}
     move: {x: 0, y: 0}
     look: {x: 0, y: 0}
     jump: 0
@@ -76,6 +114,13 @@ MonoBehaviour:
     cursorLocked: 1
     cursorInputForLook: 1
     dashing: 0
+  playerStateMachine:
+    Target: {fileID: 0}
+    Variables: {fileID: 0}
+  movementStateMachine:
+    Target: {fileID: 0}
+    Variables: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!114 &3012513334476820547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,9 +136,16 @@ MonoBehaviour:
   _aimLayerMask:
     serializedVersion: 2
     m_Bits: 823
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 0
   Animator: {fileID: 0}
   attackIndex: 0
   lastAttackTime: 0
+  IsAttacking: 0
+  Grounded: 0
+  Jumping: 0
+  jumpIndex: 0
 --- !u!65 &5558266306602655100
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -115,3 +167,36 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.5, y: 1.7417213, z: 0.5}
   m_Center: {x: 0, y: 0.87086064, z: 0}
+--- !u!114 &5924514504045062219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e54e5a728a9234ab24fcf1460ed8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MoveSpeed: 2
+  SprintSpeed: 5.335
+  RotationSmoothTime: 0.12
+  SpeedChangeRate: 10
+  JumpHeight: 1.2
+  Gravity: -15
+  Grounded: 1
+  GroundedOffset: -0.14
+  GroundedRadius: 0.28
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 513
+  CinemachineCameraTarget: {fileID: 1031661745393082111}
+  TopClamp: 70
+  BottomClamp: -30
+  CameraAngleOverride: 0
+  LockCameraPosition: 0
+  _verticalVelocity: 0
+  cameraSpeedY: 3
+  cameraSpeedX: 3
+  _jumpTime: 0

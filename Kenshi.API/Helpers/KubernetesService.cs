@@ -109,6 +109,8 @@ public class KubernetesService
             return new GameRoomInstance
             {
                 RoomId = GetPodName(freePort),
+                Port = freePort,
+                MaxPlayers = 16,
             };
         }
         else

@@ -156,8 +156,8 @@ namespace StarterAssets
             _animationBlend = Mathf.Lerp(_animationBlend, _speed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
             
-            _animator.SetFloat(_animIDSpeed, _animationBlend);
-            _animator.SetFloat(_animIDMotionSpeed, GetInputMagnitude());
+            _animator?.SetFloat(_animIDSpeed, _animationBlend);
+            _animator?.SetFloat(_animIDMotionSpeed, GetInputMagnitude());
             
             Grounded = GroundedCheck();
             target.playerStateMachine.Variables.Grounded = Grounded;
@@ -256,7 +256,10 @@ namespace StarterAssets
 
         public void StopMoving()
         {
-            _controller.velocity = Vector3.zero;
+            if (_controller != null)
+            {
+                _controller.velocity = Vector3.zero;
+            }
             _speed = 0;
         }
 

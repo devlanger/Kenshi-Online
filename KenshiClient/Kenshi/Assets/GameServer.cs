@@ -15,14 +15,18 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using StarterAssets.CombatStates;
 
 public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 {
-    private NetManager _netServer;
+    public static GameServer Instance;
+    
+    public NetManager _netServer;
     private NetPeer _ourPeer;
     [SerializeField] private GameServerEventsHandler handler;
 
     private Dictionary<int, Player> _players => handler._players;
+    public static bool IsServer => GameRoomNetworkController.Instance == null;
 
     private static int players = 0;
     
@@ -34,7 +38,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
     public static Config Configuration = new Config();
 
-    public event Action<int, Vector3> OnPlayerSpawned;
+    public event Action<NetPeer, Vector3> OnPlayerSpawned;
     public event Action<int, Vector3> OnPlayerPositionUpdate;
     public event Action<int> OnPlayerDespawned;
     
@@ -50,7 +54,12 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         public ushort port;
         public string redis;
     }
-    
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     public void StartServer()
     {
         try
@@ -62,11 +71,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             Debug.Log(e);
         }
         
-        if (UpdatePlayersAmount(0))
-        {
-            Debug.Log("Successfully connected to redis and initialized server parameters.");
-        }
-        
         NetDebug.Logger = this;
         _netServer = new NetManager(this);
         _netServer.Start(Configuration.port);
@@ -75,22 +79,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         
         Debug.Log($"Circle ENet Server started on {Configuration.port}");
         started = true;
-    }
-
-    private static bool UpdatePlayersAmount(int i)
-    {
-        try
-        {
-            var db = redis.GetDatabase();
-            db.StringSet($"{Configuration.containerName}_players", i.ToString());
-            Debug.Log("Players Count: " + db.StringGet($"{Configuration.containerName}_players"));
-            return true;
-        }
-        catch (Exception e)
-        {
-            Debug.Log("Redis connection error: " + e);
-            return false;
-        }
     }
     
     void Update()
@@ -132,6 +120,18 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                     });
                     SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z, packet.rotY));
                     break;
+                case PacketId.FsmUpdate:
+                    var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
+                    switch (fsmPacket.stateId)
+                    {
+                        case FSMStateId.attack:
+                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var player))
+                            {
+                                player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
+                            }
+                            break;
+                    }
+                    break;
             }
         }
 
@@ -167,21 +167,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         
         private static string GetRoomId(int port) => $"gameroom-{port}";
 
-        public static void AddPlayer(string player)
-        {
-            redis.GetDatabase().ListLeftPush(GetRoomId(Configuration.port), player);
-        }
-        
-        public static void RemovePlayer(string player)
-        {
-            redis.GetDatabase().ListRemove(GetRoomId(Configuration.port), player);
-        }
-
-        public static List<string> GetPlayers(string room)
-        {
-            return redis.GetDatabase().ListRange(GetRoomId(Configuration.port)).Select(x => x.ToString()).ToList();
-        }
-
         private void HandleLogout(int playerId)
         {
             if (!_players.ContainsKey(playerId))
@@ -195,12 +180,10 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                 Username = username
             });
             new RabbitMqClient().SendConnectedUser("disconnected_user",json);
-            RemovePlayer(username);
             tokens.Remove(playerId);
             UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerDespawned?.Invoke(playerId); });
             SendPacketToAll(new LogoutEventPacket(playerId));
             players--;
-            UpdatePlayersAmount(players);
             
             Debug.Log($"User has disconnected {username}");
         }
@@ -220,9 +203,8 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         client.SendConnectedUser("connected_user",json);
         Debug.Log($"[GAME SERVER] Client connected - ID: {peer.Id} Name: {claims.Name}");
         players++;
-        UpdatePlayersAmount(players);
         
-        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer.Id, Vector3.zero); });
+        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer, Vector3.zero); });
         _ourPeer = peer;
     }
 
@@ -239,13 +221,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader,
         UnconnectedMessageType messageType)
     {
-        // if (messageType == UnconnectedMessageType.Broadcast)
-        // {
-        //     Debug.Log("[SERVER] Received discovery request. Send discovery response");
-        //     NetDataWriter resp = new NetDataWriter();
-        //     resp.Put(1);
-        //     _netServer.SendUnconnectedMessage(resp, remoteEndPoint);
-        // }
     }
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
@@ -261,7 +236,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             {
                 var peer = request.Accept();
                 tokens[peer.Id] = token;
-                AddPlayer(GetUserClaims(peer.Id).Name);
             }
             else
             {

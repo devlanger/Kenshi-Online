@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour
         Vector3 forward = Camera.main.transform.forward;
         forward.y = 0;
         localPlayer.Input.CameraForward = forward;
+        
+        Physics.Raycast(Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition), out RaycastHit hit, 100, localPlayer.playerStateMachine.Variables._aimLayerMask);
+        localPlayer.Input.AimDirection =
+            hit.collider == null ? Camera.main.transform.forward * 100 : hit.point;
     }
 
 

@@ -18,6 +18,7 @@ namespace StarterAssets
 
 		public Quaternion LocalRotation => Quaternion.Euler(0.0f, RotationY, 0.0f);
 		public Vector3 CameraForward;
+		public Vector3 AimDirection;
 
 		public Vector3 LocalDirection;
 

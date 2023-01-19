@@ -27,6 +27,7 @@ public class ConnectionController : MonoBehaviour
     public static string Token => Instance.connectionDto.token;
     public static string Host => Instance.useLocal ? "127.0.0.1" : Instance.host;
     public static string Ip => Instance.useLocal ? $"http://127.0.0.1:3330" : $"http://{Instance.host}:3330";
+
     public event Action<ConnectionDto> OnLogged;
     public event Action OnUsersUpdated;
 

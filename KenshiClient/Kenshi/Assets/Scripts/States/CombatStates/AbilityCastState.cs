@@ -36,14 +36,13 @@ namespace StarterAssets.CombatStates
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
             
             var animator = stateMachine.Variables.Animator;
-            Physics.Raycast(Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition), out RaycastHit hit, 100, stateMachine.Variables._aimLayerMask);
             animator.SetTrigger("ability");
             animator.SetInteger("ability_id", 1);
             GameObject.FindObjectOfType<AbilitiesController>().CastAbility(new AbilityInfo()
             {   
                 user = stateMachine.Target,
                 abilityId = 1,
-                aimPoint = hit.collider == null ? Camera.main.transform.forward : hit.point
+                aimPoint = stateMachine.Target.Input.AimDirection
             });
         }
 

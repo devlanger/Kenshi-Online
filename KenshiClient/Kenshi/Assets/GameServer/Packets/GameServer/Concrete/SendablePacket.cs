@@ -3,6 +3,7 @@ using System.IO;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer.Interfaces;
 using LiteNetLib.Utils;
+using UnityEngine;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
@@ -16,6 +17,18 @@ namespace Kenshi.Shared.Packets.GameServer
         public SendablePacket()
         {
             
+        }
+
+        public void PutVector3(Vector3 vector)
+        {
+            writer.Put(vector.x);
+            writer.Put(vector.y);
+            writer.Put(vector.z);
+        }
+        
+        public Vector3 ReadVector3(NetDataReader reader)
+        {
+            return new Vector3(reader.GetFloat(),reader.GetFloat(),reader.GetFloat());
         }
         
         public virtual void Serialize(NetDataWriter writer)

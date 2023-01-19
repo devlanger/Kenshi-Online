@@ -11,7 +11,10 @@ namespace StarterAssets.CombatStates
         {
             if (stateMachine.Target.Input.leftClick)
             {
-                stateMachine.ChangeState(new AttackState());
+                stateMachine.ChangeState(new AttackState()
+                {
+                    data = new AttackState.Data { pos = stateMachine.Target.transform.position }
+                });
                 return true;
             }
 

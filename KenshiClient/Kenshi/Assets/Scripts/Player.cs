@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using LiteNetLib;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using UnityEngine;
@@ -12,11 +13,14 @@ public class Player : Mob
     
     public StarterAssetsInputs Input = new StarterAssetsInputs();
     public bool IsLocalPlayer { get; set; }
+    public int NetworkId { get; set; }
 
     public PlayerStateMachine playerStateMachine;
     public PlayerStateMachine movementStateMachine;
     public Animator animator;
 
+    public NetPeer peer;
+    
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -44,6 +48,9 @@ public class Player : Mob
         
         movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);
+        
+        playerStateMachine.UpdateQueue();
+        movementStateMachine.UpdateQueue();
         
         if (IsLocalPlayer)
         {
