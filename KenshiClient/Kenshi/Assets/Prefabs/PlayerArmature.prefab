@@ -1039,6 +1039,7 @@ GameObject:
   - component: {fileID: 5834057017334139378}
   - component: {fileID: 377938197895356575}
   - component: {fileID: 3931602108648380513}
+  - component: {fileID: 4728268663734691058}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -1141,9 +1142,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Interpolation: {fileID: 377938197895356575}
+  tps: {fileID: 4728268663734691058}
   Input:
     rightClick: 0
     leftClick: 0
+    RotationY: 0
+    CameraForward: {x: 0, y: 0, z: 0}
+    LocalDirection: {x: 0, y: 0, z: 0}
     move: {x: 0, y: 0}
     look: {x: 0, y: 0}
     jump: 0
@@ -1159,6 +1164,7 @@ MonoBehaviour:
   movementStateMachine:
     Target: {fileID: 0}
     Variables: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!114 &3012513334476820547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1174,9 +1180,16 @@ MonoBehaviour:
   _aimLayerMask:
     serializedVersion: 2
     m_Bits: 823
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 0
   Animator: {fileID: 6982812146204527121}
   attackIndex: 0
   lastAttackTime: 0
+  IsAttacking: 0
+  Grounded: 0
+  Jumping: 0
+  jumpIndex: 0
 --- !u!114 &5834057017334139378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1238,6 +1251,39 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &4728268663734691058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26e54e5a728a9234ab24fcf1460ed8a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MoveSpeed: 2
+  SprintSpeed: 5.335
+  RotationSmoothTime: 0.12
+  SpeedChangeRate: 10
+  JumpHeight: 1.2
+  Gravity: -15
+  Grounded: 1
+  GroundedOffset: -0.14
+  GroundedRadius: 0.28
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 513
+  CinemachineCameraTarget: {fileID: 8338988566280778634}
+  TopClamp: 70
+  BottomClamp: -30
+  CameraAngleOverride: 0
+  LockCameraPosition: 0
+  _verticalVelocity: 0
+  cameraSpeedY: 3
+  cameraSpeedX: 3
+  _jumpTime: 0
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0

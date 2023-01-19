@@ -10,5 +10,7 @@ namespace Kenshi.Shared.Enums
         jump = 77,     
         dash = 78,
         freeze = 79,
+        land = 80,
+        freefall = 81,
     }
 }

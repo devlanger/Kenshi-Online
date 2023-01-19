@@ -32,7 +32,7 @@ public class TargetController : MonoBehaviour
     {
         if (target == null)
         {
-            tpsController.CameraRotation();
+            //tpsController.CameraRotation();
         }
         else
         {

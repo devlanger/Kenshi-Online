@@ -17,6 +17,10 @@ namespace StarterAssets.CombatStates
             }
         }
 
+        protected override void OnInputUpdate(PlayerStateMachine stateMachine)
+        {
+        }
+
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
             if (stateMachine.Variables.Grounded)

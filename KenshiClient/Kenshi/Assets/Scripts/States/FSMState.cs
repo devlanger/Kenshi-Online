@@ -9,11 +9,19 @@ namespace StarterAssets
         
         public float ElapsedTime => Time.time - startTime;
         private float startTime;
+
+        private bool entered = false;
         
         public void Enter(PlayerStateMachine stateMachine)
         {
             startTime = Time.time;
             OnEnter(stateMachine);
+            entered = true;
+        }
+        
+        public void UpdateInput(PlayerStateMachine stateMachine)
+        {
+            OnInputUpdate(stateMachine);
         }
         
         public void Update(PlayerStateMachine stateMachine)
@@ -32,6 +40,7 @@ namespace StarterAssets
         }
         
         protected abstract void OnUpdate(PlayerStateMachine stateMachine);
+        protected abstract void OnInputUpdate(PlayerStateMachine stateMachine);
 
         protected virtual void OnFixedUpdate(PlayerStateMachine stateMachine)
         {

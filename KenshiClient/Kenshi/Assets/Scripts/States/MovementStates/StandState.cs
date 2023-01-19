@@ -9,32 +9,47 @@ namespace StarterAssets
 
         private ThirdPersonController tpsController;
 
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
+        protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
             switch (stateMachine.Target.playerStateMachine.CurrentState.Id)
             {
                 case FSMStateId.idle:
-                    if (stateMachine.Target.Input.jump)
-                    {
-                        stateMachine.ChangeState(new JumpState());
-                    }
-                    
                     if (stateMachine.Target.Input.move != Vector2.zero)
                     {
                         stateMachine.ChangeState(new MoveState());
+                    }
+                    else if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
+                    {
+                        stateMachine.ChangeState(new JumpState());
                     }
                     break;
             }
         }
 
+        protected override void OnUpdate(PlayerStateMachine stateMachine)
+        {
+            if (!tpsController.Grounded)
+            {
+                stateMachine.ChangeState(new FreeFallState());
+            }
+        }
+
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
+            if (stateMachine.IsLocal)
+            {
+                if (tpsController._verticalVelocity < 0)
+                {
+                    tpsController._verticalVelocity = 0f;
+                }
+            }
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
-            tpsController = GameObject.FindObjectOfType<ThirdPersonController>();
+            tpsController = stateMachine.Target.tps;
             tpsController.StopMoving();
+            stateMachine.Variables.Jumping = true;
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)

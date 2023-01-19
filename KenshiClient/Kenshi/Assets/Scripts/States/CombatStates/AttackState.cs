@@ -9,11 +9,6 @@ namespace StarterAssets.CombatStates
 
         private bool UpdateAttackInput(PlayerStateMachine machine)
         {
-            if (!machine.IsLocal)
-            {
-                return false;
-            }
-            
             if (machine.Target.Input.leftClick)
             {
                 machine.ChangeState(new AttackState());
@@ -23,21 +18,28 @@ namespace StarterAssets.CombatStates
             return false;
         }
 
-
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
+        protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.transform.position += stateMachine.Target.transform.forward * Time.deltaTime;
-
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
             if (ElapsedTime > (lastAttack ? 0.6f : 0.3f))
             {
                 if (!UpdateAttackInput(stateMachine))
                 {
-                    if (ElapsedTime > (lastAttack ? 1 : 0.6f))
-                    {
-                        stateMachine.ChangeState(new IdleState());
-                    }  
-                }
+                    stateMachine.ChangeState(new IdleState());
+                }  
+            }
+        }
+
+        protected override void OnUpdate(PlayerStateMachine stateMachine)
+        {
+            bool lastAttack = stateMachine.Variables.attackIndex == 0;
+            if (ElapsedTime > (lastAttack ? 1 : 0.6f))
+            {
+                stateMachine.ChangeState(new IdleState());
+            }
+            else
+            {
+                stateMachine.Target.transform.position += stateMachine.Target.transform.forward * Time.deltaTime;
             }
         }
 

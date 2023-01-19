@@ -12,14 +12,20 @@ namespace StarterAssets
             
         }
 
-
         protected override void OnUpdate(PlayerStateMachine machine)
         {
             if (ElapsedTime > 0.4f)
             {
                 machine.ChangeState(new StandState());
             }
-            machine.Target.transform.position -= Camera.main.transform.forward * 10 * Time.deltaTime;
+        }
+
+        protected override void OnInputUpdate(PlayerStateMachine machine)
+        {
+            if(ElapsedTime < 0.4f)
+            {
+                machine.Target.transform.position -= Camera.main.transform.forward * 10 * Time.deltaTime;
+            }
         }
 
         protected override void OnEnter(PlayerStateMachine machine)

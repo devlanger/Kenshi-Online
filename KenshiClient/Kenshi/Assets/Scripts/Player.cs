@@ -8,38 +8,57 @@ using UnityEngine;
 public class Player : Mob
 {
     public PlayerInterpolation Interpolation;
+    public ThirdPersonController tps;
     
     public StarterAssetsInputs Input = new StarterAssetsInputs();
     public bool IsLocalPlayer { get; set; }
 
     public PlayerStateMachine playerStateMachine;
     public PlayerStateMachine movementStateMachine;
-    
+    public Animator animator;
+
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         playerStateMachine = new PlayerStateMachine();
         playerStateMachine.Target = this;
         playerStateMachine.Variables = GetComponent<StateMachineVariables>();
         playerStateMachine.ChangeState(new IdleState());
         
         movementStateMachine = new PlayerStateMachine();
-        movementStateMachine.ChangeState(new StandState());
-        movementStateMachine.Variables = GetComponent<StateMachineVariables>();
         movementStateMachine.Target = this;
+        movementStateMachine.Variables = GetComponent<StateMachineVariables>();
+        movementStateMachine.ChangeState(new StandState());
     }
 
     private void Update()
     {
-        playerStateMachine.CurrentState?.Update(playerStateMachine);
+        if (IsLocalPlayer)
+        {
+            movementStateMachine.CurrentState?.UpdateInput(movementStateMachine);
+            playerStateMachine.CurrentState?.UpdateInput(playerStateMachine);
+        }
+        
         playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
-        movementStateMachine.CurrentState?.Update(movementStateMachine);
+        playerStateMachine.CurrentState?.Update(playerStateMachine);
+        
         movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
+        movementStateMachine.CurrentState?.Update(movementStateMachine);
         
         if (IsLocalPlayer)
         {
+            Input.jump = false;
             Input.rightClick = false;
             Input.leftClick = false;
             Input.dashing = false;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (IsLocalPlayer)
+        {
+            tps.CameraRotation();
         }
     }
 }

@@ -46,7 +46,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         Application.runInBackground = true;
         InitENet();
         _myPlayer = myPlayerFactory;     //Instantiate(myPlayerFactory);
-        FindObjectOfType<ThirdPersonController>().SetPlayer(_myPlayer);
+        _myPlayer.GetComponent<ThirdPersonController>().SetPlayer(_myPlayer);
     }
 
 	void Update ()

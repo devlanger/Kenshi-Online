@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class StateMachineVariables : MonoBehaviour
 {
     public LayerMask _aimLayerMask;
+    public LayerMask GroundLayers;
     public Animator Animator;
 
     public int attackIndex = 0;
@@ -13,4 +14,5 @@ public class StateMachineVariables : MonoBehaviour
     public bool IsAttacking = false;
     public bool Grounded;
     public bool Jumping;
+    public int jumpIndex = 0;
 }
