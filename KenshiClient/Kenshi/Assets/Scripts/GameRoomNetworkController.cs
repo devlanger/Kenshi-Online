@@ -73,8 +73,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     private void InitENet()
     {
-        if (ConnectionController.Instance != null)
-        {
+        //if (ConnectionController.Instance != null)
+        //{
             _netClient = new NetManager(this);
             _netClient.UnconnectedMessagesEnabled = true;
             _netClient.UpdateTime = 15;
@@ -83,7 +83,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             _netClient.Connect(host, Port, ConnectionController.Token);
 
             Debug.Log($"Connecting {host}:{Port}");
-        }
+        //}
     }
 
     private void UpdateENet()
@@ -98,9 +98,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         var y = _myPlayer.transform.position.y;
         var z = _myPlayer.transform.position.z;
         var rotY = (byte)(_myPlayer.transform.eulerAngles.y / 5);
+        var speed = _myPlayer.animator.GetFloat("Speed");
         
-        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY);
-        SendPacket(MyPeer, packet, DeliveryMethod.Unreliable);
+        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY, speed);
+        SendPacket(MyPeer, packet, DeliveryMethod.Sequenced);
     }
     
     private void SendLogin()
@@ -125,7 +126,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public static void SendPacketToMany(IEnumerable<NetPeer> peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
         PacketId packetId = (PacketId)packet.packetId;
-        Debug.Log($"Send to many [{packetId}]");
+        if (packetId == PacketId.PositionUpdateEvent)
+        {
+            Debug.Log($"Send to many [{packetId}]");
+        }
+
         packet.writer.Put((byte)packetId);
         packet.Serialize(packet.writer);
         foreach (var item in peer)
@@ -153,7 +158,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public static void SendPacket(NetPeer peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
         PacketId packetId = (PacketId)packet.packetId;
-        Debug.Log($"Send to {peer.Id} packet [{packetId}]");
+        if (packetId != PacketId.PositionUpdateRequest)
+        {
+            Debug.Log($"Send to {peer.Id} packet [{packetId}]");
+        }
+
         packet.writer.Put((byte)packetId);
         packet.Serialize(packet.writer);
         peer.Send(packet.writer, deliveryMethod);
@@ -175,7 +184,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 Debug.Log("MyPlayerId: " + packet._playerId);
             }
             else if (packetId == PacketId.LoginEvent)
-            {
+            {   
                 var packet = SendablePacket.Deserialize<LoginEventPacket>(packetId, reader);
 
                 UnityMainThreadDispatcher.Instance().Enqueue(() =>
@@ -187,8 +196,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             else if (packetId == PacketId.PositionUpdateEvent)
             {
                 var packet = SendablePacket.Deserialize<PositionUpdatePacket>(packetId, reader);
-
-                UnityMainThreadDispatcher.Instance().Enqueue(() => { UpdatePosition(packet); });
+                UpdatePosition(packet);
             }
             else if (packetId == PacketId.LogoutEvent)
             {
@@ -249,13 +257,19 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         {
             return;
         }
-        
-        _players[packet.playerId].Interpolation.Push(new PositionUpdateSnapshot()
+
+        var p = _players[packet.playerId];
+        p.Interpolation.Push(new PositionUpdateSnapshot()
         {
             packet = packet
         });
-        //_players[packet.playerId].transform.position = new Vector3(packet.x, packet.y, packet.z);
-        _players[packet.playerId].transform.eulerAngles = new Vector3(0, packet.rotY * 5, 0);
+
+        if (p.tps != null)
+        {
+            p.tps.SetSpeed(packet.speed);
+        }
+        
+        p.transform.eulerAngles = new Vector3(0, packet.rotY * 5, 0);
     }
 
     public void OnPeerConnected(NetPeer peer)

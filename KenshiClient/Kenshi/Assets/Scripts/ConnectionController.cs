@@ -54,34 +54,52 @@ public class ConnectionController : MonoBehaviour
         }
     }
 
-    private async void Start()
+    private IEnumerator Start()
     {
-        Connection = new HubConnectionBuilder()
-            .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub")
-            .Build();
+        var t = Connect();
 
-        NetworkCommandProcessor.RegisterCommand("connect", (string[] param) =>
-        {
-            SceneManager.LoadScene(1);
-        });
-        
-        RegisterStringEventListener("UpdatePlayersList");
-        RegisterStringEventListener("ListGameRooms");
-        RegisterStringEventListener("JoinGameRoom");
-        RegisterStringEventListener("ShowChatMessage");
-        
-        OnMessageReceived += OnOnMessageReceived;
-        
-        Connection.On<string>("SetConnectionData", (s =>
-        {
-            var data = JsonConvert.DeserializeObject<ConnectionDto>(s);
-            connectionDto = data;
-            OnLogged?.Invoke(data);
-        }));
-        
-        clientMessager = new ClientMessageHandler(Connection); 
+        yield return new WaitUntil(() => t.IsCompleted);
 
-        await Connection.StartAsync();
+        if (Connection.State != HubConnectionState.Connected)
+        {
+            yield return new WaitForSeconds(1);
+        }
+    }
+
+    private async Task<bool> Connect()
+    {
+        try
+        {
+            Connection = new HubConnectionBuilder()
+                .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub")
+                .Build();
+
+            NetworkCommandProcessor.RegisterCommand("connect", (string[] param) => { SceneManager.LoadScene(1); });
+
+            RegisterStringEventListener("UpdatePlayersList");
+            RegisterStringEventListener("ListGameRooms");
+            RegisterStringEventListener("JoinGameRoom");
+            RegisterStringEventListener("ShowChatMessage");
+
+            OnMessageReceived += OnOnMessageReceived;
+
+            Connection.On<string>("SetConnectionData", (s =>
+            {
+                var data = JsonConvert.DeserializeObject<ConnectionDto>(s);
+                connectionDto = data;
+                OnLogged?.Invoke(data);
+            }));
+
+            clientMessager = new ClientMessageHandler(Connection);
+
+            await Connection.StartAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return false;
+        }
     }
 
     private void OnOnMessageReceived(string arg1, string arg2)

@@ -15,7 +15,8 @@ namespace Kenshi.Shared.Packets.GameServer
         public FSMStateId stateId;
         public AttackState.Data attackData;
         public HitState.Data hitData;
-        
+        public float moveSpeed = 0;
+
         public UpdateFsmStatePacket() 
         {
         }
@@ -59,6 +60,7 @@ namespace Kenshi.Shared.Packets.GameServer
                     break;
             }
         }
+
 
         public override void Serialize(NetDataWriter writer)
         {

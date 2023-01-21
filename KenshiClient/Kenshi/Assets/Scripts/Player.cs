@@ -5,6 +5,7 @@ using LiteNetLib;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Player : Mob
 {
@@ -13,11 +14,13 @@ public class Player : Mob
     
     public StarterAssetsInputs Input = new StarterAssetsInputs();
     public bool IsLocalPlayer { get; set; }
+    public bool IsBot { get; set; }
     public int NetworkId { get; set; }
 
     public PlayerStateMachine playerStateMachine;
     public PlayerStateMachine movementStateMachine;
     public Animator animator;
+    public NavMeshAgent agent;
 
     public NetPeer peer;
     

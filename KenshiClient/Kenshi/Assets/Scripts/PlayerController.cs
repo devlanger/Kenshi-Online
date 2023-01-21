@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
     }
     
 
-    private void Update()
+    private void LateUpdate()
     {
         if (localPlayer.Input.InputDirection != Vector3.zero)
         {

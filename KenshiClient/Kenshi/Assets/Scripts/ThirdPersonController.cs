@@ -263,6 +263,11 @@ namespace StarterAssets
             _speed = 0;
         }
 
+        public void SetSpeed(float speed)
+        {
+            _speed = speed;
+        }
+
         public void SetVerticalVelocity()
         {
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);

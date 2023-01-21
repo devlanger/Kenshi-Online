@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
+    [System.Serializable]
     public class PositionUpdatePacket : SendablePacket
     {
         public override PacketId packetId => PacketId.PositionUpdateEvent;
@@ -14,6 +15,7 @@ namespace Kenshi.Shared.Packets.GameServer
         public float y;
         public float z;
         public byte rotY;
+        public float speed;
 
         public Vector3 Position => new Vector3(x, y, z); 
         
@@ -22,13 +24,14 @@ namespace Kenshi.Shared.Packets.GameServer
             
         }
         
-        public PositionUpdatePacket(int playerId, float x, float y, float z, byte rotY)
+        public PositionUpdatePacket(int playerId, float x, float y, float z, byte rotY, float speed)
         {
             this.playerId = playerId;
             this.x = x;
             this.y = y;
             this.z = z;
             this.rotY = rotY;
+            this.speed = speed;
         }
         
         public override void Serialize(NetDataWriter writer)
@@ -40,6 +43,7 @@ namespace Kenshi.Shared.Packets.GameServer
             writer.Put(y);
             writer.Put(z);
             writer.Put(rotY);
+            writer.Put(speed);
         }
         
         public override void Deserialize(NetDataReader reader)
@@ -51,6 +55,7 @@ namespace Kenshi.Shared.Packets.GameServer
             y = reader.GetFloat();
             z = reader.GetFloat();
             rotY = reader.GetByte();
+            speed = reader.GetFloat();
         }
     }
 }

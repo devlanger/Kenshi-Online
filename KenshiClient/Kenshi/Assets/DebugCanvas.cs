@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DebugCanvas : MonoBehaviour
@@ -17,6 +18,7 @@ public class DebugCanvas : MonoBehaviour
 
     private void Click()
     {
+        //SceneManager.LoadScene(1);
         FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game 5001");
     }
 

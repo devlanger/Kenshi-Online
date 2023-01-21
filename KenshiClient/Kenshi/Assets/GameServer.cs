@@ -96,42 +96,49 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     
     private void HandlePacket(NetPeer peer, NetPacketReader reader)
         {
-            var packetId = (PacketId)reader.GetByte();
-
-            if (packetId != PacketId.PositionUpdateRequest)
-                Debug.Log($"HandlePacket received: {packetId}");
-            switch (packetId)
+            while (!reader.EndOfData)
             {
-                case PacketId.LoginRequest:
-                    var playerId = peer.Id;
-                    SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
-                    SendPacket(playerId, new LoginResponsePacket(playerId));
-                    SendPacketToAll(new LoginEventPacket(playerId));
-                    foreach (var p in _players)
-                    {
-                        SendPacket(playerId, new LoginEventPacket(p.Key));
-                    }
-                    break;
-                case PacketId.PositionUpdateRequest:
-                    var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
-                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
-                    {
-                        OnPlayerPositionUpdate?.Invoke(packet.playerId, new Vector3(packet.x, packet.y, packet.z));
-                    });
-                    SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z, packet.rotY));
-                    break;
-                case PacketId.FsmUpdate:
-                    var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
-                    switch (fsmPacket.stateId)
-                    {
-                        case FSMStateId.attack:
-                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var player))
-                            {
-                                player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
-                            }
-                            break;
-                    }
-                    break;
+                var packetId = (PacketId)reader.GetByte();
+
+                if (packetId != PacketId.PositionUpdateRequest)
+                    Debug.Log($"HandlePacket received: {packetId}");
+                switch (packetId)
+                {
+                    case PacketId.LoginRequest:
+                        var playerId = peer.Id;
+                        SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
+                        SendPacket(playerId, new LoginResponsePacket(playerId), DeliveryMethod.ReliableOrdered);
+                        SendPacketToAll(new LoginEventPacket(playerId), DeliveryMethod.ReliableOrdered);
+                        foreach (var p in _players)
+                        {
+                            SendPacket(playerId, new LoginEventPacket(p.Key), DeliveryMethod.ReliableOrdered);
+                        }
+
+                        break;
+                    case PacketId.PositionUpdateRequest:
+                        var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
+                        UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                        {
+                            OnPlayerPositionUpdate?.Invoke(packet.playerId,
+                                new Vector3(packet.x, packet.y, packet.z));
+                        });
+                        SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z,
+                            packet.rotY, packet.speed), DeliveryMethod.Sequenced);
+                        break;
+                    case PacketId.FsmUpdate:
+                        var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
+                        switch (fsmPacket.stateId)
+                        {
+                            case FSMStateId.attack:
+                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var player))
+                                {
+                                    player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
+                                }
+                                break;
+                        }
+
+                        break;
+                }
             }
         }
 
@@ -140,12 +147,12 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         return _players[playerId];
     }
 
-    private void SendPacket(int peerId, SendablePacket p)
+    private void SendPacket(int peerId, SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
         {
             GameRoomNetworkController.SendPacket(_netServer.GetPeerById(peerId), p, DeliveryMethod.ReliableSequenced);
         }
 
-        private void SendPacketToAll(SendablePacket p)
+        private void SendPacketToAll(SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
         {
             if (_players.Count == 0)
             {
@@ -160,7 +167,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
             }
             
             if(list.Count > 0)
-                GameRoomNetworkController.SendPacketToMany(list, p, DeliveryMethod.ReliableSequenced);
+                GameRoomNetworkController.SendPacketToMany(list, p, deliveryMethod);
         }
 
         public static ClaimsDto GetUserClaims(int playerId)

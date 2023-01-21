@@ -56,6 +56,7 @@ public class GameServerEventsHandler : MonoBehaviour
     {
         AddPlayerToNetwork(lastBotId++, p);
         bots[p.NetworkId] = p;
+        p.IsBot = true;
     }
     
     private void AddPlayerToNetwork(int id, Player p)

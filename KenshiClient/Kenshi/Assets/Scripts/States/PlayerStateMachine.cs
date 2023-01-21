@@ -10,6 +10,7 @@ namespace StarterAssets
         public Player Target;
 
         public bool IsLocal => Target.IsLocalPlayer;
+        public bool IsBot => Target.IsBot;
         
         public FSMState CurrentState;
         public StateMachineVariables Variables;
@@ -27,7 +28,8 @@ namespace StarterAssets
         {
             try
             {
-               queuedStates.Enqueue(new DelayedState{state = newState, dequeueTime = Time.time + delayTime});
+                ExecuteStateChange(newState);
+               //queuedStates.Enqueue(new DelayedState{state = newState, dequeueTime = Time.time + delayTime});
             }
             catch (Exception e)
             {

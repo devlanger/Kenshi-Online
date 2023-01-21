@@ -1,5 +1,9 @@
 using Kenshi.Shared.Enums;
+using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace StarterAssets.CombatStates
 {
@@ -49,19 +53,36 @@ namespace StarterAssets.CombatStates
                 stateMachine.Target.animator.SetInteger("hit_id", 1);
             }
 
-            if (!GameServer.IsServer && !stateMachine.IsLocal)
+            if (GameServer.IsServer)
             {
-                stateMachine.Target.Interpolation.enabled = false;
+                var agent = stateMachine.Target.GetComponent<NavMeshAgent>();
+                if (agent)
+                {
+                    agent.enabled = false;
+                }
             }
 
-            stateMachine.Target.transform.position = data.hitPos;
+
+            if (!GameServer.IsServer && !stateMachine.Target.Interpolation.enabled)
+            {
+                //stateMachine.Target.Interpolation.enabled = false;
+            }
+
+            if (GameServer.IsServer || stateMachine.IsLocal)
+            {
+                stateMachine.Target.transform.position = data.hitPos;
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(-data.direction);
+            }
         }
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
-            if (ElapsedTime < 0.2f)
+            if (GameServer.IsServer || stateMachine.IsLocal)
             {
-                stateMachine.Target.transform.position += data.direction * Time.deltaTime;
+                if (ElapsedTime < 0.2f)
+                {
+                    stateMachine.Target.transform.position += data.direction * Time.fixedDeltaTime;
+                }
             }
         }
 
@@ -73,9 +94,18 @@ namespace StarterAssets.CombatStates
                 stateMachine.Target.animator.SetInteger("hit_id", 0);
             }
 
+            if (GameServer.IsServer)
+            {
+                var agent = stateMachine.Target.GetComponent<NavMeshAgent>();
+                if (agent)
+                {
+                    agent.enabled = true;
+                }
+            }
+            
             if (!GameServer.IsServer && !stateMachine.IsLocal)
             {
-                stateMachine.Target.Interpolation.enabled = true;
+                //stateMachine.Target.Interpolation.enabled = true;
             }
         }
     }

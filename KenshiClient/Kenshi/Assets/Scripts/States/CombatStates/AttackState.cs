@@ -1,5 +1,6 @@
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
 using Riptide;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace StarterAssets.CombatStates
         public Data data;
 
         private bool damaged = false;
-        private float damageTime = 0.25f;
+        private float damageTime = 0.15f;
         
         public class Data
         {
@@ -71,7 +72,7 @@ namespace StarterAssets.CombatStates
             }
             else
             {
-                stateMachine.Target.transform.position += stateMachine.Target.transform.forward * Time.deltaTime;
+                stateMachine.Target.transform.position += stateMachine.Target.transform.forward * 1.5f * Time.deltaTime;
             }
         }
 
@@ -83,12 +84,12 @@ namespace StarterAssets.CombatStates
             }
 
             //Delayed hit time on the server by ping
-            if (ElapsedTime < damageTime - Mathf.Min(machine.Ping, damageTime))
-            {
-                return;
-            }
+             if (ElapsedTime < damageTime - Mathf.Min(machine.Ping, damageTime))
+             {
+                 return;
+             }
 
-            var c = Physics.OverlapSphere(machine.Target.transform.position, 4);
+            var c = Physics.OverlapSphere(machine.Target.transform.position, 1.75f);
             foreach (var pCollider in c)
             {
                 var hitTarget = pCollider.GetComponent<Player>();
@@ -99,13 +100,23 @@ namespace StarterAssets.CombatStates
                     // {
                     //     continue;
                     // }
-                    GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(hitTarget.NetworkId, new HitState.Data
+
+                    Vector3 dir = (hitTarget.transform.position - machine.Target.transform.position);
+                    dir.y = 0;
+                    var hitData = new HitState.Data
                     {
                         attackerId = machine.Target.NetworkId,
                         targetId = hitTarget.NetworkId,
                         hitPos = hitTarget.transform.position,
-                        direction = (hitTarget.transform.position - machine.Target.transform.position).normalized * 2
-                    }));
+                        direction = machine.Variables.attackIndex == 0 ? dir.normalized * 2 : dir.normalized * 0.55f
+                    };
+                    
+                    if (GameServer.IsServer)
+                    {
+                        GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(hitData.targetId, hitData), DeliveryMethod.ReliableOrdered);
+                    }
+                    
+                    hitTarget.playerStateMachine.ChangeState(new HitState(hitData), machine.Ping);
                 }
             }
             damaged = true;
@@ -115,7 +126,7 @@ namespace StarterAssets.CombatStates
         {
             if (stateMachine.IsLocal)
             {
-                GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data));
+                GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
             }
 
             if (GameServer.IsServer)
@@ -124,7 +135,7 @@ namespace StarterAssets.CombatStates
                 {
                     pos = stateMachine.Target.transform.position,
                     rot = 0,
-                }));
+                }), DeliveryMethod.ReliableOrdered);
             }
             
             stateMachine.Target.movementStateMachine.ChangeState(new StandState());
