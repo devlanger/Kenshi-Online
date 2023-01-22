@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Kunai
   m_EditorClassIdentifier: 
   Id: 1
+  icon: {fileID: 21300000, guid: f96ced0baa3e34d50b8c284c14f2ea50, type: 3}
   Data:
-    name: 
+    name: Kunai
     groundDuration: 0.3
     airDuration: 0.2
     behaviour: {fileID: 11400000, guid: 22f388e3101694a99b89a382b62a78eb, type: 2}

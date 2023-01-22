@@ -78,15 +78,22 @@ public class AbilitiesController : MonoBehaviour
 
     public AbilityData CastAbility(AbilityInfo abilityInfo)
     {
-        var ability = abilities.FirstOrDefault(a => a.Id == abilityInfo.abilityId);
-        if (ability == null)
-        {
-            return null;
-        }
+        if (!GetAbilityById(abilityInfo.abilityId, out var ability)) return null;
 
         abilityInfo.user.Input.abilityInfo = abilityInfo;
         abilityInfo.user.GetComponent<PlayableDirector>().Play(ability.Data.behaviour);
         return ability.Data;
+    }
+
+    public bool GetAbilityById(int id, out AbilityScriptable ability)
+    {
+        ability = abilities.FirstOrDefault(a => a.Id == id);
+        if (ability == null)
+        {
+            return false;
+        }
+
+        return true;
     }
 }   
 
