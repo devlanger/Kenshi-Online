@@ -66,7 +66,9 @@ namespace StarterAssets.CombatStates
                 time = 0.175f;
             }
 
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation((data.hitPoint - data.startPos).normalized); 
+            Vector3 rot = (data.hitPoint - data.startPos).normalized;
+            rot.y = 0;
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot); 
             stateMachine.Target.transform.position = data.startPos; 
             
             var animator = stateMachine.Variables.Animator;
