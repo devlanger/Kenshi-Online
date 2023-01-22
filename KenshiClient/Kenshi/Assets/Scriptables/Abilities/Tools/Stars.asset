@@ -15,4 +15,6 @@ MonoBehaviour:
   Id: 2
   Data:
     name: 
+    groundDuration: 0.3
+    airDuration: 0.2
     behaviour: {fileID: 11400000, guid: 2b126f64f8b7343d08fb0b3f8ede3dc2, type: 2}

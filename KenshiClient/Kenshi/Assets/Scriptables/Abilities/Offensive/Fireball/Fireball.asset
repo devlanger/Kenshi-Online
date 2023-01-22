@@ -15,4 +15,6 @@ MonoBehaviour:
   Id: 3
   Data:
     name: Fireball
+    groundDuration: 0.7
+    airDuration: 0.7
     behaviour: {fileID: 11400000, guid: 7e833d4b7e916478788ec9e08988386b, type: 2}

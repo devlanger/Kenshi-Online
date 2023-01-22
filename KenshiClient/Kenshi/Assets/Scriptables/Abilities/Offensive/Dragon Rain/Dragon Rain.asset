@@ -15,4 +15,6 @@ MonoBehaviour:
   Id: 4
   Data:
     name: Dragon Rain
+    groundDuration: 0.9
+    airDuration: 0.9
     behaviour: {fileID: 11400000, guid: b4949f7ab253b40bbb73a3607541a429, type: 2}

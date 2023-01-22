@@ -4876,7 +4876,20 @@ MonoBehaviour:
     m_Bits: 4294967295
   triggerEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8164323998408450365, guid: 19c04c894e8454821b87911b240e922b,
+          type: 3}
+        m_TargetAssemblyTypeName: TriggerCollisionHandler, Assembly-CSharp
+        m_MethodName: Destroy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!135 &-3658223304742492155
 SphereCollider:
   m_ObjectHideFlags: 0
