@@ -11,6 +11,9 @@ public class AbilitiesController : MonoBehaviour
     {
         GameObject inst = Instantiate(kunai, abilityInfo.user.transform.position + (UnityEngine.Quaternion.LookRotation(abilityInfo.aimPoint) * new Vector3(0, 1, 1)),
             Quaternion.LookRotation(abilityInfo.aimPoint));
+
+        inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
+        
         Vector3 dir = (abilityInfo.aimPoint - inst.transform.position).normalized * 10;
         
         inst.transform.rotation = Quaternion.LookRotation(dir);

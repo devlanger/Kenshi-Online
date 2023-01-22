@@ -15,6 +15,7 @@ namespace Kenshi.Shared.Packets.GameServer
         public FSMStateId stateId;
         public AttackState.Data attackData;
         public HitState.Data hitData;
+        public AbilityCastState.Data abilityData;
         public float moveSpeed = 0;
 
         public UpdateFsmStatePacket() 
@@ -33,6 +34,13 @@ namespace Kenshi.Shared.Packets.GameServer
             this.targetId = targetId;
             stateId = FSMStateId.hit;
             this.hitData = data;
+        }
+        
+        public UpdateFsmStatePacket(int targetId, AbilityCastState.Data abilityData)
+        {
+            this.targetId = targetId;
+            stateId = FSMStateId.ability_cast;
+            this.abilityData = abilityData;
         }
         
         public override void Deserialize(NetDataReader reader)
@@ -58,6 +66,14 @@ namespace Kenshi.Shared.Packets.GameServer
                         hitPos = ReadVector3(reader),
                     };
                     break;
+                case FSMStateId.ability_cast:
+                    abilityData = new AbilityCastState.Data
+                    {
+                        abilityId = reader.GetInt(),
+                        startPos = ReadVector3(reader),
+                        hitPoint = ReadVector3(reader),
+                    };
+                    break;
             }
         }
 
@@ -79,6 +95,12 @@ namespace Kenshi.Shared.Packets.GameServer
                     writer.Put(hitData.targetId);
                     PutVector3(hitData.direction);
                     PutVector3(hitData.hitPos);
+                    break;
+                
+                case FSMStateId.ability_cast:
+                    writer.Put(abilityData.abilityId);
+                    PutVector3(abilityData.startPos);
+                    PutVector3(abilityData.hitPoint);
                     break;
             }
         }

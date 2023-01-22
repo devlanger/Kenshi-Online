@@ -231,6 +231,13 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                             p.playerStateMachine.ChangeState(new HitState(fsmPacket.hitData));
                         }
                         break;
+                    
+                    case FSMStateId.ability_cast:
+                        if (_players.TryGetValue(fsmPacket.targetId, out var ap) && !ap.IsLocalPlayer)
+                        {
+                            ap.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
+                        }
+                        break;
                 }
             }
         }

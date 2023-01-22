@@ -95,9 +95,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29ef7232d38e94865bb00970c224e7e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 823
+    m_Bits: 4294967295
   triggerEvent:
     m_PersistentCalls:
       m_Calls:

@@ -135,6 +135,13 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                                     player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
                                 }
                                 break;
+                            
+                            case FSMStateId.ability_cast:
+                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var abilityPlayer))
+                                {
+                                    abilityPlayer.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
+                                }
+                                break;
                         }
 
                         break;

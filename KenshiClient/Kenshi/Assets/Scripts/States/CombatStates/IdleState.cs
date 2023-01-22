@@ -35,7 +35,12 @@ namespace StarterAssets.CombatStates
             UpdateAttackInput(stateMachine);
             if (stateMachine.Target.Input.rightClick)
             {
-                stateMachine.ChangeState(new AbilityCastState());
+                stateMachine.ChangeState(new AbilityCastState(new AbilityCastState.Data
+                {
+                    abilityId = 1,
+                    hitPoint = stateMachine.Target.Input.AimDirection,
+                    startPos = stateMachine.Target.transform.position,
+                }));
             }
         }
 

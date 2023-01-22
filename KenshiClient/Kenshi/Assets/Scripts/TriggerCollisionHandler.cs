@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class TriggerCollisionHandler : MonoBehaviour
 {
+    public GameObject owner;
+
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private UnityEvent triggerEvent;
 
@@ -16,6 +18,11 @@ public class TriggerCollisionHandler : MonoBehaviour
             return;
         }
 
+        if (other.gameObject == owner)
+        {
+            return;
+        }
+        
         triggerEvent?.Invoke();
     }
 
