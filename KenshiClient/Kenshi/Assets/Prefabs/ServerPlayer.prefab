@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 3012513334476820547}
   - component: {fileID: 5558266306602655100}
   - component: {fileID: 5924514504045062219}
+  - component: {fileID: 3923299640951421226}
   m_Layer: 8
   m_Name: ServerPlayer
   m_TagString: Player
@@ -123,6 +124,7 @@ MonoBehaviour:
     Target: {fileID: 0}
     Variables: {fileID: 0}
   animator: {fileID: 0}
+  agent: {fileID: 0}
 --- !u!114 &3012513334476820547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +204,23 @@ MonoBehaviour:
   cameraSpeedY: 3
   cameraSpeedX: 3
   _jumpTime: 0
+--- !u!320 &3923299640951421226
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 0}
+  m_InitialState: 1
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &6545095662161360304
 GameObject:
   m_ObjectHideFlags: 0

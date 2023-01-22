@@ -33,15 +33,7 @@ namespace StarterAssets.CombatStates
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
             UpdateAttackInput(stateMachine);
-            if (stateMachine.Target.Input.rightClick)
-            {
-                stateMachine.ChangeState(new AbilityCastState(new AbilityCastState.Data
-                {
-                    abilityId = 1,
-                    hitPoint = stateMachine.Target.Input.AimDirection,
-                    startPos = stateMachine.Target.transform.position,
-                }));
-            }
+            AbilitiesController.Instance.UpdateInputs();
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)

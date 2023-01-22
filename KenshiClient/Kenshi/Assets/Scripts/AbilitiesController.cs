@@ -1,23 +1,92 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using StarterAssets.CombatStates;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class AbilitiesController : MonoBehaviour
 {
-    [SerializeField] private GameObject kunai;
+    public static AbilitiesController Instance;
     
-    public void CastAbility(AbilityInfo abilityInfo)
-    {
-        GameObject inst = Instantiate(kunai, abilityInfo.user.transform.position + (UnityEngine.Quaternion.LookRotation(abilityInfo.aimPoint) * new Vector3(0, 1, 1)),
-            Quaternion.LookRotation(abilityInfo.aimPoint));
+    [SerializeField] private GameObject kunai;
 
-        inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
-        
-        Vector3 dir = (abilityInfo.aimPoint - inst.transform.position).normalized * 10;
-        
-        inst.transform.rotation = Quaternion.LookRotation(dir);
-        inst.GetComponent<Rigidbody>().velocity = dir;
+    public List<AbilityHotkey> hotkeys = new List<AbilityHotkey>();
+
+    public AbilitiesManager abilitiesManager;
+    public List<AbilityScriptable> abilities => abilitiesManager.abilities;
+    
+    public event Action<List<AbilityHotkey>> OnHotkeysChanged;
+    
+    [System.Serializable]
+    public class AbilityHotkey
+    {
+        public int hotkeyId;
+        public int abilityId;
+        public KeyCode key;
+    }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void SetHotkey(int id, int abilityId)
+    {
+        var hotkey = hotkeys.FirstOrDefault(h => h.hotkeyId == id);
+        if (hotkey == null)
+        {
+            return;
+        }
+
+        hotkey.abilityId = abilityId;
+        OnHotkeysChanged?.Invoke(hotkeys);
+    }
+
+    private void Start()
+    {
+        //1
+        SetHotkey(0, 3);
+        //2
+        SetHotkey(1, 4);
+        //3
+        SetHotkey(2, 5);
+        //E
+        SetHotkey(3, 1);
+        //F
+        SetHotkey(4, 2);
+    }
+
+    public void UpdateInputs()
+    {
+        foreach (var hotkey in hotkeys)
+        {
+            if (Input.GetKeyDown(hotkey.key))
+            {
+                var stateMachine = GameRoomNetworkController.Instance.LocalPlayer.playerStateMachine;
+                stateMachine.ChangeState(new AbilityCastState(new AbilityCastState.Data
+                {
+                    abilityId = hotkey.abilityId,
+                    hitPoint = stateMachine.Target.Input.AimDirection,
+                    startPos = stateMachine.Target.transform.position,
+                }));
+            }
+        }
+    }
+
+    public AbilityData CastAbility(AbilityInfo abilityInfo)
+    {
+        var ability = abilities.FirstOrDefault(a => a.Id == abilityInfo.abilityId);
+        if (ability == null)
+        {
+            return null;
+        }
+
+        abilityInfo.user.Input.abilityInfo = abilityInfo;
+        abilityInfo.user.GetComponent<PlayableDirector>().Play(ability.Data.behaviour);
+        return ability.Data;
     }
 }   
 

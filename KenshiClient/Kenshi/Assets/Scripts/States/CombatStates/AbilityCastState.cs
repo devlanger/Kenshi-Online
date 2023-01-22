@@ -56,14 +56,23 @@ namespace StarterAssets.CombatStates
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, data), DeliveryMethod.ReliableOrdered);
             }
             
+            var ability = GameObject.FindObjectOfType<AbilitiesController>().CastAbility(new AbilityInfo()
+            {   
+                abilityId = data.abilityId,
+                user = stateMachine.Target,
+                aimPoint = data.hitPoint,
+            });
+
             if (stateMachine.Variables.Grounded)
             {
+                time = ability.groundDuration;
+
                 stateMachine.Target.movementStateMachine.ChangeState(new StandState());
                 stateMachine.Variables.IsAttacking = true;
             }
             else
             {
-                time = 0.175f;
+                time = ability.airDuration;
             }
 
             Vector3 rot = (data.hitPoint - data.startPos).normalized;
@@ -71,19 +80,14 @@ namespace StarterAssets.CombatStates
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot); 
             stateMachine.Target.transform.position = data.startPos; 
             
-            var animator = stateMachine.Variables.Animator;
-            if (animator != null)
-            {
-                animator.SetTrigger("ability");
-                animator.SetInteger("ability_id", 1);
-            }
+            // var animator = stateMachine.Variables.Animator;
+            // if (animator != null)
+            // {
+            //     animator.SetTrigger("ability");
+            //     animator.SetInteger("ability_id", 1);
+            // }
 
-            GameObject.FindObjectOfType<AbilitiesController>().CastAbility(new AbilityInfo()
-            {   
-                abilityId = 1,
-                user = stateMachine.Target,
-                aimPoint = data.hitPoint,
-            });
+            
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)

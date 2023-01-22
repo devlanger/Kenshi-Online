@@ -1040,6 +1040,7 @@ GameObject:
   - component: {fileID: 377938197895356575}
   - component: {fileID: 3931602108648380513}
   - component: {fileID: 4728268663734691058}
+  - component: {fileID: 3885285297033658368}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -1166,6 +1167,7 @@ MonoBehaviour:
     Target: {fileID: 0}
     Variables: {fileID: 0}
   animator: {fileID: 0}
+  agent: {fileID: 0}
 --- !u!114 &3012513334476820547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1228,7 +1230,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01bf07414d9f747049e6091ec7230c90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  receivedPackets: []
+  m_BufferedState: []
+  m_InterpolationBackTime: 0.1
+  m_ExtrapolationLimit: 0.5
 --- !u!136 &3931602108648380513
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1285,6 +1289,23 @@ MonoBehaviour:
   cameraSpeedY: 3
   cameraSpeedX: 3
   _jumpTime: 0
+--- !u!320 &3885285297033658368
+PlayableDirector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926081852918481}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_PlayableAsset: {fileID: 0}
+  m_InitialState: 0
+  m_WrapMode: 2
+  m_DirectorUpdateMode: 1
+  m_InitialTime: 0
+  m_SceneBindings: []
+  m_ExposedReferences:
+    m_References: []
 --- !u!1 &4523139366846529165
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,6 +21,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public Player myPlayerFactory;
     public Player otherPlayerFactory;
 
+    public Player LocalPlayer => _myPlayer;
+    
     private Player _myPlayer;
     private int _myPlayerId;
     

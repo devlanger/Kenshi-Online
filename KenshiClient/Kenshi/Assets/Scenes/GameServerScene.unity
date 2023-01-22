@@ -3131,6 +3131,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kunai: {fileID: 3271557652579845924, guid: e53efe993edef48c593c763a333063ad, type: 3}
+  hotkeys: []
+  abilitiesManager: {fileID: 11400000, guid: f071761030a6b4d61a864e0424bc8161, type: 2}
 --- !u!4 &2031295537
 Transform:
   m_ObjectHideFlags: 0
