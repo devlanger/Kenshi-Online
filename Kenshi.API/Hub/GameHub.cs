@@ -204,12 +204,12 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
             if (port != null)
             {
-                Console.WriteLine($"{Context.ConnectionId} has joined room port: {port}");
+                Console.WriteLine($"{Context.ConnectionId} has joined Game Room port: {port}");
                 await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", port);
-                foreach (var playerName in GetPlayersInRoom(port))
-                {
-                    Console.WriteLine(playerName);
-                }
+                // foreach (var playerName in GetPlayersInRoom(port))
+                // {
+                //     Console.WriteLine(playerName);
+                // }
             }
             else
             {
