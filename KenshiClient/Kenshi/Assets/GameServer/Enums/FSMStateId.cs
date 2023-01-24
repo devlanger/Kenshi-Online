@@ -6,6 +6,7 @@ namespace Kenshi.Shared.Enums
         attack = 2,
         ability_cast = 3,
         hit = 4,
+        dead = 5,
         
         stand = 75,        
         move = 76,        

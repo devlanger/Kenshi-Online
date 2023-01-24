@@ -20,7 +20,11 @@ namespace StarterAssets
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.animator.SetBool(_animIDGrounded, true);
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator.SetBool(_animIDGrounded, true);
+            }
+
             stateMachine.ChangeState(new StandState());
             stateMachine.Variables.jumpIndex = 0;
         }

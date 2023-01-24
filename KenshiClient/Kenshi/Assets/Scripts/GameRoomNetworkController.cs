@@ -240,6 +240,17 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                         {
                             ui.AddInGameEventLabel(gameEventPacket.diedData);
                         }
+                        if (_players.TryGetValue(gameEventPacket.respawnData.playerId, out var p1))
+                        {
+                            p1.playerStateMachine.ChangeState(new DeadState());
+                        }
+                        break;
+                    case GameEventPacket.GameEventId.player_respawn:
+                        if (_players.TryGetValue(gameEventPacket.respawnData.playerId, out var p))
+                        {
+                            p.transform.position = gameEventPacket.respawnData.respawnPos;
+                            p.playerStateMachine.ChangeState(new IdleState());
+                        }
                         break;
                 }
             }

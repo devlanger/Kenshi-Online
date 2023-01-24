@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Lightning Shock
   m_EditorClassIdentifier: 
   Id: 10
-  enabledInBuild: 0
-  icon: {fileID: 0}
+  enabledInBuild: 1
+  icon: {fileID: 21300000, guid: b3199ae29bf246642875fc68fab4595b, type: 3}
   Data:
     name: Lightning Shock
     groundDuration: 0.5

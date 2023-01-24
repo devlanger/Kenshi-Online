@@ -21,7 +21,6 @@ namespace StarterAssets.CombatStates
             return false;
         }
         
-        
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
             if (stateMachine.Variables.attackIndex > 0 && Time.time > stateMachine.Variables.lastAttackTime + 1)

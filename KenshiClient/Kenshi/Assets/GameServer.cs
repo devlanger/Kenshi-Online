@@ -114,7 +114,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                         {
                             SendPacket(playerId, new LoginEventPacket(p.Key, claims.Name), DeliveryMethod.ReliableOrdered);
                         }
-
                         break;
                     case PacketId.PositionUpdateRequest:
                         var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);

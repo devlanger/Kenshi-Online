@@ -15,6 +15,6 @@ public class InGameEventListItem : MonoBehaviour
     {
         attackerName.SetText(data.attackerName);
         targetName.SetText(data.targetName);
-        eventIcon.sprite = null;
+        //eventIcon.sprite = null;
     }
 }

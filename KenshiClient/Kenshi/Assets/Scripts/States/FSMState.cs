@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace StarterAssets
 {
+    [System.Serializable]
     public abstract class FSMState
     {
         public abstract FSMStateId Id { get; }

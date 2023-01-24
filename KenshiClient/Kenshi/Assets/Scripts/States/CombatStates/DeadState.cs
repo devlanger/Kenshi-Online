@@ -17,12 +17,18 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.animator.SetBool("dead", true);
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator.SetBool("dead", true);
+            }
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.animator.SetBool("dead", false);
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator.SetBool("dead", false);
+            }
         }
     }
 }
