@@ -9,5 +9,7 @@ namespace Kenshi.Shared.Enums
         PositionUpdateEvent = 5,
         LogoutEvent = 6,
         FsmUpdate = 7,
+        StatEvent = 8,
+        GameEventPacket = 9,
     }
 }

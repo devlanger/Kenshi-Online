@@ -214,7 +214,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             else
             {
                 Console.WriteLine($"Room with id {roomId} is not present in GameRoomService.");
-                //await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", roomId);
+                await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", 5001.ToString());
             }
         }
         catch (Exception e)

@@ -38,7 +38,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 
     public static Config Configuration = new Config();
 
-    public event Action<NetPeer, Vector3> OnPlayerSpawned;
+    public event Action<NetPeer, ClaimsDto, Vector3> OnPlayerSpawned;
     public event Action<int, Vector3> OnPlayerPositionUpdate;
     public event Action<int> OnPlayerDespawned;
     
@@ -106,12 +106,13 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                 {
                     case PacketId.LoginRequest:
                         var playerId = peer.Id;
+                        var claims = GetUserData(playerId, out var data);
                         SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
                         SendPacket(playerId, new LoginResponsePacket(playerId), DeliveryMethod.ReliableOrdered);
-                        SendPacketToAll(new LoginEventPacket(playerId), DeliveryMethod.ReliableOrdered);
+                        SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
                         foreach (var p in _players)
                         {
-                            SendPacket(playerId, new LoginEventPacket(p.Key), DeliveryMethod.ReliableOrdered);
+                            SendPacket(playerId, new LoginEventPacket(p.Key, claims.Name), DeliveryMethod.ReliableOrdered);
                         }
 
                         break;
@@ -200,7 +201,16 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                 RoomId = GetRoomId(Configuration.port),
                 Username = username
             });
-            new RabbitMqClient().SendConnectedUser("disconnected_user",json);
+            
+            try
+            {
+                new RabbitMqClient().SendConnectedUser("disconnected_user", json);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+
             tokens.Remove(playerId);
             UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerDespawned?.Invoke(playerId); });
             SendPacketToAll(new LogoutEventPacket(playerId));
@@ -213,20 +223,35 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     {
         Debug.Log("[SERVER] We have new peer " + peer.EndPoint);
         
-        var claims = GetUserClaims(peer.Id);
-        RabbitMqClient client = new RabbitMqClient();
-        var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
+        var claims = GetUserData(peer.Id, out var json);
+
+        try
+        {
+            RabbitMqClient client = new RabbitMqClient();
+            client.SendConnectedUser("connected_user",json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+        }
+        
+        Debug.Log($"[GAME SERVER] Client connected - ID: {peer.Id} Name: {claims.Name}");
+        players++;
+        
+        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer, claims, Vector3.zero); });
+        _ourPeer = peer;
+    }
+
+    private static ClaimsDto GetUserData(int id, out string json)
+    {
+        var claims = GetUserClaims(id);
+        json = JsonConvert.SerializeObject(new UserRoomStateEventDto
         {
             State = RoomEventState.Joined,
             RoomId = GetRoomId(Configuration.port),
             Username = claims.Name
         });
-        client.SendConnectedUser("connected_user",json);
-        Debug.Log($"[GAME SERVER] Client connected - ID: {peer.Id} Name: {claims.Name}");
-        players++;
-        
-        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer, Vector3.zero); });
-        _ourPeer = peer;
+        return claims;
     }
 
     public void OnNetworkError(IPEndPoint endPoint, SocketError socketErrorCode)

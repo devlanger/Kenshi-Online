@@ -113,6 +113,31 @@ namespace StarterAssets.CombatStates
                     
                     if (GameServer.IsServer)
                     {
+                        if (hitTarget.GetStat(StatEventPacket.StatId.health, out ushort health))
+                        {
+                            health -= 10;
+                            if (health <= 0)
+                            {                        
+                                GameRoomNetworkController.SendPacketToAll(new GameEventPacket(new GameEventPacket.PlayerDied
+                                {
+                                    playerId = hitTarget.NetworkId,
+                                    targetName = (string)hitTarget.stats[StatEventPacket.StatId.username],
+                                    attackerName = (string)machine.Target.stats[StatEventPacket.StatId.username],
+                                    dt = GameEventPacket.PlayerDied.DeathType.melee
+                                }), DeliveryMethod.ReliableOrdered);
+                                
+                                health = 100;
+                            }
+                            
+                            CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
+                            {
+                                statId = StatEventPacket.StatId.health,
+                                value = health,
+                                maxValue = (ushort)100,
+                                playerId = hitTarget.NetworkId
+                            });
+                        }
+                        
                         GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(hitData.targetId, hitData), DeliveryMethod.ReliableOrdered);
                     }
                     

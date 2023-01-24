@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using UnityEngine;
 
@@ -40,7 +41,7 @@ public class GameServerEventsHandler : MonoBehaviour
 
     private int lastBotId = 1000;
     
-    private void ServerOnOnPlayerSpawned(NetPeer arg1, Vector3 arg2)
+    private void ServerOnOnPlayerSpawned(NetPeer arg1, GameServer.ClaimsDto claims,Vector3 arg2)
     {
         if (_players.ContainsKey(arg1.Id))
         {
@@ -49,6 +50,7 @@ public class GameServerEventsHandler : MonoBehaviour
 
         var inst = Instantiate(playerObject, arg2, Quaternion.identity);
         AddPlayerToNetwork(arg1.Id, inst);
+        inst.stats[StatEventPacket.StatId.username] = claims.Name;
         _players[arg1.Id].peer = arg1;
     }
     

@@ -29,7 +29,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     private NetManager _netClient;
 
     private int _skipFrame = 0;
-    private Dictionary<int, Player> _players = new Dictionary<int, Player>();
+    public Dictionary<int, Player> _players = new Dictionary<int, Player>();
 
     private NetPeer MyPeer => _netClient == null ? null : _netClient.FirstPeer;
     public float Ping => MyPeer == null ? 0.15f : MyPeer.Ping;
@@ -137,6 +137,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         packet.Serialize(packet.writer);
         foreach (var item in peer)
         {
+            if (item == null)
+            {
+                continue;
+            }
+            
             item.Send(packet.writer, deliveryMethod);
         }
     }
@@ -192,7 +197,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 UnityMainThreadDispatcher.Instance().Enqueue(() =>
                 {
                     Debug.Log("OtherPlayerId: " + packet._playerId);
-                    SpawnOtherPlayer(packet._playerId);
+                    var p = SpawnOtherPlayer(packet._playerId);
+                    if (p != null)
+                    {
+                        p.SetStat(StatEventPacket.StatId.username, packet.username);
+                    }
                 });
             }
             else if (packetId == PacketId.PositionUpdateEvent)
@@ -213,6 +222,26 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                         _players.Remove(packet.PlayerId);
                     }
                 });
+            }
+            else if (packetId == PacketId.StatEvent)
+            {
+                var statPacket = SendablePacket.Deserialize<StatEventPacket>(packetId, reader);
+                CombatController.Instance.SetPlayerStat(statPacket.data);
+            }
+            else if (packetId == PacketId.GameEventPacket)
+            {
+                var gameEventPacket = SendablePacket.Deserialize<GameEventPacket>(packetId, reader);
+                //CombatController.Instance.SetPlayerStat(statPacket.data);
+                switch (gameEventPacket.eventId)
+                {
+                    case GameEventPacket.GameEventId.player_died:
+                        var ui = FindObjectOfType<InGameEventsUI>();
+                        if (ui)
+                        {
+                            ui.AddInGameEventLabel(gameEventPacket.diedData);
+                        }
+                        break;
+                }
             }
             else if (packetId == PacketId.FsmUpdate)
             {
@@ -245,16 +274,17 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
     }
 
-    private void SpawnOtherPlayer(int playerId)
+    private Player SpawnOtherPlayer(int playerId)
     {
         if (playerId == _myPlayerId)
-            return;
+            return null;
         
         var newPlayer = Instantiate(otherPlayerFactory);
         newPlayer.transform.position = newPlayer.GetComponent<Rigidbody>().position + new Vector3(UnityEngine.Random.Range(-5.0f, 5.0f), UnityEngine.Random.Range(-5.0f, 5.0f));
         Debug.Log("Spawn other object " + playerId);
         _players[playerId] = newPlayer;
         newPlayer.NetworkId = playerId;
+        return _players[playerId];
     }
 
     private void UpdatePosition(PositionUpdatePacket packet)
