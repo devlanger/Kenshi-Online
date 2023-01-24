@@ -198,5 +198,7 @@ MonoBehaviour:
   m_Name: ThrowPlayableAsset
   m_EditorClassIdentifier: 
   data:
-    throwable: {fileID: 2396338518217125097, guid: 19c04c894e8454821b87911b240e922b,
+    spawnType: 2
+    spawnOffset: {x: 0, y: 1, z: 0}
+    throwable: {fileID: 2651058809732364528, guid: 832af621a7fc44b63b2e28cfcf2a3b28,
       type: 3}

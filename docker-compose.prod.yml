@@ -1,0 +1,3 @@
+services:
+  kenshiapi:
+    platform: linux/amd64 #set to work on ubuntu

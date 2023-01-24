@@ -200,7 +200,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         try
         {
-            var port = _service.ListPods()?.Result?.Find(p => roomId == p.Id)?.Port;
+            var port = _gameRoomService.GetRooms().FirstOrDefault(p => roomId == p.RoomId)?.Port.ToString();
 
             if (port != null)
             {
@@ -213,7 +213,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             }
             else
             {
-                await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", roomId);
+                Console.WriteLine($"Room with id {roomId} is not present in GameRoomService.");
+                //await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", roomId);
             }
         }
         catch (Exception e)

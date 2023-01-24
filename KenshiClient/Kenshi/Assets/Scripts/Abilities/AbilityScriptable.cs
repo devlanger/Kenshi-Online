@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class AbilityScriptable : ScriptableDataObject
 {
+    public bool enabledInBuild = true;
     public Sprite icon;
     public AbilityData Data;
 }

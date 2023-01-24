@@ -60,7 +60,7 @@ namespace StarterAssets.CombatStates
             {   
                 abilityId = data.abilityId,
                 user = stateMachine.Target,
-                aimPoint = data.hitPoint,
+                hitPoint = data.hitPoint,
             });
 
             if (stateMachine.Variables.Grounded)

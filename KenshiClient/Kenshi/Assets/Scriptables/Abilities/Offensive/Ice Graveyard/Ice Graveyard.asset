@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
+  m_Name: Ice Graveyard
+  m_EditorClassIdentifier: 
+  Id: 7
+  enabledInBuild: 0
+  icon: {fileID: 21300000, guid: fed4337445ffcb6438005f1a27d01035, type: 3}
+  Data:
+    name: Ice Graveyard
+    groundDuration: 0.5
+    airDuration: 0.5
+    behaviour: {fileID: 11400000, guid: dd00874cedf174de4806bc9a2443bb46, type: 2}

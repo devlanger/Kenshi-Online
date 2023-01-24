@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using StarterAssets.CombatStates;
 using Unity.Mathematics;
 using UnityEngine;
@@ -19,6 +20,8 @@ public class AbilitiesController : MonoBehaviour
     public List<AbilityScriptable> abilities => abilitiesManager.abilities;
     
     public event Action<List<AbilityHotkey>> OnHotkeysChanged;
+
+    public List<int> skillMap = new List<int>();
     
     [System.Serializable]
     public class AbilityHotkey
@@ -31,6 +34,7 @@ public class AbilitiesController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        LoadSkillmap();
     }
 
     public void SetHotkey(int id, int abilityId)
@@ -41,22 +45,37 @@ public class AbilitiesController : MonoBehaviour
             return;
         }
 
+        skillMap[id] = abilityId;
         hotkey.abilityId = abilityId;
         OnHotkeysChanged?.Invoke(hotkeys);
     }
 
-    private void Start()
+    private void LoadSkillmap()
     {
-        //1
-        SetHotkey(0, 3);
-        //2
-        SetHotkey(1, 4);
-        //3
-        SetHotkey(2, 5);
-        //E
-        SetHotkey(3, 1);
-        //F
-        SetHotkey(4, 2);
+        var skillsString = PlayerPrefs.GetString("skillmap");
+        if (!String.IsNullOrEmpty(skillsString))
+        {
+            skillMap = JsonConvert.DeserializeObject<List<int>>(skillsString);
+        }
+        else
+        {
+            skillMap = new List<int>()
+            {
+                3, 4, 5, 1, 2
+            };
+
+            SaveSkillmap();
+        }
+            
+        for (int i = 0; i < hotkeys.Count; i++)
+        {
+            SetHotkey(i, skillMap[i]);
+        }
+    }
+
+    public void SaveSkillmap()
+    {
+        PlayerPrefs.SetString("skillmap", JsonConvert.SerializeObject(skillMap));
     }
 
     public void UpdateInputs()
@@ -69,7 +88,7 @@ public class AbilitiesController : MonoBehaviour
                 stateMachine.ChangeState(new AbilityCastState(new AbilityCastState.Data
                 {
                     abilityId = hotkey.abilityId,
-                    hitPoint = stateMachine.Target.Input.AimDirection,
+                    hitPoint = stateMachine.Target.Input.HitPoint,
                     startPos = stateMachine.Target.transform.position,
                 }));
             }
@@ -101,5 +120,5 @@ public class AbilityInfo
 {
     public Player user;
     public int abilityId;
-    public Vector3 aimPoint;
+    public Vector3 hitPoint;
 }

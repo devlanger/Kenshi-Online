@@ -4,23 +4,23 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 // A behaviour that is attached to a playable
-public class ThrowPlayableBehaviour : PlayableBehaviour
+public class MovePlayableBehaviour : PlayableBehaviour
 {
     [System.Serializable]
     public class Data
     {
-        public AbilityInfo info;
-        public GameObject throwable;
+        public string triggerKey = "";
+        public int value = 1;
     }
 
-    public GameObject owner;
     public Data data;
+    public GameObject owner;
     
     // Called when the owning graph starts playing
     public override void OnGraphStart(Playable playable)
     {
     }
-    
+
     // Called when the owning graph stops playing
     public override void OnGraphStop(Playable playable)
     {
@@ -33,17 +33,11 @@ public class ThrowPlayableBehaviour : PlayableBehaviour
         if (playable.GetPlayState() == PlayState.Playing)
         {
             var p = owner.GetComponent<Player>();
-            var abilityInfo = p.Input.abilityInfo;
-            Debug.Log("Throw");
-            GameObject inst = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (UnityEngine.Quaternion.LookRotation(abilityInfo.aimPoint) * new Vector3(0, 1, 1)),
-                Quaternion.LookRotation(abilityInfo.aimPoint));
-
-            inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
-        
-            Vector3 dir = (abilityInfo.aimPoint - inst.transform.position).normalized * 10;
-        
-            inst.transform.rotation = Quaternion.LookRotation(dir);
-            inst.GetComponent<Rigidbody>().velocity = dir;
+            if (p.animator != null)
+            {
+                p.animator.SetTrigger(data.triggerKey);                
+                p.animator.SetInteger($"{data.triggerKey}_id", data.value);                
+            }
         }
     }
 

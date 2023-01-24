@@ -13,8 +13,20 @@ MonoBehaviour:
   m_Name: Abilities Manager
   m_EditorClassIdentifier: 
   abilities:
-  - {fileID: 11400000, guid: 8092527cf33044a57893e23f0b3bc5d8, type: 2}
-  - {fileID: 11400000, guid: 7383e9f9807f642a6bd122ceb876ee1e, type: 2}
-  - {fileID: 11400000, guid: 15b0a088fd1954545be03ff61fd0983f, type: 2}
+  - {fileID: 11400000, guid: 3fc747aa064e8450b9ef801744a978fd, type: 2}
+  - {fileID: 11400000, guid: 01ccdc8a94196494f8fdf66fc0705270, type: 2}
   - {fileID: 11400000, guid: 37ecb996c4f2d4389bf448d380ffc3a4, type: 2}
+  - {fileID: 11400000, guid: 15b0a088fd1954545be03ff61fd0983f, type: 2}
+  - {fileID: 11400000, guid: 61086be70bad04a008cc700292ceb2a2, type: 2}
+  - {fileID: 11400000, guid: b2002bb84d2894e4bbf2b09a662ad886, type: 2}
+  - {fileID: 11400000, guid: 8092527cf33044a57893e23f0b3bc5d8, type: 2}
+  - {fileID: 11400000, guid: f2da025d072a640e08a7727314a77403, type: 2}
+  - {fileID: 11400000, guid: 6e44bf54529c54c138d25751170cf1c6, type: 2}
+  - {fileID: 11400000, guid: a539cc73082344d92853da1625d5dbeb, type: 2}
+  - {fileID: 11400000, guid: a7327a92f39864738bc2223668824401, type: 2}
+  - {fileID: 11400000, guid: 7383e9f9807f642a6bd122ceb876ee1e, type: 2}
+  - {fileID: 11400000, guid: 8bdc81b6ad3bd476d966f10586e83998, type: 2}
+  - {fileID: 11400000, guid: c908c53334d0a4c6dad96ce5dd64f8c9, type: 2}
+  - {fileID: 11400000, guid: f45a61da3972f4d6a8069f213bb34d5a, type: 2}
   - {fileID: 11400000, guid: 9ace2e5b94cd0498a8af1697cfe28aa7, type: 2}
+  - {fileID: 11400000, guid: 50fe0750c2d83464e8890a030ba3962e, type: 2}

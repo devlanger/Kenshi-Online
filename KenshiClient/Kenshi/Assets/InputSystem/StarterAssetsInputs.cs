@@ -20,7 +20,7 @@ namespace StarterAssets
 		public AbilityInfo abilityInfo;
 
 		public Vector3 CameraForward;
-		public Vector3 AimDirection;
+		[FormerlySerializedAs("AimDirection")] public Vector3 HitPoint;
 
 		public Vector3 LocalDirection;
 

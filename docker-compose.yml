@@ -6,7 +6,6 @@ networks:
 
 services:
   kenshiapi:
-    #platform: linux/amd64 #set to work on ubuntu
     depends_on:
       - redis
       - kenshirabbitmq
@@ -60,67 +59,67 @@ services:
     networks:
       - local-dev
       
-  grafana:
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
-    volumes:
-      - grafana-data:/var/lib/grafana
-    networks:
-      - local-dev
-    
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    restart: unless-stopped
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-    networks:
-      - local-dev
-  
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.45.0
-    container_name: cadvisor
-    ports:
-      - "8080:8080"
-    networks:
-      - local-dev
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-      - /etc/machine-id:/etc/machine-id:ro
-      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
-    devices:
-      - /dev/kmsg
-    restart: unless-stopped
-    privileged: true
-    
-  node_exporter:
-    image: prom/node-exporter:latest
-    container_name: node-exporter
-    restart: unless-stopped
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.rootfs=/rootfs'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    networks:
-      - local-dev
-    
-volumes:
-  grafana-data:
-  prometheus-data:
+#  grafana:
+#    image: grafana/grafana
+#    ports:
+#      - 3000:3000
+#    environment:
+#      GF_SECURITY_ADMIN_USER: admin
+#      GF_SECURITY_ADMIN_PASSWORD: admin
+#    volumes:
+#      - grafana-data:/var/lib/grafana
+#    networks:
+#      - local-dev
+#    
+#  prometheus:
+#    image: prom/prometheus
+#    ports:
+#      - 9090:9090
+#    volumes:
+#      - prometheus-data:/prometheus
+#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#    restart: unless-stopped
+#    command:
+#      - "--config.file=/etc/prometheus/prometheus.yml"
+#    networks:
+#      - local-dev
+#  
+#  cadvisor:
+#    image: gcr.io/cadvisor/cadvisor:v0.45.0
+#    container_name: cadvisor
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - local-dev
+#    volumes:
+#      - /:/rootfs:ro
+#      - /var/run:/var/run:ro
+#      - /sys:/sys:ro
+#      - /var/lib/docker/:/var/lib/docker:ro
+#      - /dev/disk/:/dev/disk:ro
+#      - /etc/machine-id:/etc/machine-id:ro
+#      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
+#    devices:
+#      - /dev/kmsg
+#    restart: unless-stopped
+#    privileged: true
+#    
+#  node_exporter:
+#    image: prom/node-exporter:latest
+#    container_name: node-exporter
+#    restart: unless-stopped
+#    volumes:
+#      - /proc:/host/proc:ro
+#      - /sys:/host/sys:ro
+#      - /:/rootfs:ro
+#    command:
+#      - '--path.procfs=/host/proc'
+#      - '--path.rootfs=/rootfs'
+#      - '--path.sysfs=/host/sys'
+#      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+#    networks:
+#      - local-dev
+#    
+#volumes:
+#  grafana-data:
+#  prometheus-data:

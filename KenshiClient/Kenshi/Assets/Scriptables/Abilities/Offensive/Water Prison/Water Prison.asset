@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Water Prison
   m_EditorClassIdentifier: 
   Id: 5
+  enabledInBuild: 1
   icon: {fileID: 21300000, guid: d79036c8f3ba7ca45970d9530c4dca90, type: 3}
   Data:
     name: Water Prison

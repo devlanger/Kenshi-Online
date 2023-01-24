@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 [System.Serializable]
-public class ThrowPlayableAsset : PlayableAsset
+public class MovePlayableAsset : PlayableAsset
 {
-    public ThrowPlayableBehaviour.Data data;
+    public AnimationPlayableBehaviour.Data data;
     
     public override Playable CreatePlayable(PlayableGraph graph, GameObject go)
     {
-        var p = ScriptPlayable<ThrowPlayableBehaviour>.Create(graph);
+        var p = ScriptPlayable<AnimationPlayableBehaviour>.Create(graph);
         p.GetBehaviour().owner = go;
         p.GetBehaviour().data = data;
         return p;

@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ../..
 
-docker-compose build
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
 docker-compose push
 
 cd tools/backend
