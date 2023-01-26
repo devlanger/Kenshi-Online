@@ -21,6 +21,7 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
         public Vector3 spawnOffset;
         public AbilityInfo info;
         public GameObject throwable;
+        public float speed = 20;
     }
 
     public GameObject owner;
@@ -51,9 +52,9 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
                     GameObject inst = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (UnityEngine.Quaternion.LookRotation(abilityInfo.hitPoint) * new Vector3(0, 1, 1)),
                         Quaternion.LookRotation(abilityInfo.hitPoint));
 
-                    inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
+                    inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
         
-                    Vector3 dir = (abilityInfo.hitPoint - inst.transform.position).normalized * 10;
+                    Vector3 dir = (abilityInfo.hitPoint - inst.transform.position).normalized * data.speed;
         
                     inst.transform.rotation = Quaternion.LookRotation(dir);
                     inst.GetComponent<Rigidbody>().velocity = dir;
@@ -61,12 +62,12 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
                 
                 case Data.SpawnType.AT_USER:
                     GameObject inst2 = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (abilityInfo.user.transform.rotation * data.spawnOffset), abilityInfo.user.transform.rotation);
-                    inst2.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
+                    inst2.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
                     break;
                 
                 case Data.SpawnType.AT_HIT_POINT:
                     GameObject inst3 = GameObject.Instantiate(data.throwable, abilityInfo.hitPoint + (abilityInfo.user.transform.rotation * data.spawnOffset), Quaternion.identity);
-                    inst3.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user.gameObject;
+                    inst3.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
                     break;
             }
         }

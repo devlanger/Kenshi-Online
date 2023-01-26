@@ -14,7 +14,14 @@ namespace StarterAssets
             switch (stateMachine.Target.playerStateMachine.CurrentState.Id)
             {
                 case FSMStateId.idle:
-                    if (stateMachine.Target.Input.move != Vector2.zero)
+                    if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
+                    {
+                        stateMachine.ChangeState(new DashState(new DashState.Data
+                        {
+                            dashIndex = stateMachine.Target.Input.dashIndex
+                        }));
+                    }
+                    else if (stateMachine.Target.Input.move != Vector2.zero)
                     {
                         stateMachine.ChangeState(new MoveState());
                     }
@@ -22,6 +29,7 @@ namespace StarterAssets
                     {
                         stateMachine.ChangeState(new JumpState());
                     }
+                    
                     break;
             }
         }

@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2651058809732364543}
   - component: {fileID: 2651058809732364537}
   - component: {fileID: 2651058809732364542}
+  - component: {fileID: 2640506908069400782}
   m_Layer: 0
   m_Name: WaterPrison
   m_TagString: Untagged
@@ -4897,6 +4898,27 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &2640506908069400782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2651058809732364528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ef7232d38e94865bb00970c224e7e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 1280
+  triggerEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  destroyOnHit: 0
+  destroyAfter: 2
 --- !u!1 &2651058810075976836
 GameObject:
   m_ObjectHideFlags: 0

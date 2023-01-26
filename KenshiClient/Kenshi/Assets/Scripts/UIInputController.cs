@@ -16,12 +16,19 @@ public class UIInputController : MonoBehaviour
         SCORES = 3,
     }
 
+    public static UIInputController Instance;
+    
     [SerializeField] private PlayerInput _inputController;
     [SerializeField] private EscapeView _escapeView;
     [SerializeField] private InGameChatUI _chatView;
     [SerializeField] private ScoresView _scoresView;
 
     public State CurrentState = State.IDLE;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -30,7 +37,7 @@ public class UIInputController : MonoBehaviour
     }
 
     private void Update()
-    {
+    { 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             SetState(CurrentState == State.IDLE ? State.ESCAPE : State.IDLE);

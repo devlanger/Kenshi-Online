@@ -8,6 +8,7 @@ public class GameRoomInstance : IGameRoomInstance
     public List<string> Players { get; set; } = new List<string>();
     public int Port { get; set; }
     public int MaxPlayers { get; set; }
+    public int PlayersCount => Players.Count;
 
     public void AddPlayer(string username)
     {

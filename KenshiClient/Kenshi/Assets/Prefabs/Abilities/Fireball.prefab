@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -4353555902051697407}
   - component: {fileID: 8164323998408450365}
   - component: {fileID: -3658223304742492155}
+  - component: {fileID: 6505749722133580485}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: Untagged
@@ -4880,18 +4881,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8164323998408450365}
         m_TargetAssemblyTypeName: TriggerCollisionHandler, Assembly-CSharp
-        m_MethodName: Destroy
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 8164323998408450365}
-        m_TargetAssemblyTypeName: TriggerCollisionHandler, Assembly-CSharp
         m_MethodName: SpawnEffect
         m_Mode: 2
         m_Arguments:
@@ -4903,6 +4892,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6505749722133580485}
+        m_TargetAssemblyTypeName: DamageTrigger, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  destroyOnHit: 1
+  destroyAfter: 0
 --- !u!135 &-3658223304742492155
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4924,6 +4927,23 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6505749722133580485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2396338518217125097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00a20acc9db2047c29b3e6f6a4c42c51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  damage: 25
+  distance: 3
+  throwBack: 10
+  collisionTarget: {fileID: 0}
 --- !u!1 &5644109113524021865
 GameObject:
   m_ObjectHideFlags: 0

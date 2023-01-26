@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 6254011326284892690}
   - component: {fileID: 2501939930703023653}
   - component: {fileID: 8629479130259209425}
+  - component: {fileID: 810229242614807223}
   m_Layer: 0
   m_Name: Kunai
   m_TagString: Untagged
@@ -235,7 +236,7 @@ MonoBehaviour:
   owner: {fileID: 0}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1847
   triggerEvent:
     m_PersistentCalls:
       m_Calls:
@@ -252,10 +253,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 8629479130259209425}
-        m_TargetAssemblyTypeName: TriggerCollisionHandler, Assembly-CSharp
-        m_MethodName: Destroy
-        m_Mode: 1
+      - m_Target: {fileID: 810229242614807223}
+        m_TargetAssemblyTypeName: DamageTrigger, Assembly-CSharp
+        m_MethodName: Trigger
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -264,6 +265,26 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  destroyOnHit: 1
+  destroyAfter: 0
+--- !u!114 &810229242614807223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3271557652579845924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00a20acc9db2047c29b3e6f6a4c42c51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  hitType: 0
+  damage: 10
+  distance: 0
+  throwBack: 1
+  collisionTarget: {fileID: 0}
 --- !u!1001 &7485039877619006726
 PrefabInstance:
   m_ObjectHideFlags: 0

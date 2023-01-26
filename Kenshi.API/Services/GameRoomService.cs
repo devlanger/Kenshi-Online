@@ -54,4 +54,9 @@ public class GameRoomService : IGameRoomService
     {
         return Rooms.Values.Select(r => r).FirstOrDefault(r => r.Players.Contains(playerName));
     }
+
+    public IGameRoomInstance GetRoom(string dtoRoomId)
+    {
+        return Rooms.ContainsKey(dtoRoomId) ? Rooms[dtoRoomId] : null;
+    }
 }

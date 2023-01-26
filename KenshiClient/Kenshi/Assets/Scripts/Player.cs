@@ -17,7 +17,8 @@ public class Player : Mob
     public bool IsLocalPlayer { get; set; }
     public bool IsBot { get; set; }
     public int NetworkId { get; set; }
-
+    public float Ping => peer != null ? (float)((float)peer.Ping / 1000f) : 0f;
+    
     public PlayerStateMachine playerStateMachine;
     public PlayerStateMachine movementStateMachine;
     public Animator animator;
@@ -77,8 +78,13 @@ public class Player : Mob
     {
         if (IsLocalPlayer)
         {
-            movementStateMachine.CurrentState?.UpdateInput(movementStateMachine);
-            playerStateMachine.CurrentState?.UpdateInput(playerStateMachine);
+            var state = UIInputController.Instance.CurrentState;
+            if (state != UIInputController.State.WRITING_CHAT && 
+                state != UIInputController.State.ESCAPE)
+            {
+                movementStateMachine.CurrentState?.UpdateInput(movementStateMachine);
+                playerStateMachine.CurrentState?.UpdateInput(playerStateMachine);
+            }
         }
         
         playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
@@ -89,20 +95,18 @@ public class Player : Mob
         
         playerStateMachine.UpdateQueue();
         movementStateMachine.UpdateQueue();
-        
-        if (IsLocalPlayer)
-        {
-            Input.jump = false;
-            Input.rightClick = false;
-            Input.leftClick = false;
-            Input.dashing = false;
-        }
     }
 
     private void LateUpdate()
     {
         if (IsLocalPlayer)
         {
+            Input.jump = false;
+            Input.rightClick = false;
+            Input.leftClick = false;
+            Input.dashing = false;
+            Input.dashIndex = DashState.Data.DashIndex.none;
+            
             tps.CameraRotation();
         }
     }

@@ -1,4 +1,5 @@
 using System.Text;
+using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
 using Kenshi.API.Services;
 using Kenshi.Backend.Shared.Models;
@@ -14,18 +15,20 @@ public class RabbitConsumer : IHostedService
     private readonly IConfiguration _configuration;
     private readonly IGameRoomService _gameRoomService;
     private readonly UserService _userService;
+    private readonly KubernetesService _podsService;
     private readonly IHubContext<GameHub> _gameHub;
     private IConnection _connection;
     private IModel _connectedChannel;
     private IModel _disconnectedChannel;
     private readonly string _host;
 
-    public RabbitConsumer(IConfiguration config, IGameRoomService gameRoomService, UserService userService, IHubContext<GameHub> gameHub)
+    public RabbitConsumer(IConfiguration config, IGameRoomService gameRoomService, UserService userService, IHubContext<GameHub> gameHub, KubernetesService podsService)
     {
         _configuration = config;
         _gameRoomService = gameRoomService;
         _userService = userService;
         _gameHub = gameHub;
+        _podsService = podsService;
         _host = _configuration["ConnectionStrings:rabbitmq"];
     }
 
@@ -105,6 +108,15 @@ public class RabbitConsumer : IHostedService
                 var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);
                 _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(users)).SendAsync("ShowChatMessage", $"[SYS] {dto.Username} has left the room");
                 _disconnectedChannel.BasicAck(deliveryTag: ea.DeliveryTag, multiple: false);
+                var room = _gameRoomService.GetRoom(dto.RoomId);
+                if (room != null)
+                {
+                    if (room.PlayersCount == 0)
+                    {
+                        _gameRoomService.RemoveRoom(room.RoomId);
+                        _podsService.DeletePod(room.RoomId);
+                    }
+                }
             }
             catch (Exception e)
             {

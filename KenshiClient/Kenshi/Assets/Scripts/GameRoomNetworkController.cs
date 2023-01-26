@@ -128,7 +128,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public static void SendPacketToMany(IEnumerable<NetPeer> peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
         PacketId packetId = (PacketId)packet.packetId;
-        if (packetId == PacketId.PositionUpdateEvent)
+        if (packetId != PacketId.PositionUpdateEvent)
         {
             Debug.Log($"Send to many [{packetId}]");
         }
@@ -231,7 +231,6 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             else if (packetId == PacketId.GameEventPacket)
             {
                 var gameEventPacket = SendablePacket.Deserialize<GameEventPacket>(packetId, reader);
-                //CombatController.Instance.SetPlayerStat(statPacket.data);
                 switch (gameEventPacket.eventId)
                 {
                     case GameEventPacket.GameEventId.player_died:
@@ -240,7 +239,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                         {
                             ui.AddInGameEventLabel(gameEventPacket.diedData);
                         }
-                        if (_players.TryGetValue(gameEventPacket.respawnData.playerId, out var p1))
+                        if (_players.TryGetValue(gameEventPacket.diedData.playerId, out var p1))
                         {
                             p1.playerStateMachine.ChangeState(new DeadState());
                         }
@@ -257,27 +256,50 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             else if (packetId == PacketId.FsmUpdate)
             {
                 var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
-                
+
+                var playerNotNull = _players.TryGetValue(fsmPacket.targetId, out var player);
                 switch (fsmPacket.stateId)
                 {
                     case FSMStateId.attack:
-                        if (_players.TryGetValue(fsmPacket.targetId, out var player) && !player.IsLocalPlayer)
+                        if (playerNotNull && !player.IsLocalPlayer)
                         {
                             player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
                         }
                         break;
-                    
                     case FSMStateId.hit:
                         if (_players.TryGetValue(fsmPacket.hitData.targetId, out var p))
                         {
                             p.playerStateMachine.ChangeState(new HitState(fsmPacket.hitData));
                         }
                         break;
-                    
                     case FSMStateId.ability_cast:
-                        if (_players.TryGetValue(fsmPacket.targetId, out var ap) && !ap.IsLocalPlayer)
+                        if (playerNotNull && !player.IsLocalPlayer)
                         {
-                            ap.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
+                            player.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
+                        }
+                        break;
+                    case FSMStateId.dash:
+                        if (playerNotNull && !player.IsLocalPlayer)
+                        {
+                            player.movementStateMachine.ChangeState(new DashState(fsmPacket.dashData));
+                        }
+                        break;
+                    case FSMStateId.block:
+                        if (playerNotNull && !player.IsLocalPlayer)
+                        {
+                            player.playerStateMachine.ChangeState(new BlockState());
+                        }
+                        break;
+                    case FSMStateId.mana_regen:
+                        if (playerNotNull && !player.IsLocalPlayer)
+                        {
+                            player.playerStateMachine.ChangeState(new ManaRegenState());
+                        }
+                        break;
+                    case FSMStateId.stunned:
+                        if (playerNotNull)
+                        {
+                            player.playerStateMachine.ChangeState(new StunState());
                         }
                         break;
                 }

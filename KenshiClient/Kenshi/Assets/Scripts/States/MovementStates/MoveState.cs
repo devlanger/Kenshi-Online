@@ -18,8 +18,15 @@ namespace StarterAssets
         }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-        {
-            if (stateMachine.Target.Input.move == Vector2.zero)
+        { 
+            if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
+            {
+                stateMachine.ChangeState(new DashState(new DashState.Data
+                {
+                    dashIndex = stateMachine.Target.Input.dashIndex
+                }));
+            }
+            else if (stateMachine.Target.Input.move == Vector2.zero)
             {
                 stateMachine.ChangeState(new StandState());
             }

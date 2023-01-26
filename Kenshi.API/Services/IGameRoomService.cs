@@ -11,4 +11,5 @@ public interface IGameRoomService
     void RemovePlayerFromRoom(string roomName, string username);
     void RemoveRoom(string id);
     IGameRoomInstance GetRoomForUsername(string playerName);
+    IGameRoomInstance GetRoom(string dtoRoomId);
 }

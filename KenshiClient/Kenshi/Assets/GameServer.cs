@@ -15,6 +15,7 @@ using LiteNetLib;
 using LiteNetLib.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using StarterAssets;
 using StarterAssets.CombatStates;
 
 public class GameServer : MonoBehaviour, INetEventListener, INetLogger
@@ -140,6 +141,30 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                                 if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var abilityPlayer))
                                 {
                                     abilityPlayer.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
+                                }
+                                break;
+                            
+                            case FSMStateId.dash:
+                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var dashPlayer))
+                                {
+                                    dashPlayer.movementStateMachine.ChangeState(new DashState(fsmPacket.dashData));
+                                }
+                                break;
+                            default:
+                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var p1))
+                                {
+                                    switch (fsmPacket.stateId)
+                                    {
+                                        case FSMStateId.block:
+                                            p1.playerStateMachine.ChangeState(new BlockState());
+                                            break;
+                                        case FSMStateId.mana_regen:
+                                            p1.playerStateMachine.ChangeState(new ManaRegenState());
+                                            break;
+                                        case FSMStateId.stunned:
+                                            p1.playerStateMachine.ChangeState(new StunState());
+                                            break;
+                                    }
                                 }
                                 break;
                         }

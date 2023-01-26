@@ -468,7 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     triggerKey: ability
-    value: 3
+    value: 5
 --- !u!114 &-3476108475063691209
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -519,8 +519,11 @@ MonoBehaviour:
   m_Name: ThrowPlayableAsset(Clone)
   m_EditorClassIdentifier: 
   data:
+    spawnType: 1
+    spawnOffset: {x: 0, y: 0, z: 0}
     throwable: {fileID: 2396338518217125097, guid: 19c04c894e8454821b87911b240e922b,
       type: 3}
+    speed: 20
 --- !u!114 &3180303113235867599
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -534,8 +537,11 @@ MonoBehaviour:
   m_Name: ThrowPlayableAsset
   m_EditorClassIdentifier: 
   data:
+    spawnType: 1
+    spawnOffset: {x: 0, y: 0, z: 0}
     throwable: {fileID: 2396338518217125097, guid: 19c04c894e8454821b87911b240e922b,
       type: 3}
+    speed: 20
 --- !u!114 &3682831864357444694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -564,8 +570,11 @@ MonoBehaviour:
   m_Name: ThrowPlayableAsset(Clone)(Clone)
   m_EditorClassIdentifier: 
   data:
+    spawnType: 1
+    spawnOffset: {x: 0, y: 0, z: 0}
     throwable: {fileID: 2396338518217125097, guid: 19c04c894e8454821b87911b240e922b,
       type: 3}
+    speed: 20
 --- !u!114 &4909592283375156579
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -580,7 +589,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     triggerKey: ability
-    value: 3
+    value: 5
 --- !u!114 &5203966672359047538
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -595,4 +604,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     triggerKey: ability
-    value: 3
+    value: 5

@@ -1,6 +1,7 @@
 using System.Collections;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
+using Kenshi.Utils;
 using LiteNetLib;
 using Riptide;
 using UnityEngine;
@@ -15,6 +16,10 @@ namespace StarterAssets.CombatStates
 
         private bool damaged = false;
         private float damageTime = 0.15f;
+
+        private float duration = 0.8f;
+        private float heavyAttackDuration = 1.2f;
+        private float hitDistance = 1.75f;
         
         public class Data
         {
@@ -50,7 +55,7 @@ namespace StarterAssets.CombatStates
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
-            if (ElapsedTime > (lastAttack ? 0.6f : 0.3f))
+            if (ElapsedTime > (lastAttack ? heavyAttackDuration - 0.2f : duration - 0.2f))
             {
                 if (!UpdateAttackInput(stateMachine))
                 {
@@ -67,13 +72,13 @@ namespace StarterAssets.CombatStates
             }
             
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
-            if (ElapsedTime > (lastAttack ? 1 : 0.6f))
+            if (ElapsedTime > (lastAttack ? heavyAttackDuration : duration))
             {
                 stateMachine.ChangeState(new IdleState());
             }
             else
             {
-                stateMachine.Target.transform.position += stateMachine.Target.transform.forward * 1.5f * Time.deltaTime;
+                stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 0.5f);
             }
         }
 
@@ -85,94 +90,62 @@ namespace StarterAssets.CombatStates
             }
 
             //Delayed hit time on the server by ping
-             if (ElapsedTime < damageTime - Mathf.Min(machine.Ping, damageTime))
+             if (ElapsedTime < damageTime - Mathf.Min(machine.Target.Ping, damageTime))
              {
                  return;
              }
 
-            var c = Physics.OverlapSphere(machine.Target.transform.position, 1.75f);
+            bool lastAttack = machine.Variables.attackIndex == 0;
+            var c = Physics.OverlapSphere(machine.Target.transform.position, hitDistance);
             foreach (var pCollider in c)
             {
                 var hitTarget = pCollider.GetComponent<Player>();
                 if (hitTarget != null && hitTarget.gameObject != machine.Target.gameObject)
                 {
-                    if (hitTarget.playerStateMachine.CurrentState.Id == FSMStateId.dead)
+                    switch (hitTarget.playerStateMachine.CurrentState.Id)
                     {
-                        continue;
+                        case FSMStateId.dead:
+                        case FSMStateId.block:
+                            continue;
                     }
+
                     // float angle = Vector3.Angle(c.transform.position - machine.transform.position, machine.transform.forward);
                     // if (angle > attackAngle / 2)
                     // {
                     //     continue;
                     // }
+            
                     Vector3 dir = (hitTarget.transform.position - machine.Target.transform.position);
                     dir.y = 0;
-                    var hitData = new HitState.Data
-                    {
-                        attackerId = machine.Target.NetworkId,
-                        targetId = hitTarget.NetworkId,
-                        hitPos = hitTarget.transform.position,
-                        direction = machine.Variables.attackIndex == 0 ? dir.normalized * 2 : dir.normalized * 0.55f
-                    };
 
-                    if (hitTarget.GetStat(StatEventPacket.StatId.health, out ushort health))
+                    CombatController.Instance.HitSingleTarget(new DamageData
                     {
-                        health -= 10;
-                        if (health <= 0)
-                        {
-                            GameRoomNetworkController.SendPacketToAll(new GameEventPacket(new GameEventPacket.PlayerDied
-                            {
-                                targetName = (string)hitTarget.stats[StatEventPacket.StatId.username],
-                                attackerName = (string)machine.Target.stats[StatEventPacket.StatId.username],
-                                dt = GameEventPacket.PlayerDied.DeathType.melee
-                            }), DeliveryMethod.ReliableOrdered);
-                            
-                            hitTarget.playerStateMachine.ChangeState(new DeadState());
-                            CombatController.Instance.StartCoroutine(RespawnPlayer(hitTarget));
-                        }
-                        
-                        CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
-                        {
-                            statId = StatEventPacket.StatId.health,
-                            value = health,
-                            maxValue = (ushort)100,
-                            playerId = hitTarget.NetworkId
-                        });
-                    }
-
-                    if (hitTarget.playerStateMachine.CurrentState.Id != FSMStateId.dead)
-                    {
-                        GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(hitData.targetId, hitData),
-                            DeliveryMethod.ReliableOrdered);
-                        hitTarget.playerStateMachine.ChangeState(new HitState(hitData), machine.Ping);
-                    }
+                        attacker = machine.Target,
+                        hitTarget = hitTarget,
+                        damage = 15,
+                        direction = lastAttack ? (dir.normalized * 7) : (dir.normalized * 0.5f),
+                        hitType = lastAttack ? DamageData.HitType.heavy : DamageData.HitType.light
+                    });
                 }
             }
             damaged = true;
         }
 
-        private IEnumerator RespawnPlayer(Player deadPlayer)
+        public class DamageData
         {
-            yield return new WaitForSeconds(5);
-
-            var pos = SpawnPointsController.Instance.GetRandomSpawnPoint();
+            public Player attacker;
+            public Player hitTarget;
+            public ushort damage;
+            public Vector3 direction;
+            public HitType hitType;
             
-            GameRoomNetworkController.SendPacketToAll(new GameEventPacket(new GameEventPacket.PlayerRespawn
+            public enum HitType
             {
-                playerId = deadPlayer.NetworkId,
-                respawnPos = pos
-            }), DeliveryMethod.ReliableOrdered);
-
-            deadPlayer.transform.position = pos;
-            deadPlayer.playerStateMachine.ChangeState(new IdleState());
-            
-            CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
-            {
-                statId = StatEventPacket.StatId.health,
-                value = (ushort)100,
-                maxValue = (ushort)100,
-                playerId = deadPlayer.NetworkId
-            });
+                very_light = 0,
+                light = 1,
+                heavy = 2,
+                stun = 3,
+            }
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)

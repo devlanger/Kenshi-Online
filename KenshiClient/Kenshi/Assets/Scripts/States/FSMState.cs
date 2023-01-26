@@ -1,4 +1,6 @@
 using Kenshi.Shared.Enums;
+using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
 using UnityEngine;
 
 namespace StarterAssets
@@ -38,6 +40,19 @@ namespace StarterAssets
         public void Exit(PlayerStateMachine stateMachine)
         {
             OnExit(stateMachine);
+        }
+
+        protected void SyncStateOverNetwork(PlayerStateMachine stateMachine)
+        {
+            if (stateMachine.IsLocal)
+            {
+                GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, Id), DeliveryMethod.ReliableOrdered);
+            }
+
+            if (GameServer.IsServer)
+            {
+                GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, Id), DeliveryMethod.ReliableOrdered);
+            }
         }
         
         protected abstract void OnUpdate(PlayerStateMachine stateMachine);

@@ -4961,7 +4961,7 @@ Transform:
   - {fileID: 3246014888363572398}
   - {fileID: 3246014887904112440}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3246014887947077104
 Rigidbody:
@@ -5021,6 +5021,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  destroyOnHit: 1
+  destroyAfter: 0
 --- !u!65 &3246014887947077105
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5036,7 +5038,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

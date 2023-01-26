@@ -5,32 +5,41 @@ using System.Linq;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-// [System.Serializable]
-// public class DashState
-// {
-//     public KeyCode lastKey;
-//     public float keyTime;
-//
-//     public Dictionary<KeyCode, MovementState> keys = new Dictionary<KeyCode, MovementState>()
-//     {
-//         {KeyCode.A, MovementState.DASH_LEFT}, {KeyCode.W, MovementState.DASH_FORWARD}, { KeyCode.S, MovementState.DASH_BACK }, {KeyCode.D, MovementState.DASH_RIGHT}
-//     };
-//     
-//     public bool IsDashing => keys.Keys.Contains(lastKey) && Time.time < keyTime + 0.2f;
-// }
+[System.Serializable]
+public class DashInput
+{
+    public DashState.Data.DashIndex dashIndex;
+    public KeyCode lastKey;
+    public float keyTime;
+
+    public Dictionary<KeyCode, DashState.Data.DashIndex> keys = new Dictionary<KeyCode, DashState.Data.DashIndex>()
+    {
+        {KeyCode.A, DashState.Data.DashIndex.left}, {KeyCode.W, DashState.Data.DashIndex.forward}, { KeyCode.S, DashState.Data.DashIndex.back }, {KeyCode.D, DashState.Data.DashIndex.right}
+    };
+    
+    public bool IsDashing => keys.Keys.Contains(lastKey) && Time.time < keyTime + 0.2f;
+}
 
 public class PlayerController : MonoBehaviour
 {
     public Player localPlayer;
+
+    [SerializeField] private DashInput dashInput;
     
     private void Awake()
     {
+        dashInput = new DashInput();
         localPlayer.gameObject.layer = 10;
         localPlayer.IsLocalPlayer = true;
         localPlayer.Interpolation.enabled = false;
     }
-    
+
+    private void Update()
+    {
+        UpdateDashState();
+    }
 
     private void LateUpdate()
     {
@@ -52,22 +61,24 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    // private void UpdateDashState()
-    // {
-    //     foreach (var key in dashState.keys)
-    //     {
-    //         if (UnityEngine.Input.GetKeyDown(key.Key))
-    //         {
-    //             if (dashState.IsDashing)
-    //             {
-    //                 dashState.lastKey = KeyCode.None;
-    //                 localPlayer.Input.dashing = true;
-    //                 //movementStateMachine.ChangeState(key.Value);
-    //             }
-    //             
-    //             dashState.lastKey = key.Key;
-    //             dashState.keyTime = Time.time;
-    //         }
-    //     }
-    // }
+    private void UpdateDashState()
+    {
+        foreach (var key in dashInput.keys)
+        {
+            if (UnityEngine.Input.GetKeyDown(key.Key))
+            {
+                if (dashInput.lastKey == key.Key)
+                {
+                    dashInput.lastKey = KeyCode.None;
+                    localPlayer.Input.dashing = true;
+                    localPlayer.Input.dashIndex = key.Value;
+                }
+                else
+                {
+                    dashInput.lastKey = key.Key;
+                    dashInput.keyTime = Time.time;
+                }
+            }
+        }
+    }
 }

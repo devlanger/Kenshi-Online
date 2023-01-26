@@ -13,7 +13,14 @@ namespace StarterAssets
         
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
+            if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
+            {
+                stateMachine.ChangeState(new DashState(new DashState.Data
+                {
+                    dashIndex = stateMachine.Target.Input.dashIndex
+                }));
+            }
+            else if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
             {
                 stateMachine.ChangeState(new JumpState());
             }

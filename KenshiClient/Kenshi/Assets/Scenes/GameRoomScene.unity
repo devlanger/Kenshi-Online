@@ -1242,8 +1242,8 @@ RectTransform:
   - {fileID: 1294713310}
   - {fileID: 512631896}
   - {fileID: 1613020110}
-  - {fileID: 847581670}
   - {fileID: 848968622}
+  - {fileID: 847581670}
   m_Father: {fileID: 1554333451}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3742,7 +3742,7 @@ PrefabInstance:
     - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_Name
-      value: StatBar (1)
+      value: StatBar (Mana)
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960092, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
@@ -5962,7 +5962,12 @@ PrefabInstance:
     - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_Name
-      value: StatBar (3)
+      value: StatBar (Stamina)
+      objectReference: {fileID: 0}
+    - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960092, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
@@ -5982,12 +5987,12 @@ PrefabInstance:
     - target: {fileID: 444714729430960095, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960095, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 444714730153264039, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
@@ -10551,17 +10556,22 @@ PrefabInstance:
     - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_Name
-      value: StatBar (2)
+      value: StatBar (Experience)
+      objectReference: {fileID: 0}
+    - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960095, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960095, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 444714730153264039, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
@@ -10939,7 +10949,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1006999790}
   m_HandleRect: {fileID: 1006999789}
   m_Direction: 2
-  m_Value: 1.0000037
+  m_Value: 1.000004
   m_Size: 0.7236853
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -11010,6 +11020,7 @@ GameObject:
   - component: {fileID: 1666079197}
   - component: {fileID: 1666079198}
   - component: {fileID: 1666079199}
+  - component: {fileID: 1666079200}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -11144,6 +11155,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d5ae5965c6e4b9abd96df76e7b2a05d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1666079200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666079191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c6937d5678b4725ac033c313ede912, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manaLoadEffect: {fileID: 2029048474317730345, guid: ad09a17cf7b3a47c99e36e3b4c0041eb,
+    type: 3}
 --- !u!1001 &1677113201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13514,6 +13539,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1557486221260924829, guid: 2f7f3dde7ae722a4aafffe20691ad702,
+        type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 1847
+      objectReference: {fileID: 0}
     - target: {fileID: 6751388636123340836, guid: 2f7f3dde7ae722a4aafffe20691ad702,
         type: 3}
       propertyPath: m_Name
@@ -14885,7 +14915,7 @@ PrefabInstance:
     - target: {fileID: 444714728704571499, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}
       propertyPath: m_Name
-      value: StatBar
+      value: StatBar (Health)
       objectReference: {fileID: 0}
     - target: {fileID: 444714729430960092, guid: 08812b700b0cc4051a52a027712813c0,
         type: 3}

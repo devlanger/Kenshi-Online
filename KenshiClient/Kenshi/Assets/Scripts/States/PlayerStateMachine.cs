@@ -14,7 +14,7 @@ namespace StarterAssets
         
         public FSMState CurrentState;
         public StateMachineVariables Variables;
-        public float Ping => Target != null ? Target.peer.Ping : 0;
+        public float Ping => Target != null ? Target.Ping : 0f;
 
         public Queue<DelayedState> queuedStates = new Queue<DelayedState>();
 

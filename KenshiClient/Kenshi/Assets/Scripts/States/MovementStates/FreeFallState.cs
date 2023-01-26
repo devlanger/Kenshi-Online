@@ -13,7 +13,14 @@ namespace StarterAssets
         
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
+            if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
+            {
+                stateMachine.ChangeState(new DashState(new DashState.Data
+                {
+                    dashIndex = stateMachine.Target.Input.dashIndex
+                }));
+            }
+            else if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
             {
                 stateMachine.ChangeState(new JumpState());
             }
@@ -56,8 +63,11 @@ namespace StarterAssets
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
-            if(stateMachine.Target.animator != null)
-            stateMachine.Target.animator?.SetBool(_animIDFreeFall, false);
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator?.SetBool(_animIDFreeFall, false);
+                stateMachine.Target.animator?.SetBool(_animIDGrounded, false);
+            }
         }
     }
 }

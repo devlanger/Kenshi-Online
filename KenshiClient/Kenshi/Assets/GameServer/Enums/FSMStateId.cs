@@ -7,6 +7,9 @@ namespace Kenshi.Shared.Enums
         ability_cast = 3,
         hit = 4,
         dead = 5,
+        block = 6,
+        mana_regen = 7,
+        stunned = 8,
         
         stand = 75,        
         move = 76,        

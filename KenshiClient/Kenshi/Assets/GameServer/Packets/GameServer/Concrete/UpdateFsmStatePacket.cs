@@ -2,6 +2,7 @@ using System.IO;
 using System.Numerics;
 using Kenshi.Shared.Enums;
 using LiteNetLib.Utils;
+using StarterAssets;
 using StarterAssets.CombatStates;
 using Unity.VisualScripting;
 
@@ -16,6 +17,7 @@ namespace Kenshi.Shared.Packets.GameServer
         public AttackState.Data attackData;
         public HitState.Data hitData;
         public AbilityCastState.Data abilityData;
+        public DashState.Data dashData;
         public float moveSpeed = 0;
 
         public UpdateFsmStatePacket() 
@@ -43,6 +45,19 @@ namespace Kenshi.Shared.Packets.GameServer
             this.abilityData = abilityData;
         }
         
+        public UpdateFsmStatePacket(int targetId, DashState.Data dashData)
+        {
+            this.targetId = targetId;
+            stateId = FSMStateId.dash;
+            this.dashData = dashData;
+        }
+        
+        public UpdateFsmStatePacket(int targetId, FSMStateId stateId)
+        {
+            this.targetId = targetId;
+            this.stateId = stateId;
+        }
+        
         public override void Deserialize(NetDataReader reader)
         {
             stateId = (FSMStateId)reader.GetByte();
@@ -62,6 +77,7 @@ namespace Kenshi.Shared.Packets.GameServer
                     {
                         attackerId = reader.GetInt(),
                         targetId = reader.GetInt(),
+                        duration = reader.GetFloat(),
                         direction = ReadVector3(reader),
                         hitPos = ReadVector3(reader),
                     };
@@ -93,6 +109,7 @@ namespace Kenshi.Shared.Packets.GameServer
                 case FSMStateId.hit:
                     writer.Put(hitData.attackerId);
                     writer.Put(hitData.targetId);
+                    writer.Put(hitData.duration);
                     PutVector3(hitData.direction);
                     PutVector3(hitData.hitPos);
                     break;

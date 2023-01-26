@@ -21,6 +21,7 @@ namespace StarterAssets.CombatStates
             public int targetId;
             public Vector3 hitPos;
             public Vector3 direction;
+            public float duration;
         }
         
         public HitState()
@@ -35,7 +36,7 @@ namespace StarterAssets.CombatStates
         
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
-            if (ElapsedTime > 0.4f)
+            if (ElapsedTime > data.duration)
             {
                 stateMachine.ChangeState(new IdleState());
             }
@@ -62,7 +63,6 @@ namespace StarterAssets.CombatStates
                 }
             }
 
-
             if (!GameServer.IsServer && !stateMachine.Target.Interpolation.enabled)
             {
                 //stateMachine.Target.Interpolation.enabled = false;
@@ -71,7 +71,9 @@ namespace StarterAssets.CombatStates
             if (GameServer.IsServer || stateMachine.IsLocal)
             {
                 stateMachine.Target.transform.position = data.hitPos;
-                stateMachine.Target.transform.rotation = Quaternion.LookRotation(-data.direction);
+                Vector3 rot = -data.direction;
+                rot.y = 0;
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot);
             }
         }
 
@@ -79,15 +81,17 @@ namespace StarterAssets.CombatStates
         {
             if (GameServer.IsServer || stateMachine.IsLocal)
             {
-                if (ElapsedTime < 0.2f)
+                if (ElapsedTime < 0.3f)
                 {
-                    stateMachine.Target.transform.position += data.direction * Time.fixedDeltaTime;
+                    stateMachine.Target.tps.SetVelocity(data.direction);
                 }
             }
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.tps.StopMoving();
+            
             if (stateMachine.Target.animator != null)
             {
                 stateMachine.Target.animator.SetTrigger("hit");

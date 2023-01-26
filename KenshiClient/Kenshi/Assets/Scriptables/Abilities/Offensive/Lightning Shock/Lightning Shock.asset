@@ -17,6 +17,6 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: b3199ae29bf246642875fc68fab4595b, type: 3}
   Data:
     name: Lightning Shock
-    groundDuration: 0.5
-    airDuration: 0.5
+    groundDuration: 1.2
+    airDuration: 1.2
     behaviour: {fileID: 11400000, guid: 19420e02a556b45cda27f4c180f36fd8, type: 2}

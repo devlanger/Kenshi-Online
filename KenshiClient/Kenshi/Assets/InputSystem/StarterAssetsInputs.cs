@@ -17,10 +17,12 @@ namespace StarterAssets
 		public float RotationY;
 
 		public Quaternion LocalRotation => Quaternion.Euler(0.0f, RotationY, 0.0f);
+		public DashState.Data.DashIndex dashIndex;
+
 		public AbilityInfo abilityInfo;
 
 		public Vector3 CameraForward;
-		[FormerlySerializedAs("AimDirection")] public Vector3 HitPoint;
+		public Vector3 HitPoint;
 
 		public Vector3 LocalDirection;
 

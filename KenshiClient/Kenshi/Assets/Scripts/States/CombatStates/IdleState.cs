@@ -33,6 +33,14 @@ namespace StarterAssets.CombatStates
         {
             UpdateAttackInput(stateMachine);
             AbilitiesController.Instance.UpdateInputs();
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                stateMachine.ChangeState(new BlockState());
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                stateMachine.ChangeState(new ManaRegenState());
+            }
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)

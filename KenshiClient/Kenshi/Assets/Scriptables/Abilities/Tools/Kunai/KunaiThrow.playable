@@ -220,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     triggerKey: ability
-    value: 2
+    value: 1
 --- !u!114 &3997126810466279229
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -257,5 +257,8 @@ MonoBehaviour:
   m_Name: NewPlayableAsset
   m_EditorClassIdentifier: 
   data:
+    spawnType: 1
+    spawnOffset: {x: 0, y: 0, z: 0}
     throwable: {fileID: 3271557652579845924, guid: e53efe993edef48c593c763a333063ad,
       type: 3}
+    speed: 20
