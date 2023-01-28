@@ -16,6 +16,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly JwtTokenService _tokenService;
     private readonly IGameRoomService _gameRoomService;
     private readonly UserService _userService;
+    private readonly MetricsService _metricsService;
+    private readonly ILogger<GameHub> _logger;
     private readonly ConnectionMultiplexer redis;
 
     public static string RedisString(IConfiguration config) =>
@@ -23,7 +25,13 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     
     private string GetUsername() => (string)Context.Items["username"];
     
-    public GameHub(KubernetesService service, IConfiguration config, JwtTokenService tokenService, IGameRoomService gameRoomService, UserService userService)
+    public GameHub(KubernetesService service,
+        IConfiguration config,
+        JwtTokenService tokenService,
+        IGameRoomService gameRoomService,
+        UserService userService,
+        MetricsService metricsService,
+        ILogger<GameHub> logger)
     {   
         redis = ConnectionMultiplexer.Connect(RedisString(config));
 
@@ -32,6 +40,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _tokenService = tokenService;
         _gameRoomService = gameRoomService;
         _userService = userService;
+        _metricsService = metricsService;
+        _logger = logger;
     }
     
     public async Task DeleteAllGameRooms()
@@ -246,6 +256,9 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             token = token,
             nickname = username
         }));
+        
+        _metricsService.SetPlayersCount(UserService.LoggedUsers.Count);
+        _logger.LogInformation($"{GetUsername()} has logged in.");
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
@@ -256,5 +269,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         await BroadcastLobbyUsersList();
 
         Console.WriteLine($"{Context.ConnectionId} has left");
+        _metricsService.SetPlayersCount(UserService.LoggedUsers.Count);
+        _logger.LogInformation($"{GetUsername()} has logged out.");
     }
 }

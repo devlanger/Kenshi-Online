@@ -2,6 +2,7 @@ using System.Text;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Kenshi.API.Helpers;
+using Kenshi.API.Metrics;
 using Kenshi.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +18,9 @@ public static class ApplicationServicesExtension
         services.AddTransient<JwtTokenService>();
         services.AddTransient<IGameRoomService, GameRoomService>();
         services.AddTransient<UserService>();
+        services.AddTransient<MetricsService>();
+
+        services.AddSingleton<ILoggerProvider>(new NestLoggerProvider(new Uri(configuration["ConnectionStrings:elasticsearch"])));
         
         Console.WriteLine(configuration["ConnectionStrings:rabbitmq"]);
         services.AddHostedService<RabbitConsumer>();

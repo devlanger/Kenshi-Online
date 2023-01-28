@@ -5,6 +5,7 @@ using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
+using Prometheus;
 using RabbitMQ.Client;
 
 namespace Kenshi.API;
@@ -37,13 +38,17 @@ public class Startup
         //}
 
         app.UseHttpsRedirection();
-
+        
+        app.UseMetricServer();
+        app.UseHttpMetrics();
+        
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseRouting();
         app.UseEndpoints(x =>
         {
+            x.MapMetrics();
             x.MapControllers();
             x.MapHub<GameHub>("/gameHub");
         });

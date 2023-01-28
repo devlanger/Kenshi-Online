@@ -9,6 +9,7 @@ services:
     depends_on:
       - redis
       - kenshirabbitmq
+      - elasticsearch
     restart: on-failure
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -38,88 +39,56 @@ services:
     image: rabbitmq:3-management
     ports:
       # AMQP protocol port
-      - '5672:5672'
+      - '5673:5672'
       # HTTP management UI
-      - '15672:15672'
+      - '15673:15672'
     environment:
       HOST_PORT_RABBIT: 5672
       HOST_PORT_RABBIT_MGMT: 15672
     networks:
       - local-dev
-    
-  kenshigameserver:
-    depends_on:
-      - redis
-    platform: linux/amd64
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    image: piotrlanger/kenshigs
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3001:3000
     environment:
-      - "REDIS_HOST=redis"
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
     networks:
       - local-dev
-      
-#  grafana:
-#    image: grafana/grafana
-#    ports:
-#      - 3000:3000
-#    environment:
-#      GF_SECURITY_ADMIN_USER: admin
-#      GF_SECURITY_ADMIN_PASSWORD: admin
-#    volumes:
-#      - grafana-data:/var/lib/grafana
-#    networks:
-#      - local-dev
-#    
-#  prometheus:
-#    image: prom/prometheus
-#    ports:
-#      - 9090:9090
-#    volumes:
-#      - prometheus-data:/prometheus
-#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-#    restart: unless-stopped
-#    command:
-#      - "--config.file=/etc/prometheus/prometheus.yml"
-#    networks:
-#      - local-dev
-#  
-#  cadvisor:
-#    image: gcr.io/cadvisor/cadvisor:v0.45.0
-#    container_name: cadvisor
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - local-dev
-#    volumes:
-#      - /:/rootfs:ro
-#      - /var/run:/var/run:ro
-#      - /sys:/sys:ro
-#      - /var/lib/docker/:/var/lib/docker:ro
-#      - /dev/disk/:/dev/disk:ro
-#      - /etc/machine-id:/etc/machine-id:ro
-#      - /var/lib/dbus/machine-id:/var/lib/dbus/machine-id:ro
-#    devices:
-#      - /dev/kmsg
-#    restart: unless-stopped
-#    privileged: true
-#    
-#  node_exporter:
-#    image: prom/node-exporter:latest
-#    container_name: node-exporter
-#    restart: unless-stopped
-#    volumes:
-#      - /proc:/host/proc:ro
-#      - /sys:/host/sys:ro
-#      - /:/rootfs:ro
-#    command:
-#      - '--path.procfs=/host/proc'
-#      - '--path.rootfs=/rootfs'
-#      - '--path.sysfs=/host/sys'
-#      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-#    networks:
-#      - local-dev
-#    
-#volumes:
-#  grafana-data:
-#  prometheus-data:
+    
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9091:9090
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - local-dev
+  
+  elasticsearch:
+    image: elasticsearch:7.17.7
+    ports:
+      - 9201:9200
+      - 9301:9300
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xms256m -Xmx256m"
+      discovery.type: single-node
+      http.cors.enabled: true
+      http.cors.allow-origin: "*"
+    networks:
+      - local-dev
+        
+volumes:
+  grafana-data:
+  prometheus-data:
+  elasticsearch-data:

@@ -21,6 +21,14 @@ scrape_configs:
     static_configs:
       - targets: ['node_exporter:9100']
 
+  - job_name: 'kenshiapi'
+    static_configs:
+      - targets: [ 'kenshiapi:3330' ]
+
+  - job_name: 'elasticsearch'
+    static_configs:
+      - targets: [ 'localhost:9200' ]
+
 #   Example job for cadvisor
   - job_name: 'cadvisor'
     static_configs:

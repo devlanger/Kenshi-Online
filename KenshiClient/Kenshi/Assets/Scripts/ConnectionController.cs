@@ -35,6 +35,10 @@ public class ConnectionController : MonoBehaviour
 
     private void Awake()
     {
+#if !UNITY_EDITOR
+        useLocal = false;
+#endif
+        
         if (Instance == null)
         {
             Instance = this;
