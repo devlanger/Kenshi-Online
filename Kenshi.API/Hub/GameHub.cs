@@ -56,6 +56,9 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             Console.WriteLine($"Delete game id {id}");
             await _service.DeletePod(id);
             _gameRoomService.RemoveRoom(id);
+            
+            var podsList = await GetGamesRooms();
+            await Clients.All.SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
         }
         catch (Exception e)
         {

@@ -4925,7 +4925,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 0.6
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6505749722133580485
 MonoBehaviour:
@@ -4939,11 +4939,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00a20acc9db2047c29b3e6f6a4c42c51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageOwner: 1
   type: 0
+  hitType: 2
   damage: 25
   distance: 3
   throwBack: 10
-  collisionTarget: {fileID: 0}
 --- !u!1 &5644109113524021865
 GameObject:
   m_ObjectHideFlags: 0

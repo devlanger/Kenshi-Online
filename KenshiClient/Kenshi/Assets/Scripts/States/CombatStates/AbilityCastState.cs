@@ -31,6 +31,10 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.ChangeState(new IdleState());
             }
+            
+            Vector3 rot = (data.hitPoint - data.startPos).normalized;
+            rot.y = 0;
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot); 
         }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
