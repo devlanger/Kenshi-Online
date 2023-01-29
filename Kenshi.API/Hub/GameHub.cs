@@ -83,6 +83,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
                 var podsList = await GetGamesRooms();
                 await Clients.All.SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
+                await Clients.Clients(Context.ConnectionId).SendAsync("JoinGameRoom", gameRoomInstance.Port.ToString());
             }
         }
         catch (Exception e)

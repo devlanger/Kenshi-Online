@@ -60,13 +60,21 @@ public class ConnectionController : MonoBehaviour
 
     private IEnumerator Start()
     {
-        var t = Connect();
-
-        yield return new WaitUntil(() => t.IsCompleted);
-
-        if (Connection.State != HubConnectionState.Connected)
+        bool connected = false;
+        while (!connected)
         {
-            yield return new WaitForSeconds(1);
+            Debug.Log("trying to connect");
+            var t = Connect();
+
+            yield return new WaitUntil(() => t.IsCompleted);
+
+            if (Connection.State == HubConnectionState.Connected)
+            {
+                connected = true;
+            }
+            
+            Debug.Log("Reconnecting in 5 sec...");
+            yield return new WaitForSeconds(5);
         }
     }
 
