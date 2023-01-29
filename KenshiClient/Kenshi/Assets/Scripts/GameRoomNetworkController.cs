@@ -38,6 +38,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     public static ushort Port = 5001;
 
+    public bool Connected = false;
+    
     public static GameRoomNetworkController Instance;
 
     private void Awake()
@@ -187,7 +189,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 _myPlayerId = packet._playerId;
                 _myPlayer.NetworkId = _myPlayerId;
                 _players[_myPlayerId] = _myPlayer;
-
+                
+                Connected = true;
                 Debug.Log("MyPlayerId: " + packet._playerId);
             }
             else if (packetId == PacketId.LoginEvent)

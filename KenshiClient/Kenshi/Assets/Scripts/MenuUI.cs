@@ -103,11 +103,34 @@ public class MenuUI : MonoBehaviour
             case "JoinGameRoom":
                 string port = arg2;
                 GameRoomNetworkController.Port = ushort.Parse(port);
-                SceneManager.LoadScene(1);
+
+                if (loadingCoroutine == null)
+                {
+                    loadingCoroutine = connectionController.StartCoroutine(LoadYourAsyncScene());
+                }
                 break;
         }
     }
 
+    private Coroutine loadingCoroutine;
+    
+    IEnumerator LoadYourAsyncScene()
+    {
+        LoadingController.Instance.Activate();
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+
+        while (!asyncLoad.isDone)
+        {
+            yield return 0;
+        }
+
+        Debug.Log("Loaded");
+        //yield return new WaitForSeconds(Time.deltaTime * 2);
+        yield return new WaitUntil(() => GameRoomNetworkController.Instance.Connected);
+        LoadingController.Instance.Deactivate();
+        Debug.Log("Deactiveeeeeee");
+    }
+    
     private void RefreshUsersLogged()
     {
         playersList.Clear();
