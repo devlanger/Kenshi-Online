@@ -93,8 +93,8 @@ public class Player : Mob
         movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);
         
-        playerStateMachine.UpdateQueue();
-        movementStateMachine.UpdateQueue();
+        playerStateMachine?.UpdateQueue();
+        movementStateMachine?.UpdateQueue();
     }
 
     private void LateUpdate()

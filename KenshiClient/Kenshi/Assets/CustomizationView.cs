@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class CustomizationView : ViewUI
 {
-    [SerializeField] private Player character;
+    [SerializeField] private PlayerCustomization character;
 }

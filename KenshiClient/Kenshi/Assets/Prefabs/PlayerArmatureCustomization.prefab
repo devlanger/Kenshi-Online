@@ -2404,7 +2404,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8552761082316230426}
   - component: {fileID: 2328834035004167520}
-  - component: {fileID: 8741582468784029134}
+  - component: {fileID: 881798538457970373}
   m_Layer: 8
   m_Name: PlayerArmatureCustomization
   m_TagString: Player
@@ -2451,7 +2451,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
---- !u!114 &8741582468784029134
+--- !u!114 &881798538457970373
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2460,36 +2460,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9077658499425424800}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7516936c5fa92478caabb83c94131e72, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ca4f4231929b448794ca163d32044cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Interpolation: {fileID: 0}
-  tps: {fileID: 0}
-  Input:
-    rightClick: 0
-    leftClick: 0
-    RotationY: 0
-    dashIndex: 0
-    CameraForward: {x: 0, y: 0, z: 0}
-    HitPoint: {x: 0, y: 0, z: 0}
-    LocalDirection: {x: 0, y: 0, z: 0}
-    move: {x: 0, y: 0}
-    look: {x: 0, y: 0}
-    jump: 0
-    sprint: 0
-    tab: 0
-    analogMovement: 0
-    cursorLocked: 1
-    cursorInputForLook: 1
-    dashing: 0
-  playerStateMachine:
-    Target: {fileID: 0}
-    Variables: {fileID: 0}
-  movementStateMachine:
-    Target: {fileID: 0}
-    Variables: {fileID: 0}
-  animator: {fileID: 0}
-  agent: {fileID: 0}
 --- !u!1 &9111674694070067708
 GameObject:
   m_ObjectHideFlags: 0
