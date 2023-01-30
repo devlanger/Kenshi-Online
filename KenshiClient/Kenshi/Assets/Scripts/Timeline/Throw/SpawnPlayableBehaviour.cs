@@ -49,7 +49,8 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
             switch (data.spawnType)
             {
                 case Data.SpawnType.THROW:
-                    GameObject inst = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (UnityEngine.Quaternion.LookRotation(abilityInfo.hitPoint) * new Vector3(0, 1, 1)),
+                    GameObject inst = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + 
+                                                                             (UnityEngine.Quaternion.LookRotation(abilityInfo.hitPoint - abilityInfo.user.transform.position) * data.spawnOffset),
                         Quaternion.LookRotation(abilityInfo.hitPoint));
 
                     inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
@@ -63,6 +64,7 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
                 case Data.SpawnType.AT_USER:
                     GameObject inst2 = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (abilityInfo.user.transform.rotation * data.spawnOffset), abilityInfo.user.transform.rotation);
                     inst2.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
+                    inst2.transform.parent = owner.transform;
                     break;
                 
                 case Data.SpawnType.AT_HIT_POINT:

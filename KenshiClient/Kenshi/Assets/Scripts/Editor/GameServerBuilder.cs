@@ -25,7 +25,7 @@ public class GameServerBuilder
         });
     }
     
-    [MenuItem("Building/Build for Game Server for Ubuntu")]
+    [MenuItem("Building/Build Game Server for Ubuntu")]
     public static void BuildGameServer ()
     {
         // Get filename.

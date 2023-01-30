@@ -37,7 +37,7 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.ChangeState(new BlockState());
             }
-            else if (Input.GetKeyDown(KeyCode.R))
+            else if (Input.GetKey(KeyCode.R))
             {
                 stateMachine.ChangeState(new ManaRegenState());
             }

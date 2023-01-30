@@ -15,10 +15,10 @@ namespace StarterAssets.CombatStates
         public Data data;
 
         private bool damaged = false;
-        private float damageTime = 0.15f;
+        private float damageTime = 0.2f;
 
-        private float duration = 0.8f;
-        private float heavyAttackDuration = 1.2f;
+        private float duration = 0.65f;
+        private float heavyAttackDuration = 1f;
         private float hitDistance = 1.75f;
         
         public class Data

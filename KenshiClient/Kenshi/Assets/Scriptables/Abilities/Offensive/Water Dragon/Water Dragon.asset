@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Water Dragon
   m_EditorClassIdentifier: 
   Id: 9
+  enabledInBuild: 1
   icon: {fileID: 21300000, guid: db24189abde247144b83fb23e63c9464, type: 3}
   Data:
     name: Water Dragon
     groundDuration: 1
     airDuration: 1
     behaviour: {fileID: 11400000, guid: dec2771d2edd944b7a1c79595bee2c0d, type: 2}
+    mana: 25

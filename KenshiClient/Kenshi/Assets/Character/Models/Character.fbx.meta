@@ -29,21 +29,40 @@ ModelImporter:
       that will be discarded.\n\t'DEF-head' has scale animation that will be discarded.\n\t'DEF-upper_arm.L'
       has translation animation that will be discarded.\n\t'DEF-upper_arm.L' has
       scale animation that will be discarded.\n\t'DEF-forearm.L' has scale animation
-      that will be discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-f_middle.03.L'
-      has scale animation that will be discarded.\n\t'DEF-f_pinky.02.L' has scale
-      animation that will be discarded.\n\t'DEF-upper_arm.R' has translation animation
-      that will be discarded.\n\t'DEF-upper_arm.R' has scale animation that will
-      be discarded.\n\t'DEF-forearm.R' has scale animation that will be discarded.\n\t'DEF-hand.R'
-      has scale animation that will be discarded.\n\t'DEF-f_index.03.R' has scale
-      animation that will be discarded.\n\t'DEF-f_middle.03.R' has scale animation
-      that will be discarded.\n\t'DEF-f_ring.03.R' has scale animation that will
-      be discarded.\n\t'DEF-f_pinky.02.R' has scale animation that will be discarded.\n\t'DEF-f_pinky.03.R'
-      has scale animation that will be discarded.\n\t'DEF-thigh.L' has scale animation
-      that will be discarded.\n\t'DEF-shin.L' has scale animation that will be discarded.\n\t'DEF-foot.L'
-      has scale animation that will be discarded.\n\t'DEF-toe.L' has scale animation
-      that will be discarded.\n\t'DEF-thigh.R' has scale animation that will be discarded.\n\t'DEF-shin.R'
-      has scale animation that will be discarded.\n\t'DEF-foot.R' has scale animation
-      that will be discarded.\n\t'DEF-toe.R' has scale animation that will be discarded.\n"
+      that will be discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-f_index.01.L'
+      has translation animation that will be discarded.\n\t'DEF-f_index.02.L' has
+      scale animation that will be discarded.\n\t'DEF-f_index.03.L' has scale animation
+      that will be discarded.\n\t'DEF-thumb.01.L' has translation animation that
+      will be discarded.\n\t'DEF-thumb.02.L' has scale animation that will be discarded.\n\t'DEF-thumb.03.L'
+      has scale animation that will be discarded.\n\t'DEF-f_middle.01.L' has translation
+      animation that will be discarded.\n\t'DEF-f_middle.02.L' has scale animation
+      that will be discarded.\n\t'DEF-f_middle.03.L' has scale animation that will
+      be discarded.\n\t'DEF-f_ring.01.L' has translation animation that will be discarded.\n\t'DEF-f_ring.02.L'
+      has scale animation that will be discarded.\n\t'DEF-f_ring.03.L' has scale
+      animation that will be discarded.\n\t'DEF-f_pinky.01.L' has translation animation
+      that will be discarded.\n\t'DEF-f_pinky.02.L' has scale animation that will
+      be discarded.\n\t'DEF-f_pinky.03.L' has scale animation that will be discarded.\n\t'DEF-upper_arm.R'
+      has translation animation that will be discarded.\n\t'DEF-upper_arm.R' has
+      scale animation that will be discarded.\n\t'DEF-forearm.R' has scale animation
+      that will be discarded.\n\t'DEF-hand.R' has scale animation that will be discarded.\n\t'DEF-f_index.01.R'
+      has translation animation that will be discarded.\n\t'DEF-f_index.02.R' has
+      scale animation that will be discarded.\n\t'DEF-f_index.03.R' has scale animation
+      that will be discarded.\n\t'DEF-thumb.01.R' has translation animation that
+      will be discarded.\n\t'DEF-thumb.02.R' has scale animation that will be discarded.\n\t'DEF-thumb.03.R'
+      has scale animation that will be discarded.\n\t'DEF-f_middle.01.R' has translation
+      animation that will be discarded.\n\t'DEF-f_middle.02.R' has scale animation
+      that will be discarded.\n\t'DEF-f_middle.03.R' has scale animation that will
+      be discarded.\n\t'DEF-f_ring.01.R' has translation animation that will be discarded.\n\t'DEF-f_ring.02.R'
+      has scale animation that will be discarded.\n\t'DEF-f_ring.03.R' has scale
+      animation that will be discarded.\n\t'DEF-f_pinky.01.R' has translation animation
+      that will be discarded.\n\t'DEF-f_pinky.02.R' has scale animation that will
+      be discarded.\n\t'DEF-f_pinky.03.R' has scale animation that will be discarded.\n\t'DEF-thigh.L'
+      has scale animation that will be discarded.\n\t'DEF-shin.L' has scale animation
+      that will be discarded.\n\t'DEF-foot.L' has scale animation that will be discarded.\n\t'DEF-toe.L'
+      has scale animation that will be discarded.\n\t'DEF-thigh.R' has scale animation
+      that will be discarded.\n\t'DEF-shin.R' has scale animation that will be discarded.\n\t'DEF-foot.R'
+      has scale animation that will be discarded.\n\t'DEF-toe.R' has scale animation
+      that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -60,7 +79,7 @@ ModelImporter:
       name: Throw
       takeName: rig|rigAction
       internalID: 3374748389425109202
-      firstFrame: 10
+      firstFrame: 11
       lastFrame: 20
       wrapMode: 0
       orientationOffsetY: 0
@@ -214,6 +233,122 @@ ModelImporter:
       loop: 0
       hasAdditiveReferencePose: 0
       loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Idle
+      takeName: rig|rigAction
+      internalID: -2451789343633183004
+      firstFrame: 1
+      lastFrame: 10
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DashRight
+      takeName: rig|rigAction
+      internalID: -2834480211674462595
+      firstFrame: 109
+      lastFrame: 111
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DashLeft
+      takeName: rig|rigAction
+      internalID: 9039535887175902178
+      firstFrame: 114
+      lastFrame: 116
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DashForward
+      takeName: rig|rigAction
+      internalID: -1004416848253862888
+      firstFrame: 119
+      lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1

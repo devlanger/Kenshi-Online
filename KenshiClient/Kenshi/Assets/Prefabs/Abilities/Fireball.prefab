@@ -4875,7 +4875,7 @@ MonoBehaviour:
   owner: {fileID: 0}
   collisionMask:
     serializedVersion: 2
-    m_Bits: 1847
+    m_Bits: 823
   triggerEvent:
     m_PersistentCalls:
       m_Calls:

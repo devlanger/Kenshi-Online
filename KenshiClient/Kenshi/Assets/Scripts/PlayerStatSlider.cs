@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace StarterAssets
 {
+    [DefaultExecutionOrder(1)]
     public class PlayerStatSlider : MonoBehaviour
     {
         [SerializeField] private StatEventPacket.StatId statId;

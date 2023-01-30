@@ -10,9 +10,31 @@ namespace StarterAssets.CombatStates
         public override FSMStateId Id => FSMStateId.mana_regen;
 
         private GameObject manaLoadEffect;
+
+        private float value = 0;
+        private float startValue;
         
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
+        }
+
+        protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
+        {
+            value += Time.deltaTime * 25;
+            value = Mathf.Clamp(value, 0, 100);
+            if (stateMachine.Target.GetStat(StatEventPacket.StatId.mana, out ushort v))
+            {
+                if (stateMachine.IsLocal)
+                {
+                    CombatController.Instance.SetPlayerStat(new StatEventPacket.Data()
+                    {
+                        value = (ushort)value,
+                        maxValue = (ushort)100,
+                        playerId = stateMachine.Target.NetworkId,
+                        statId = StatEventPacket.StatId.mana
+                    });
+                }
+            }
         }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
@@ -25,6 +47,8 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.GetStat<ushort>(StatEventPacket.StatId.mana, out var startV);
+            value = (float)startV;
             SyncStateOverNetwork(stateMachine);
 
             if (StatesController.Instance && StatesController.Instance.manaLoadEffect != null)

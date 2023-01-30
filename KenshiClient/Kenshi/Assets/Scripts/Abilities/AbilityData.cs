@@ -10,4 +10,5 @@ public class AbilityData
     public float groundDuration;
     public float airDuration;
     public TimelineAsset behaviour;
+    public ushort mana;
 }

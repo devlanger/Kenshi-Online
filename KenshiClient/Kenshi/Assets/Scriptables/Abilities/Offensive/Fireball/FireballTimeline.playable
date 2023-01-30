@@ -235,7 +235,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
     spawnType: 1
-    spawnOffset: {x: 0, y: 0, z: 0}
+    spawnOffset: {x: 0, y: 1, z: 1}
     throwable: {fileID: 2396338518217125097, guid: 30253f46c026b4562aa2f6150baa4d6b,
       type: 3}
     speed: 20

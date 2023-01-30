@@ -20,3 +20,4 @@ MonoBehaviour:
     groundDuration: 1
     airDuration: 1
     behaviour: {fileID: 11400000, guid: 6ff0cf8f5114149bb97df9a58bb1ff0e, type: 2}
+    mana: 25

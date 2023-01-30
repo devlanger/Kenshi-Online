@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
         {
             if (UnityEngine.Input.GetKeyDown(key.Key))
             {
-                if (dashInput.lastKey == key.Key)
+                if (dashInput.lastKey == key.Key && Time.time < dashInput.keyTime + 0.2f)
                 {
                     dashInput.lastKey = KeyCode.None;
                     localPlayer.Input.dashing = true;

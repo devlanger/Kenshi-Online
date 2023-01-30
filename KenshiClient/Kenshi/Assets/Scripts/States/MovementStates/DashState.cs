@@ -63,8 +63,11 @@ namespace StarterAssets
                     dir.y = 0;
                     dir = dir.normalized;
                 }
-                
-                stateMachine.Target.tps.SetVelocity(dir * 10);
+
+                Vector3 direction = dir * 15;
+                stateMachine.Target.tps.UpdateGravity();
+                stateMachine.Target.tps.SetVelocity(direction, true);
+
                 if (!stateMachine.Variables.Grounded)
                 {
                     stateMachine.Target.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
@@ -94,6 +97,20 @@ namespace StarterAssets
             {
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, data), DeliveryMethod.ReliableOrdered);
             }
+            else
+            {
+                int v = (int)data.dashIndex;
+                SetAnimation(stateMachine, v);
+            }
+        }
+
+        private void SetAnimation(PlayerStateMachine stateMachine, int v)
+        {
+            if (stateMachine.Target.animator != null)
+            {
+                stateMachine.Target.animator.SetTrigger("dash");
+                stateMachine.Target.animator.SetInteger("dash_id", v);
+            }
         }
 
         protected override void OnExit(PlayerStateMachine machine)
@@ -102,6 +119,8 @@ namespace StarterAssets
             {
                 machine.Target.animator?.SetBool("Grounded", machine.Variables.Grounded);
             }
+            
+            SetAnimation(machine, 0);
         }
 
         public class Data

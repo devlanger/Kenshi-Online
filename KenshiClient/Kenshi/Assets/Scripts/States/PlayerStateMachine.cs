@@ -40,7 +40,7 @@ namespace StarterAssets
 
         private void ExecuteStateChange(FSMState newState)
         {
-            Debug.Log(newState);
+            //Debug.Log(newState);
 
             if (CurrentState != null)
                 CurrentState.Exit(this);

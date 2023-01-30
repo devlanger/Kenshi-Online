@@ -275,9 +275,17 @@ namespace StarterAssets
             _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
         }
         
-        public void SetVelocity(Vector3 velocity)
+        public void SetVelocity(Vector3 velocity, bool ignoreY = false)
         {
-            _controller.velocity = velocity;
+            Vector3 v = velocity;
+            if (ignoreY)
+            {
+                _controller.velocity = new Vector3(v.x, _verticalVelocity, v.z);
+            }
+            else
+            {
+                _controller.velocity = velocity;
+            }
         }
     }
 }
