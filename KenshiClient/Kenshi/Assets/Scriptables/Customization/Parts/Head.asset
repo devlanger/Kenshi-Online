@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 979b44685538d4beba8b7302a4f21f8b, type: 3}
-  m_Name: Customization Manager
+  m_Script: {fileID: 11500000, guid: a198a027f52d3485e82c4d14d9786cd8, type: 3}
+  m_Name: Head
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,9 +21,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  items:
-  - {fileID: 11400000, guid: e2b8b919e31264e3baae30dbff9b0e1b, type: 2}
-  - {fileID: 11400000, guid: 19d98e26c3ea64877a2a647f6eaae44b, type: 2}
-  - {fileID: 11400000, guid: b2fd81d1d70644131b354b4a99c509e4, type: 2}
-  - {fileID: 11400000, guid: 972905e4602744f4ab4579ec3bc340ea, type: 2}
-  - {fileID: 11400000, guid: d687a8c97044a4479a1ff11648f63a27, type: 2}
+  id: 4
+  part: {fileID: 0}
+  slot: 1

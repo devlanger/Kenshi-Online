@@ -12,8 +12,6 @@ public class AbilitiesController : MonoBehaviour
 {
     public static AbilitiesController Instance;
     
-    [SerializeField] private GameObject kunai;
-
     public List<AbilityHotkey> hotkeys = new List<AbilityHotkey>();
 
     public AbilitiesManager abilitiesManager;

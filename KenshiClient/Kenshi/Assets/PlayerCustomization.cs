@@ -15,12 +15,21 @@ public class PlayerCustomization : MonoBehaviour
         RefreshCustomizationVisuals(data);
     }
 
+    public void SetCustomizationSlot(ClothingPart part, int itemId)
+    {
+        customizationData.clothes[part] = itemId;
+        RefreshCustomizationVisuals(customizationData);
+    }
+    
     private void RefreshCustomizationVisuals(CustomizationData data)
     {
         Debug.Log("Refresh visuals");
         foreach (var item in itemsWorn.Values)
         {
-            Destroy(item.gameObject);
+            if (item != null)
+            {
+                Destroy(item.gameObject);
+            }
         }
         
         itemsWorn.Clear();
@@ -32,7 +41,7 @@ public class PlayerCustomization : MonoBehaviour
         }
     }
 
-    private GameObject WearItem(int itemValue)
+    public GameObject WearItem(int itemValue)
     {
         return null;
     }

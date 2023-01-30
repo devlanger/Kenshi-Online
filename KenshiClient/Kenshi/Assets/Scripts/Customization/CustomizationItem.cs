@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [CreateAssetMenu]
 public class CustomizationItem : SerializedScriptableObject
@@ -14,7 +15,7 @@ public class CustomizationItem : SerializedScriptableObject
 [System.Serializable]
 public class CustomizationData
 {
-    public Dictionary<ClothingPart, int> clothes = new Dictionary<ClothingPart, int>();
+    public SerializedDictionary<ClothingPart, int> clothes = new SerializedDictionary<ClothingPart, int>();
 }
 
 public enum ClothingPart
