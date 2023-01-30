@@ -11,6 +11,12 @@ public class CustomizationItem : SerializedScriptableObject
     public ClothingPart slot;
 }
 
+[System.Serializable]
+public class CustomizationData
+{
+    public Dictionary<ClothingPart, int> clothes = new Dictionary<ClothingPart, int>();
+}
+
 public enum ClothingPart
 {
     head = 1,
