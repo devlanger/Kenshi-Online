@@ -44,7 +44,6 @@ public class TriggerCollisionHandler : MonoBehaviour
     public void SpawnEffect(GameObject go)
     {
         var inst = Instantiate(go, transform.position, transform.rotation);
-        GameObject.Destroy(inst.gameObject, 1);
     }
 
     public void Destroy()

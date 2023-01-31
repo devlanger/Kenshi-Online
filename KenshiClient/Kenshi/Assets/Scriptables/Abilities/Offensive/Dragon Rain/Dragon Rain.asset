@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Dragon Rain
   m_EditorClassIdentifier: 
   Id: 4
-  enabledInBuild: 1
+  enabledInBuild: 0
   icon: {fileID: 21300000, guid: 09afc7129c6400947ab194811d1e314b, type: 3}
   Data:
     name: Dragon Rain

@@ -81,7 +81,7 @@ public class TargetController : MonoBehaviour
         }
         
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.T))
         {
             if (Physics.SphereCast(mainCamera.transform.position, 1.5f, mainCamera.transform.forward, out var raycastHit1, 25, charactersMask,
                     QueryTriggerInteraction.Ignore))

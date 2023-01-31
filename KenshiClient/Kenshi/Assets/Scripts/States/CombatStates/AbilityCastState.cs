@@ -54,13 +54,23 @@ namespace StarterAssets.CombatStates
             }
 
             var mana = abilityData.Data.mana;
-            if (v < mana)
-            {
-                return;
-            }
-
+            
             if (stateMachine.IsLocal)
             {
+                if (v < mana)
+                {
+                    if (stateMachine.IsLocal)
+                    {
+                        return;
+                    }
+
+                    //TODO: On the server the mana regen isnt adding mana - check and for now validator is disabled on the server
+                    // if (GameServer.IsServer)
+                    // {
+                    //     return;
+                    // }
+                }
+                
                 GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
             }
             else
@@ -75,16 +85,20 @@ namespace StarterAssets.CombatStates
             {
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, data), DeliveryMethod.ReliableOrdered);
             }
-            
-            v -= mana;
-            CombatController.Instance.SetPlayerStat(new StatEventPacket.Data()
+
+            //TODO: Fix to work on server side
+            if (stateMachine.IsLocal)
             {
-                value = v,
-                maxValue = (ushort)100,
-                playerId = stateMachine.Target.NetworkId,
-                statId = StatEventPacket.StatId.mana
-            });
-            
+                v -= mana;
+                CombatController.Instance.SetPlayerStat(new StatEventPacket.Data()
+                {
+                    value = v,
+                    maxValue = (ushort)100,
+                    playerId = stateMachine.Target.NetworkId,
+                    statId = StatEventPacket.StatId.mana
+                });
+            }
+
             var ability = GameObject.FindObjectOfType<AbilitiesController>().CastAbility(new AbilityInfo()
             {   
                 abilityId = data.abilityId,

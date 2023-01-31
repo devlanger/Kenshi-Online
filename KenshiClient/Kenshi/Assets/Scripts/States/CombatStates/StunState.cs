@@ -27,6 +27,7 @@ namespace StarterAssets.CombatStates
         {
             if (GameServer.IsServer)
             {
+                stateMachine.Target.ActivateNavAgent(false);
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, Id), DeliveryMethod.ReliableOrdered);
             }
          
@@ -41,6 +42,11 @@ namespace StarterAssets.CombatStates
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
+            if(GameServer.IsServer)
+            {
+                stateMachine.Target.ActivateNavAgent(true);
+            }
+            
             if (stateMachine.Target.animator != null)
             {
                 stateMachine.Target.animator.SetTrigger("hit");

@@ -10,12 +10,9 @@ public class CustomizationView : ViewUI
 
     public void WearItem(int itemId)
     {
-        var item = _customizationManager.items.FirstOrDefault(i => i.id == itemId);
-        if (item == null)
+        if (_customizationManager.GetItem(itemId, out var item))
         {
-            return;
+            character.SetCustomizationSlot(item.slot, item.id);
         }
-
-        character.SetCustomizationSlot(item.slot, itemId);
     }
 }

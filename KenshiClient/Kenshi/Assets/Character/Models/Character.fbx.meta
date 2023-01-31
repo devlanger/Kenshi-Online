@@ -19,14 +19,43 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'rig|rigAction' has import animation warnings
+    animationImportWarnings: "\nClip 'rig|Attacks' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'DEF-spine.001' has scale animation that
-      will be discarded.\n\t'DEF-spine.002' has scale animation that will be discarded.\n\t'DEF-spine.003'
+      to improve retargeting quality.\n\t'DEF-spine' has scale animation that will
+      be discarded.\n\t'DEF-spine.002' has scale animation that will be discarded.\n\t'DEF-spine.003'
       has scale animation that will be discarded.\n\t'DEF-spine.004' is inbetween
       humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-spine.004'
       has scale animation that will be discarded.\n\t'DEF-neck' has scale animation
       that will be discarded.\n\t'DEF-head' has scale animation that will be discarded.\n\t'DEF-upper_arm.L'
+      has scale animation that will be discarded.\n\t'DEF-forearm.L' has scale animation
+      that will be discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-thumb.02.L'
+      has scale animation that will be discarded.\n\t'DEF-f_ring.01.L' has scale
+      animation that will be discarded.\n\t'DEF-f_ring.02.L' has scale animation
+      that will be discarded.\n\t'DEF-f_ring.03.L' has scale animation that will
+      be discarded.\n\t'DEF-upper_arm.R' has translation animation that will be discarded.\n\t'DEF-upper_arm.R'
+      has scale animation that will be discarded.\n\t'DEF-forearm.R' has scale animation
+      that will be discarded.\n\t'DEF-hand.R' has scale animation that will be discarded.\n\t'DEF-f_index.02.R'
+      has scale animation that will be discarded.\n\t'DEF-f_index.03.R' has scale
+      animation that will be discarded.\n\t'DEF-thumb.02.R' has scale animation that
+      will be discarded.\n\t'DEF-thumb.03.R' has scale animation that will be discarded.\n\t'DEF-f_middle.02.R'
+      has scale animation that will be discarded.\n\t'DEF-f_middle.03.R' has scale
+      animation that will be discarded.\n\t'DEF-f_ring.01.R' has scale animation
+      that will be discarded.\n\t'DEF-f_ring.02.R' has scale animation that will
+      be discarded.\n\t'DEF-f_ring.03.R' has scale animation that will be discarded.\n\t'DEF-f_pinky.02.R'
+      has scale animation that will be discarded.\n\t'DEF-f_pinky.03.R' has scale
+      animation that will be discarded.\n\t'DEF-thigh.L' has scale animation that
+      will be discarded.\n\t'DEF-shin.L' has scale animation that will be discarded.\n\t'DEF-foot.L'
+      has scale animation that will be discarded.\n\t'DEF-toe.L' has scale animation
+      that will be discarded.\n\t'DEF-thigh.R' has scale animation that will be discarded.\n\t'DEF-shin.R'
+      has scale animation that will be discarded.\n\t'DEF-foot.R' has scale animation
+      that will be discarded.\n\t'DEF-toe.R' has scale animation that will be discarded.\n\nClip
+      'rig|rigAction' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'DEF-spine.001'
+      has scale animation that will be discarded.\n\t'DEF-spine.002' has scale animation
+      that will be discarded.\n\t'DEF-spine.003' has scale animation that will be
+      discarded.\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
+      animation that will be discarded.\n\t'DEF-spine.004' has scale animation that
+      will be discarded.\n\t'DEF-neck' has scale animation that will be discarded.\n\t'DEF-upper_arm.L'
       has translation animation that will be discarded.\n\t'DEF-upper_arm.L' has
       scale animation that will be discarded.\n\t'DEF-forearm.L' has scale animation
       that will be discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-f_index.01.L'
@@ -57,10 +86,12 @@ ModelImporter:
       animation that will be discarded.\n\t'DEF-f_pinky.01.R' has translation animation
       that will be discarded.\n\t'DEF-f_pinky.02.R' has scale animation that will
       be discarded.\n\t'DEF-f_pinky.03.R' has scale animation that will be discarded.\n\t'DEF-thigh.L'
-      has scale animation that will be discarded.\n\t'DEF-shin.L' has scale animation
-      that will be discarded.\n\t'DEF-foot.L' has scale animation that will be discarded.\n\t'DEF-toe.L'
-      has scale animation that will be discarded.\n\t'DEF-thigh.R' has scale animation
-      that will be discarded.\n\t'DEF-shin.R' has scale animation that will be discarded.\n\t'DEF-foot.R'
+      has translation animation that will be discarded.\n\t'DEF-thigh.L' has scale
+      animation that will be discarded.\n\t'DEF-shin.L' has scale animation that
+      will be discarded.\n\t'DEF-foot.L' has scale animation that will be discarded.\n\t'DEF-toe.L'
+      has scale animation that will be discarded.\n\t'DEF-thigh.R' has translation
+      animation that will be discarded.\n\t'DEF-thigh.R' has scale animation that
+      will be discarded.\n\t'DEF-shin.R' has scale animation that will be discarded.\n\t'DEF-foot.R'
       has scale animation that will be discarded.\n\t'DEF-toe.R' has scale animation
       that will be discarded.\n"
     animationRetargetingWarnings: 
@@ -109,7 +140,7 @@ ModelImporter:
       takeName: rig|rigAction
       internalID: 2796233005842590986
       firstFrame: 32
-      lastFrame: 50
+      lastFrame: 60
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -166,8 +197,8 @@ ModelImporter:
       name: Block
       takeName: rig|rigAction
       internalID: -7171348330274588401
-      firstFrame: 70
-      lastFrame: 75
+      firstFrame: 69
+      lastFrame: 70
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -195,8 +226,8 @@ ModelImporter:
       name: RegenMana
       takeName: rig|rigAction
       internalID: -2435092234954419096
-      firstFrame: 80
-      lastFrame: 85
+      firstFrame: 79
+      lastFrame: 80
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -282,8 +313,8 @@ ModelImporter:
       name: DashRight
       takeName: rig|rigAction
       internalID: -2834480211674462595
-      firstFrame: 109
-      lastFrame: 111
+      firstFrame: 108
+      lastFrame: 110
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -342,6 +373,194 @@ ModelImporter:
       internalID: -1004416848253862888
       firstFrame: 119
       lastFrame: 120
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Sprint
+      takeName: rig|rigAction
+      internalID: -3886349032861752875
+      firstFrame: 125
+      lastFrame: 145
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.2520281
+        functionName: OnFootstep
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7547883
+        functionName: OnFootstep
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DashBack
+      takeName: rig|rigAction
+      internalID: 8480097365045108539
+      firstFrame: 152
+      lastFrame: 180
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Backflip
+      takeName: rig|rigAction
+      internalID: 3209305792530626469
+      firstFrame: 191
+      lastFrame: 215
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: DoubleBackflip
+      takeName: rig|rigAction
+      internalID: 2731914535907584038
+      firstFrame: 220
+      lastFrame: 265
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Frontflip
+      takeName: rig|rigAction
+      internalID: -7467545332628133258
+      firstFrame: 265
+      lastFrame: 285
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Attack1
+      takeName: rig|Attacks
+      internalID: -6376207457243065909
+      firstFrame: 10
+      lastFrame: 32
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

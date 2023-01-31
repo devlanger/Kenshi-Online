@@ -14,7 +14,6 @@ public class MenuUI : MonoBehaviour
     private ConnectionController connectionController;
 
     [SerializeField] private TextMeshProUGUI nicknameLabel;
-    [SerializeField] private Button createGameButton;
     [SerializeField] private Button joinGameButton;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button refreshGameButton;
@@ -37,7 +36,6 @@ public class MenuUI : MonoBehaviour
         connectionController.OnMessageReceived += ConnectionControllerOnOnMessageReceived;
         connectionController.OnLogged += ConnectionControllerOnOnLogged;
         
-        createGameButton.onClick.AddListener(CreateGameClick);
         joinGameButton.onClick.AddListener(JoinGameClick);
         exitGameButton.onClick.AddListener(ExitGameClick);
         refreshGameButton.onClick.AddListener(RefreshGameClick);
@@ -155,11 +153,6 @@ public class MenuUI : MonoBehaviour
     private async void JoinGameClick()
     {
         await connectionController.ExecuteCommand("join_game");
-    }
-
-    private async void CreateGameClick()
-    {
-        await connectionController.ExecuteCommand("create_game x");
     }
 
     private async void Start()

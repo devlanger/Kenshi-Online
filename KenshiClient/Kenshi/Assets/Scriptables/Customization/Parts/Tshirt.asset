@@ -22,5 +22,5 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   id: 3
-  part: {fileID: 0}
+  part: {fileID: 713508695568649192, guid: b8e382158fc7545c0920a61c294d9774, type: 3}
   slot: 2

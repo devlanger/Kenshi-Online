@@ -31,8 +31,11 @@ namespace StarterAssets
         {
             if (statId == obj.statId && obj.playerId == GameRoomNetworkController.Instance.LocalPlayer.NetworkId)
             {
-                slider.maxValue = (ushort)obj.maxValue;
-                slider.value = (ushort)obj.value;
+                if (slider != null)
+                {
+                    slider.maxValue = (ushort)obj.maxValue;
+                    slider.value = (ushort)obj.value;
+                }
             }
         }
     }

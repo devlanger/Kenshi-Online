@@ -187,6 +187,6 @@ MonoBehaviour:
   data:
     spawnType: 1
     spawnOffset: {x: 0, y: 1, z: 1}
-    throwable: {fileID: 3271557652579845924, guid: e13ba80bf9da041beb6814dee14c1827,
+    throwable: {fileID: 3271557652579845924, guid: 1719893e0578544b58bf7dfc75a199fd,
       type: 3}
-    speed: 20
+    speed: 35

@@ -90,5 +90,8 @@ services:
         
 volumes:
   grafana-data:
+    driver: local
   prometheus-data:
+    driver: local
   elasticsearch-data:
+    driver: local

@@ -56,12 +56,18 @@ namespace StarterAssets
                 stateMachine.Variables.jumpIndex++;
                 tpsController.SetVerticalVelocity();
             }
+            
+            stateMachine.Target.animator?.SetBool("Grounded", false);
+            stateMachine.Target.animator?.SetTrigger("jump");
+            stateMachine.Target.animator?.SetInteger("jump_id", stateMachine.Variables.jumpIndex);
         }
 
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
             stateMachine.Target.animator?.SetBool(_animIDJump, false);
+            stateMachine.Target.animator?.SetTrigger("jump");
+            stateMachine.Target.animator?.SetInteger("jump_id", 0);
         }
     }
 }

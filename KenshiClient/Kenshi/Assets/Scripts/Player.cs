@@ -110,4 +110,12 @@ public class Player : Mob
             tps.CameraRotation();
         }
     }
+
+    public void ActivateNavAgent(bool b)
+    {
+        if (TryGetComponent<NavMeshAgent>(out var c))
+        {
+            c.enabled = b;
+        }
+    }
 }

@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
 public class PlayerCustomization : MonoBehaviour
 {
+    [SerializeField] private CustomizationManager _customizationManager;
     [SerializeField] private CustomizationData customizationData;
 
-    private Dictionary<ClothingPart, GameObject> itemsWorn = new Dictionary<ClothingPart, GameObject>();
+    [SerializeField] private SerializedDictionary<ClothingPart, GameObject> itemsWorn = new SerializedDictionary<ClothingPart, GameObject>();
 
     public void SetCustomization(CustomizationData data)
     {
@@ -43,6 +45,15 @@ public class PlayerCustomization : MonoBehaviour
 
     public GameObject WearItem(int itemValue)
     {
+        if (_customizationManager.GetItem(itemValue, out var i))
+        {
+            if (i.part != null)
+            {
+                var inst = EquipUtils.EquipItem(gameObject, i.part);
+                return inst;
+            }
+        }
+        
         return null;
     }
 }

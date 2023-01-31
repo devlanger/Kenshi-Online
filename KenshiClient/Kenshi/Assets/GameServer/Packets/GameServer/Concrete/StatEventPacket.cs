@@ -44,6 +44,7 @@ namespace Kenshi.Shared.Packets.GameServer
             switch (data.statId)
             {
                 case StatId.health:
+                case StatId.mana:
                     data.value = reader.GetUShort();
                     data.maxValue = reader.GetUShort();
                     break;
@@ -57,6 +58,7 @@ namespace Kenshi.Shared.Packets.GameServer
             switch (data.statId)
             {
                 case StatId.health:
+                case StatId.mana:
                     writer.Put((ushort)data.value);
                     writer.Put((ushort)data.maxValue);
                     break;

@@ -17,8 +17,8 @@ namespace StarterAssets.CombatStates
         private bool damaged = false;
         private float damageTime = 0.2f;
 
-        private float duration = 0.65f;
-        private float heavyAttackDuration = 1f;
+        private float duration = 0.85f;
+        private float heavyAttackDuration = 1.25f;
         private float hitDistance = 1.75f;
         
         public class Data
@@ -55,7 +55,7 @@ namespace StarterAssets.CombatStates
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
-            if (ElapsedTime > (lastAttack ? heavyAttackDuration - 0.2f : duration - 0.2f))
+            if (ElapsedTime > (lastAttack ? heavyAttackDuration - 0.3f : duration - 0.3f))
             {
                 if (!UpdateAttackInput(stateMachine))
                 {
@@ -190,6 +190,8 @@ namespace StarterAssets.CombatStates
                 stateMachine.Target.animator.SetTrigger("attack");
                 stateMachine.Target.animator.SetInteger("attack_id", 0);
             }
+            
+            stateMachine.Target.tps.SetVelocity(Vector3.zero, true);
             stateMachine.Variables.IsAttacking = false;
         }
     }

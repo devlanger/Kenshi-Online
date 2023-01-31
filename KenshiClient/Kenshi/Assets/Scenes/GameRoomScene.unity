@@ -6143,13 +6143,13 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -3
   m_TargetDisplay: 0
 --- !u!1001 &1402827283
 PrefabInstance:
@@ -6237,17 +6237,17 @@ PrefabInstance:
     - target: {fileID: 2070925442191277752, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: Damping.x
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2070925442191277752, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: Damping.y
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2070925442191277752, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
       propertyPath: Damping.z
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2070925442191277752, guid: a1a802ecaf6775746bb2a929fb554ad8,
         type: 3}
@@ -7622,7 +7622,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f61631e626e43a29461bd29c19ea88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kunai: {fileID: 3271557652579845924, guid: e53efe993edef48c593c763a333063ad, type: 3}
   hotkeys:
   - hotkeyId: 0
     abilityId: 1
@@ -10156,7 +10155,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1847
 --- !u!223 &2140062974
 Canvas:
   m_ObjectHideFlags: 0
