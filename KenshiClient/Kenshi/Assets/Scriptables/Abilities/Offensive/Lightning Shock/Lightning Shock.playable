@@ -132,6 +132,7 @@ MonoBehaviour:
     throwable: {fileID: 5438187191059399289, guid: aa40d5dd974e74cad8350d3885998ee0,
       type: 3}
     speed: 0
+    parentToUser: 1
 --- !u!114 &5501678260781067136
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -80,6 +80,7 @@ namespace Kenshi.Shared.Packets.GameServer
                         duration = reader.GetFloat(),
                         direction = ReadVector3(reader),
                         hitPos = ReadVector3(reader),
+                        hitType = (AttackState.DamageData.HitType)reader.GetByte(),
                     };
                     break;
                 case FSMStateId.ability_cast:
@@ -112,6 +113,7 @@ namespace Kenshi.Shared.Packets.GameServer
                     writer.Put(hitData.duration);
                     PutVector3(hitData.direction);
                     PutVector3(hitData.hitPos);
+                    writer.Put((byte)hitData.hitType);
                     break;
                 
                 case FSMStateId.ability_cast:

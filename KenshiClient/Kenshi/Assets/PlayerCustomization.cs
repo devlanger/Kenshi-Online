@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 
-public class PlayerCustomization : MonoBehaviour
+public class PlayerCustomization : SerializedMonoBehaviour
 {
     [SerializeField] private CustomizationManager _customizationManager;
     [SerializeField] private CustomizationData customizationData;
 
-    [SerializeField] private SerializedDictionary<ClothingPart, GameObject> itemsWorn = new SerializedDictionary<ClothingPart, GameObject>();
+    [SerializeField] private Dictionary<ClothingPart, GameObject> itemsWorn = new Dictionary<ClothingPart, GameObject>();
 
     public void SetCustomization(CustomizationData data)
     {
@@ -26,16 +27,21 @@ public class PlayerCustomization : MonoBehaviour
     private void RefreshCustomizationVisuals(CustomizationData data)
     {
         Debug.Log("Refresh visuals");
-        foreach (var item in itemsWorn.Values)
+        var keys = new HashSet<ClothingPart>();
+        foreach (var item in itemsWorn)
         {
-            if (item != null)
+            if (item.Value != null && customizationData.clothes.ContainsKey(item.Key))
             {
-                Destroy(item.gameObject);
+                Destroy(item.Value.gameObject);
+                keys.Add(item.Key);
             }
         }
-        
-        itemsWorn.Clear();
 
+        foreach (var key in keys)
+        {
+            itemsWorn.Remove(key);
+        }
+        
         foreach (var item in customizationData.clothes)
         {
             var inst = WearItem(item.Value);

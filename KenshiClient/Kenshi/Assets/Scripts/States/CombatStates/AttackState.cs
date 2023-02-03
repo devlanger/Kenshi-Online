@@ -20,6 +20,8 @@ namespace StarterAssets.CombatStates
         private float duration = 0.85f;
         private float heavyAttackDuration = 1.25f;
         private float hitDistance = 1.75f;
+
+        private bool dashForwardAttack = false;
         
         public class Data
         {
@@ -31,7 +33,20 @@ namespace StarterAssets.CombatStates
         {
             
         }
-        
+
+        public override bool Validate(PlayerStateMachine machine)
+        {
+            if (machine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
+            {
+                if(((DashState)machine.Target.movementStateMachine.CurrentState).data.dashIndex != DashState.Data.DashIndex.forward)
+                {
+                    return false;
+                }
+            }
+            
+            return base.Validate(machine);
+        }
+
         public AttackState(Data data)
         {
             this.data = data;
@@ -78,7 +93,10 @@ namespace StarterAssets.CombatStates
             }
             else
             {
-                stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 0.5f);
+                if (!dashForwardAttack)
+                {
+                    stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 1f);
+                }
             }
         }
 
@@ -123,7 +141,7 @@ namespace StarterAssets.CombatStates
                         attacker = machine.Target,
                         hitTarget = hitTarget,
                         damage = 15,
-                        direction = lastAttack ? (dir.normalized * 7) : (dir.normalized * 0.5f),
+                        direction = lastAttack ? (dir.normalized * 15) : (dir.normalized * 0.5f),
                         hitType = lastAttack ? DamageData.HitType.heavy : DamageData.HitType.light
                     });
                 }
@@ -163,8 +181,21 @@ namespace StarterAssets.CombatStates
                     rot = 0,
                 }), DeliveryMethod.ReliableOrdered);
             }
-            
-            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+
+            if (stateMachine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
+            {
+                if (((DashState)stateMachine.Target.movementStateMachine.CurrentState).data.dashIndex ==
+                    DashState.Data.DashIndex.forward)
+                {
+                    dashForwardAttack = true;
+                }
+            }
+
+            if (!dashForwardAttack)
+            {
+                stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+            }
+
             stateMachine.Target.transform.position = data.pos;
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
             stateMachine.Variables.IsAttacking = true;

@@ -68,6 +68,10 @@ public class BotsController : MonoBehaviour
                 {
                     speed = bot.agent.velocity.sqrMagnitude > 0.01f ? 2 : 0;
                 }
+
+                bot.playerStateMachine.CurrentState?.UpdateInput(bot.playerStateMachine);
+                bot.Input.leftClick = true;
+                
                 GameRoomNetworkController.SendPacketToAll(new PositionUpdatePacket(bot.NetworkId, bot.transform.position.x, bot.transform.position.y, bot.transform.position.z, (byte)(bot.transform.eulerAngles.y / 5), speed));
             }
 

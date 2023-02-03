@@ -41,6 +41,12 @@ namespace StarterAssets
         private void ExecuteStateChange(FSMState newState)
         {
             //Debug.Log(newState);
+            if (!newState.Validate(this))
+            {
+                return;
+            }
+
+            var oldState = CurrentState;
 
             if (CurrentState != null)
                 CurrentState.Exit(this);
@@ -48,7 +54,7 @@ namespace StarterAssets
             CurrentState = newState;
 
             if (newState != null)
-                newState.Enter(this);
+                newState.Enter(this, oldState);
         }
 
         public void UpdateQueue()

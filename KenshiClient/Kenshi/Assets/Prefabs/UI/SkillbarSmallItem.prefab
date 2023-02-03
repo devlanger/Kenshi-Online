@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 7804256700098971409}
   hotkeyId: 0
+  type: 2
 --- !u!114 &4055666748792946326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,6 +196,7 @@ GameObject:
   - component: {fileID: 6452269168599882136}
   - component: {fileID: 7434725546439417378}
   - component: {fileID: 6847145526426842613}
+  - component: {fileID: 7072799204614727189}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -319,6 +321,18 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!225 &7072799204614727189
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6194671810335561303}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &7870617125836000297
 GameObject:
   m_ObjectHideFlags: 0

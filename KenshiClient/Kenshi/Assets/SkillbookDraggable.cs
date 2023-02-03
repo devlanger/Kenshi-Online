@@ -37,8 +37,11 @@ public class SkillbookDraggable : MonoBehaviour, IBeginDragHandler, IEndDragHand
         {
             if (droppedOn.TryGetComponent(out SkillbarItem skillbarItem))
             {
-                AbilitiesController.Instance.SetHotkey(skillbarItem.hotkeyId, abilityId);
-                AbilitiesController.Instance.SaveSkillmap();
+                if (AbilitiesController.Instance.abilitiesManager.GetItem(abilityId, out var ab) && ab.type == skillbarItem.type)
+                {
+                    AbilitiesController.Instance.SetHotkey(skillbarItem.hotkeyId, abilityId);
+                    AbilitiesController.Instance.SaveSkillmap();
+                }
             }
         }
     }

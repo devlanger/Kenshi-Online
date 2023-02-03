@@ -15,6 +15,8 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
             THROW = 1,
             AT_HIT_POINT = 2,
             AT_USER = 3,
+            AT_RIGHT_HAND = 4,
+            AT_LEFT_HAND = 5,
         }
 
         public SpawnType spawnType = SpawnType.THROW;
@@ -22,6 +24,7 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
         public AbilityInfo info;
         public GameObject throwable;
         public float speed = 20;
+        public bool parentToUser = false;
     }
 
     public GameObject owner;
@@ -64,12 +67,24 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
                 case Data.SpawnType.AT_USER:
                     GameObject inst2 = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + (abilityInfo.user.transform.rotation * data.spawnOffset), abilityInfo.user.transform.rotation);
                     inst2.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
-                    inst2.transform.parent = owner.transform;
+                    if(data.parentToUser) inst2.transform.parent = owner.transform;
                     break;
                 
                 case Data.SpawnType.AT_HIT_POINT:
                     GameObject inst3 = GameObject.Instantiate(data.throwable, abilityInfo.hitPoint + (abilityInfo.user.transform.rotation * data.spawnOffset), Quaternion.identity);
                     inst3.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
+                    break;
+                
+                case Data.SpawnType.AT_RIGHT_HAND:
+                    var parent = abilityInfo.user.bodyParts.rightHand.transform;
+                    GameObject inst4 = GameObject.Instantiate(data.throwable, parent.position, Quaternion.identity, parent);
+                    inst4.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
+                    break;
+                
+                case Data.SpawnType.AT_LEFT_HAND:
+                    var parentL = abilityInfo.user.bodyParts.leftHand.transform;
+                    GameObject inst5 = GameObject.Instantiate(data.throwable, parentL.position, Quaternion.identity, parentL);
+                    inst5.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
                     break;
             }
         }

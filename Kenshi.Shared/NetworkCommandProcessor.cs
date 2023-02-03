@@ -35,7 +35,7 @@ namespace Kenshi.Shared
                     case "disconnect":
                         return true;
                     case "create_game":
-                        await connection.SendAsync("CreateGameRoom", "test-room");
+                        await connection.SendAsync("CreateGameRoom", input.Replace(parameters[0], ""));
                         break;
                     case "delete_game":
                         await connection.SendAsync("DeleteGameRoom", parameters[1]);

@@ -115,7 +115,8 @@ public class Player : Mob
     {
         if (TryGetComponent<NavMeshAgent>(out var c))
         {
-            c.enabled = b;
+            c.enabled = b; 
+            c.isStopped = !b;
         }
     }
 }

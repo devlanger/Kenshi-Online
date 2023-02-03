@@ -2463,16 +2463,95 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ca4f4231929b448794ca163d32044cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 7447576550254581994}
+    - {fileID: 459588972066687341}
+    - {fileID: 7728724671607183647}
+    - {fileID: 1100555064706037118}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: itemsWorn
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[ClothingPart, Assembly-CSharp],[UnityEngine.GameObject,
+        UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[ClothingPart, Assembly-CSharp]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 4
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 2
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 3
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   _customizationManager: {fileID: 11400000, guid: 9879ee0056f8e4851a482f86ff23f2e2,
     type: 2}
-  customizationData:
-    clothes:
-      m_Keys: 
-      m_Values: 
-  itemsWorn:
-    m_Keys: 02000000
-    m_Values:
-    - {fileID: 7447576550254581994}
 --- !u!1 &9111674694070067708
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,6 +2714,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e2f37ded9d34337bfc6c35fc919be9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &459588972066687341 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7640558969779515294, guid: 6842ea769bb0549339805680149d15e9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1411739554383583503}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1100555064706037118 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -7146521406498821007, guid: 6842ea769bb0549339805680149d15e9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1411739554383583503}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1449377157072273124 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6842ea769bb0549339805680149d15e9,
@@ -2644,6 +2735,12 @@ Transform:
 --- !u!1 &7447576550254581994 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8416272007918961125, guid: 6842ea769bb0549339805680149d15e9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1411739554383583503}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7728724671607183647 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -516098083770646512, guid: 6842ea769bb0549339805680149d15e9,
     type: 3}
   m_PrefabInstance: {fileID: 1411739554383583503}
   m_PrefabAsset: {fileID: 0}

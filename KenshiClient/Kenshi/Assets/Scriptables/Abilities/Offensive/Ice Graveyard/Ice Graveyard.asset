@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Ice Graveyard
   m_EditorClassIdentifier: 
-  Id: 7
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 25
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: fed4337445ffcb6438005f1a27d01035, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.5
     behaviour: {fileID: 11400000, guid: dd00874cedf174de4806bc9a2443bb46, type: 2}
     mana: 25
+  canCastInAir: 1

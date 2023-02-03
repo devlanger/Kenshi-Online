@@ -108,6 +108,7 @@ public class KubernetesService
         {
             return new GameRoomInstance
             {
+                DisplayName = settings.Name,
                 RoomId = GetPodName(freePort),
                 Port = freePort,
                 MaxPlayers = 16,

@@ -10,7 +10,20 @@ namespace StarterAssets
         int _animIDJump = Animator.StringToHash("Jump");
 
         public override FSMStateId Id => FSMStateId.jump;
-        
+
+        public override bool Validate(PlayerStateMachine machine)
+        {
+            switch (machine.Target.playerStateMachine.CurrentState.Id)
+            {
+                case FSMStateId.hit:
+                case FSMStateId.stunned:
+                case FSMStateId.dead:
+                    return false;
+            }
+
+            return base.Validate(machine);
+        }
+
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
             if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)

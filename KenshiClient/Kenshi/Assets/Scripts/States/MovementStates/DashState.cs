@@ -8,7 +8,7 @@ namespace StarterAssets
 {
     public class DashState : FSMState
     {
-        private Data data;
+        public Data data;
         
         public override FSMStateId Id => FSMStateId.dash;
 
@@ -19,9 +19,22 @@ namespace StarterAssets
             this.data = data;
         }
 
+        public override bool Validate(PlayerStateMachine machine)
+        {
+            switch (machine.Target.playerStateMachine.CurrentState.Id)
+            {
+                case FSMStateId.hit:
+                case FSMStateId.stunned:
+                case FSMStateId.dead:
+                    return false;
+            }
+            
+            return base.Validate(machine);
+        }
+
         protected override void OnUpdate(PlayerStateMachine machine)
         {
-            if (ElapsedTime > 0.4f)
+            if (ElapsedTime > 0.3f)
             {
                 if (machine.Variables.Grounded && startedInAir)
                 {
@@ -38,10 +51,12 @@ namespace StarterAssets
         {
             if (stateMachine.IsLocal && ElapsedTime < 0.4f)
             {
+                float speed = 20;
                 Vector3 dir = Vector3.zero;
                 switch (data.dashIndex)
                 {
                     case Data.DashIndex.forward:
+                        speed = 25;
                         dir = Camera.main.transform.forward;
                         break;
                     
@@ -61,19 +76,19 @@ namespace StarterAssets
                 if (stateMachine.Variables.Grounded)
                 {
                     dir.y = 0;
-                    dir = dir.normalized;
                 }
 
-                Vector3 direction = dir * 15;
-                stateMachine.Target.tps.UpdateGravity();
-                stateMachine.Target.tps.SetVelocity(direction, true);
+                Vector3 direction = dir.normalized * speed;
 
-                if (!stateMachine.Variables.Grounded)
+                if (!stateMachine.Variables.Grounded && data.dashIndex == Data.DashIndex.forward)
                 {
                     stateMachine.Target.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+                    stateMachine.Target.tps.SetVelocity(direction, false);
                 }
                 else
                 {
+                    stateMachine.Target.tps.UpdateGravity();
+                    stateMachine.Target.tps.SetVelocity(direction, true);
                     Vector3 rot = Camera.main.transform.forward;
                     rot.y = 0;
                     stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot);

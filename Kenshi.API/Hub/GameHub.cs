@@ -20,6 +20,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly ILogger<GameHub> _logger;
     private readonly ConnectionMultiplexer redis;
 
+    public const string CLIENT_VERSION = "0.0.10";
+    
     public static string RedisString(IConfiguration config) =>
         Environment.GetEnvironmentVariable("REDIS_HOST") ?? config["ConnectionStrings:redis"];
     
@@ -75,6 +77,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
             var gameRoomInstance = await _service.CreatePod(new GameRoomPodSettings()
             {
+                Name = name,
                 Annotations = new Dictionary<string, string>(),
                 Port = 3000,
                 RoomId = 1
@@ -111,7 +114,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             var dto = new ContainerDto()
             {
                 Id = item.RoomId,
-                Name = item.RoomId,
+                Name = item.DisplayName,
                 Port = item.Port.ToString(),
                 PlayersCount = item.Players.Count,
                 MaxPlayersCount = item.MaxPlayers
@@ -187,7 +190,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             return new List<string>();
         }
         
-        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value)?.ToList();
+        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value.id)?.ToList();
     }
 
     public List<string> GetPlayersInRoom(string port)
@@ -246,12 +249,24 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     
     public override async Task OnConnectedAsync()
     {
+        var remoteClientVersion = Context.GetHttpContext().Request.Headers["client_version"];
+        if (remoteClientVersion != CLIENT_VERSION)
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("ShowConnectionMessage", $"Wrong client version [{remoteClientVersion}]. Download new one [{CLIENT_VERSION}]!");
+            Context.Abort();
+            return;
+        }
+
         var username = $"User-{new Random().Next(10000).ToString()}";
         Console.WriteLine($"{Context.ConnectionId}: {username} has joined");
         Context.Items["username"] = username;
         UserService.UsersInLobby.Add(username);
         UserService.LoggedUsers.Add(username);
-        UserService.userIds[username] = Context.ConnectionId;
+        UserService.userIds[username] = new UserService.User
+        {
+            id = Context.ConnectionId,
+            customization = new Dictionary<int, int>()
+        };
         var token = _tokenService.GenerateToken(GetUsername());
         await BroadcastLobbyUsersList();
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {username} has joined lobby");

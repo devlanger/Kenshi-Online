@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Fireball
   m_EditorClassIdentifier: 
-  Id: 3
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 23
+  type: 1
   enabledInBuild: 1
   icon: {fileID: 21300000, guid: 4867db53aa592a64a851c36645423699, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.7
     behaviour: {fileID: 11400000, guid: 7e833d4b7e916478788ec9e08988386b, type: 2}
     mana: 25
+  canCastInAir: 1

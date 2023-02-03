@@ -247,6 +247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 5814536300371247840}
   hotkeyId: 0
+  type: 1
 --- !u!114 &2487139637518524777
 MonoBehaviour:
   m_ObjectHideFlags: 0

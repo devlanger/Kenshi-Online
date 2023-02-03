@@ -12,8 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Water Prison
   m_EditorClassIdentifier: 
-  Id: 5
-  enabledInBuild: 1
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 35
+  type: 1
+  enabledInBuild: 0
   icon: {fileID: 21300000, guid: d79036c8f3ba7ca45970d9530c4dca90, type: 3}
   Data:
     name: Water Prison
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.9
     behaviour: {fileID: 11400000, guid: e698fad7ceb004d9bb5a17d82453d043, type: 2}
     mana: 25
+  canCastInAir: 1

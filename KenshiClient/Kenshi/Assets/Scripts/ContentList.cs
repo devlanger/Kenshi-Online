@@ -11,12 +11,19 @@ public class ContentList : MonoBehaviour
     [SerializeField] private bool removeChildren = true;
     private List<GameObject> list = new List<GameObject>();
 
+    [SerializeField] private List<GameObject> ignoredItems = new List<GameObject>();
+
     private void Awake()
     {
         if (removeChildren)
         {
             foreach (Transform item in parent.transform)
             {
+                if (ignoredItems.Contains(item.gameObject))
+                {
+                    continue;
+                }
+                
                 Destroy(item.gameObject);
             }
         }
@@ -39,6 +46,11 @@ public class ContentList : MonoBehaviour
     {
         foreach (var item in list)
         {
+            if (ignoredItems.Contains(item.gameObject))
+            {
+                continue;
+            }
+            
             Destroy(item.gameObject);
         }
         

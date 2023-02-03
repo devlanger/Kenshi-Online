@@ -8,18 +8,32 @@ public class MenuSkillbarView : ViewUI
 {
     [SerializeField] private AbilitiesManager manager;
     [SerializeField] private ContentList skillbookList;
+    [SerializeField] private ContentList toolsList;
     [SerializeField] private SkillbarItem skillbookItem;
     
     private void Start()
     {
-        foreach (var ability in manager.abilities.Where(a => a.enabledInBuild))
+        foreach (var ability in manager.items.Where(a => a.enabledInBuild))
         {
-            var inst = skillbookList.SpawnItem(skillbookItem);
+            var list = GetList(ability);
+
+            var inst = list.SpawnItem(skillbookItem);
             inst.Fill(ability);
             
-            var bt =inst.GetComponentInChildren<SkillbookDraggable>();
+            var bt = inst.GetComponentInChildren<SkillbookDraggable>();
             bt.DragStart += (d) => { d.transform.parent = transform; };
-            bt.abilityId = ability.Id;
+            bt.abilityId = ability.id;
         }
+    }
+
+    private ContentList GetList(AbilityScriptable ability)
+    {
+        var list = skillbookList;
+        if (ability.type == AbilityScriptable.Type.tool)
+        {
+            list = toolsList;
+        }
+
+        return list;
     }
 }

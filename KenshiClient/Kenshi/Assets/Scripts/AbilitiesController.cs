@@ -15,7 +15,9 @@ public class AbilitiesController : MonoBehaviour
     public List<AbilityHotkey> hotkeys = new List<AbilityHotkey>();
 
     public AbilitiesManager abilitiesManager;
-    public List<AbilityScriptable> abilities => abilitiesManager.abilities;
+    public List<AbilityScriptable> abilities => abilitiesManager.items;
+
+    public List<AbilityScriptable> defaultSkillmap = new List<AbilityScriptable>();
     
     public event Action<List<AbilityHotkey>> OnHotkeysChanged;
 
@@ -57,10 +59,7 @@ public class AbilitiesController : MonoBehaviour
         }
         else
         {
-            skillMap = new List<int>()
-            {
-                3, 4, 5, 1, 2
-            };
+            skillMap = defaultSkillmap.Select(s => s.id).ToList();
 
             SaveSkillmap();
         }
@@ -104,7 +103,7 @@ public class AbilitiesController : MonoBehaviour
 
     public bool GetAbilityById(int id, out AbilityScriptable ability)
     {
-        ability = abilities.FirstOrDefault(a => a.Id == id);
+        ability = abilities.FirstOrDefault(a => a.id == id);
         if (ability == null)
         {
             return false;

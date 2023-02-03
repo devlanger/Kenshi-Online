@@ -12,7 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238f0f6e5e64748fcb2f8e409de55312, type: 3}
   m_Name: Abilities Manager
   m_EditorClassIdentifier: 
-  abilities:
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  items:
   - {fileID: 11400000, guid: 3fc747aa064e8450b9ef801744a978fd, type: 2}
   - {fileID: 11400000, guid: 01ccdc8a94196494f8fdf66fc0705270, type: 2}
   - {fileID: 11400000, guid: 37ecb996c4f2d4389bf448d380ffc3a4, type: 2}
@@ -31,3 +40,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9ace2e5b94cd0498a8af1697cfe28aa7, type: 2}
   - {fileID: 11400000, guid: 50fe0750c2d83464e8890a030ba3962e, type: 2}
   - {fileID: 11400000, guid: 0092fb9265f3141d69ec63eeb054ddc0, type: 2}
+  - {fileID: 11400000, guid: bc9257efc634742d09c881fe4f147b1d, type: 2}
+  - {fileID: 11400000, guid: 28f53c9e8850d46efa72c9dd17af11c2, type: 2}

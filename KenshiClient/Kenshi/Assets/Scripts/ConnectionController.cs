@@ -65,7 +65,6 @@ public class ConnectionController : MonoBehaviour
         {
             Debug.Log("trying to connect");
             var t = Connect();
-
             yield return new WaitUntil(() => t.IsCompleted);
 
             if (Connection.State == HubConnectionState.Connected)
@@ -83,7 +82,10 @@ public class ConnectionController : MonoBehaviour
         try
         {
             Connection = new HubConnectionBuilder()
-                .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub")
+                .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub", opts =>
+                {
+                    opts.Headers["client_version"] = Application.version;
+                })
                 .Build();
 
             NetworkCommandProcessor.RegisterCommand("connect", (string[] param) => { SceneManager.LoadScene(1); });
@@ -92,6 +94,7 @@ public class ConnectionController : MonoBehaviour
             RegisterStringEventListener("ListGameRooms");
             RegisterStringEventListener("JoinGameRoom");
             RegisterStringEventListener("ShowChatMessage");
+            RegisterStringEventListener("ShowConnectionMessage");
 
             OnMessageReceived += OnOnMessageReceived;
 

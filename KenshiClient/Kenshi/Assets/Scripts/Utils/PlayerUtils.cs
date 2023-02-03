@@ -44,7 +44,8 @@ namespace Kenshi.Utils
                 targetId = hitTarget.NetworkId,
                 hitPos = hitTarget.transform.position,
                 direction = data.direction,
-                duration = GetHitDuration(data)
+                duration = GetHitDuration(data),
+                hitType = data.hitType
             };
 
             if (hitTarget.GetStat(StatEventPacket.StatId.health, out ushort health))

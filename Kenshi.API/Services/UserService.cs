@@ -5,11 +5,17 @@ public class UserService
     /// <summary>
     /// <username, playerId>
     /// </summary>
-    public static Dictionary<string, string> userIds = new Dictionary<string, string>();
+    public static Dictionary<string, User> userIds = new Dictionary<string, User>();
 
     public static List<string> UsersInLobby = new List<string>();
     public static List<string> LoggedUsers = new List<string>();
 
+    public class User
+    {
+        public string id;
+        public Dictionary<int, int> customization = new Dictionary<int, int>();
+    }
+    
     public static bool IsUserLogged(string username)
     {
         return LoggedUsers.Contains(username);
@@ -21,6 +27,6 @@ public class UserService
         {
             return "";
         }
-        return userIds[username];
+        return userIds[username].id;
     }
 }

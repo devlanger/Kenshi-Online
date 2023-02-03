@@ -7,6 +7,7 @@ public class SkillbarItem : MonoBehaviour
 {
     [SerializeField] private Image icon;
     public int hotkeyId;
+    public AbilityScriptable.Type type;
     
     public void Fill(AbilityScriptable ability)
     {

@@ -51,12 +51,15 @@ namespace StarterAssets.CombatStates
             value = (float)startV;
             SyncStateOverNetwork(stateMachine);
 
-            if (StatesController.Instance && StatesController.Instance.manaLoadEffect != null)
+            if (VfxController.Instance)
             {
-                manaLoadEffect = GameObject.Instantiate(StatesController.Instance.manaLoadEffect,
+                manaLoadEffect = VfxController.Instance.SpawnFx(VfxController.VfxId.mana_load,
                     stateMachine.Target.transform.position,
                     stateMachine.Target.transform.rotation);
-                manaLoadEffect.transform.parent = stateMachine.Target.transform;
+                if (manaLoadEffect != null)
+                {
+                    manaLoadEffect.transform.parent = stateMachine.Target.transform;
+                }
             }
 
             stateMachine.Target.movementStateMachine.ChangeState(new StandState());
@@ -68,7 +71,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
-            if (StatesController.Instance && StatesController.Instance.manaLoadEffect != null)
+            if (VfxController.Instance && manaLoadEffect != null)
             {
                 GameObject.Destroy(manaLoadEffect);
             }

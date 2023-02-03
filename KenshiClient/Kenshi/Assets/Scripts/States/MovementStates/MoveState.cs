@@ -9,6 +9,19 @@ namespace StarterAssets
 
         private ThirdPersonController tpsController;
 
+        public override bool Validate(PlayerStateMachine machine)
+        {
+            switch (machine.Target.playerStateMachine.CurrentState.Id)
+            {
+                case FSMStateId.hit:
+                case FSMStateId.stunned:
+                case FSMStateId.dead:
+                    return false;
+            }
+
+            return base.Validate(machine);
+        }
+
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
             if (!tpsController.Grounded)

@@ -9,8 +9,7 @@ public class MovePlayableBehaviour : PlayableBehaviour
     [System.Serializable]
     public class Data
     {
-        public string triggerKey = "";
-        public int value = 1;
+        public Vector3 velocity;
     }
 
     public Data data;
@@ -33,18 +32,15 @@ public class MovePlayableBehaviour : PlayableBehaviour
         if (playable.GetPlayState() == PlayState.Playing)
         {
             var p = owner.GetComponent<Player>();
-            if (p.animator != null)
-            {
-                p.animator.SetTrigger(data.triggerKey);                
-                p.animator.SetInteger($"{data.triggerKey}_id", data.value);                
-            }
+            p.tps.SetVelocity(p.transform.rotation * data.velocity);
         }
     }
 
     // Called when the state of the playable is set to Paused
     public override void OnBehaviourPause(Playable playable, FrameData info)
     {
-        
+        var p = owner.GetComponent<Player>();
+        p.tps.SetVelocity(Vector3.zero);
     }
 
     // Called each frame while the state is set to Play

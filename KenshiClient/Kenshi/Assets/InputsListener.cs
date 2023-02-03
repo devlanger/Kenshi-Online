@@ -10,7 +10,6 @@ public class InputsListener : MonoBehaviour
 
     private StarterAssetsInputs inputs => localPlayer.Input;
     
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
     public void OnMove(InputValue value)
     {
         inputs.MoveInput(value.Get<Vector2>());
@@ -53,5 +52,4 @@ public class InputsListener : MonoBehaviour
     {
         inputs.SprintInput(value.isPressed);
     }
-#endif
 }

@@ -1,9 +1,7 @@
 ﻿using System;
 using Kenshi.Shared.Enums;
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
-#endif
 
 /* Note: animations are called via the controller for both the character and capsule using animator null checks
  */
@@ -78,9 +76,7 @@ namespace StarterAssets
         private int _animIDSpeed;
         private int _animIDMotionSpeed;
 
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
         private PlayerInput _playerInput;
-#endif
         private Animator _animator;
         private Rigidbody _controller;
         private GameObject _mainCamera;

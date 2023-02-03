@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Kunai
   m_EditorClassIdentifier: 
-  Id: 1
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 26
+  type: 2
   enabledInBuild: 1
   icon: {fileID: 21300000, guid: f96ced0baa3e34d50b8c284c14f2ea50, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.2
     behaviour: {fileID: 11400000, guid: 22f388e3101694a99b89a382b62a78eb, type: 2}
     mana: 5
+  canCastInAir: 1

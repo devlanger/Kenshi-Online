@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Dragon Rain
   m_EditorClassIdentifier: 
-  Id: 4
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 22
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: 09afc7129c6400947ab194811d1e314b, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.9
     behaviour: {fileID: 11400000, guid: b4949f7ab253b40bbb73a3607541a429, type: 2}
     mana: 25
+  canCastInAir: 1

@@ -5,9 +5,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [CreateAssetMenu]
-public class CustomizationItem : SerializedScriptableObject
+public class CustomizationItem : DataObject<int>
 {
-    public int id;
     public GameObject part;
     public ClothingPart slot;
 }
@@ -15,7 +14,7 @@ public class CustomizationItem : SerializedScriptableObject
 [System.Serializable]
 public class CustomizationData
 {
-    public SerializedDictionary<ClothingPart, int> clothes = new SerializedDictionary<ClothingPart, int>();
+    public Dictionary<ClothingPart, int> clothes = new Dictionary<ClothingPart, int>();
 }
 
 public enum ClothingPart

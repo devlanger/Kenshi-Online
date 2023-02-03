@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Stars
   m_EditorClassIdentifier: 
-  Id: 2
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 31
+  type: 2
   enabledInBuild: 1
   icon: {fileID: 21300000, guid: 7027214d916b64f5b8c5613cc9670726, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.2
     behaviour: {fileID: 11400000, guid: 2b126f64f8b7343d08fb0b3f8ede3dc2, type: 2}
     mana: 5
+  canCastInAir: 1

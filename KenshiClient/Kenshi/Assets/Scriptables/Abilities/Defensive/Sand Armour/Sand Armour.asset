@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Sand Armour
   m_EditorClassIdentifier: 
-  Id: 10
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 30
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: aa0f991c64b8fcd4f9b052e24775c686, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 1
     behaviour: {fileID: 11400000, guid: 6ff0cf8f5114149bb97df9a58bb1ff0e, type: 2}
     mana: 25
+  canCastInAir: 1

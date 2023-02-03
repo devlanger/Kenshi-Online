@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Water Dragon
   m_EditorClassIdentifier: 
-  Id: 9
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 33
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: db24189abde247144b83fb23e63c9464, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 1
     behaviour: {fileID: 11400000, guid: dec2771d2edd944b7a1c79595bee2c0d, type: 2}
     mana: 25
+  canCastInAir: 1

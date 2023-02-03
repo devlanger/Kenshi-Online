@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Breath of Nature
   m_EditorClassIdentifier: 
-  Id: 12
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 20
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: b9c61c6896eff5b43ae44d047f49b31d, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.6
     behaviour: {fileID: 11400000, guid: c257d13f02a0e41309730c240ab50aa9, type: 2}
     mana: 25
+  canCastInAir: 1

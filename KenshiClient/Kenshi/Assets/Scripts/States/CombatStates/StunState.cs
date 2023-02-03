@@ -25,6 +25,8 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+            
             if (GameServer.IsServer)
             {
                 stateMachine.Target.ActivateNavAgent(false);

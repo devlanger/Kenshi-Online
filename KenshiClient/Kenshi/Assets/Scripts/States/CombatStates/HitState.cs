@@ -22,6 +22,7 @@ namespace StarterAssets.CombatStates
             public Vector3 hitPos;
             public Vector3 direction;
             public float duration;
+            public AttackState.DamageData.HitType hitType;
         }
         
         public HitState()
@@ -48,10 +49,12 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+            
             if (stateMachine.Target.animator != null)
             {
                 stateMachine.Target.animator.SetTrigger("hit");
-                stateMachine.Target.animator.SetInteger("hit_id", 1);
+                stateMachine.Target.animator.SetInteger("hit_id", data.hitType == AttackState.DamageData.HitType.heavy ? 2 : 1);
             }
 
             if (GameServer.IsServer)
@@ -60,6 +63,21 @@ namespace StarterAssets.CombatStates
                 if (agent)
                 {
                     agent.enabled = false;
+                }
+            }
+            else
+            {
+                Debug.Log(data.hitType);
+                switch (data.hitType)
+                {
+                    case AttackState.DamageData.HitType.light:
+                    case AttackState.DamageData.HitType.very_light:
+                    case AttackState.DamageData.HitType.stun:
+                        VfxController.Instance.SpawnFx(VfxController.VfxId.hit_light, stateMachine.Target.transform.position + Vector3.up, Quaternion.identity);
+                        break;
+                    case AttackState.DamageData.HitType.heavy:
+                        VfxController.Instance.SpawnFx(VfxController.VfxId.hit_heavy, stateMachine.Target.transform.position + Vector3.up, stateMachine.Target.transform.rotation);
+                        break;
                 }
             }
 

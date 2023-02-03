@@ -9,14 +9,19 @@ namespace StarterAssets
     public abstract class FSMState
     {
         public abstract FSMStateId Id { get; }
+
+        public FSMState lastState;
         
         public float ElapsedTime => Time.time - startTime;
         private float startTime;
 
         private bool entered = false;
+
+        public virtual bool Validate(PlayerStateMachine machine) => true;
         
-        public void Enter(PlayerStateMachine stateMachine)
+        public void Enter(PlayerStateMachine stateMachine, FSMState lastState = null)
         {
+            this.lastState = lastState; 
             startTime = Time.time;
             OnEnter(stateMachine);
             entered = true;

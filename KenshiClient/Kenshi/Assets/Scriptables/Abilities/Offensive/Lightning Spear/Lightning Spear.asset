@@ -12,12 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Lightning Spear
   m_EditorClassIdentifier: 
-  Id: 11
-  enabledInBuild: 0
-  icon: {fileID: 0}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 28
+  type: 1
+  enabledInBuild: 1
+  icon: {fileID: -8537026464255265270, guid: dd21809acadeb404399c4e312841795f, type: 3}
   Data:
     name: Lightning Spear
     groundDuration: 1
     airDuration: 1
     behaviour: {fileID: 11400000, guid: 1b4c47725ec3548eab2dd17417ce0a3e, type: 2}
     mana: 25
+  canCastInAir: 1

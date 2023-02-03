@@ -12,7 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a04214b8e924364acfaea513c1b4ff, type: 3}
   m_Name: Rock Wall
   m_EditorClassIdentifier: 
-  Id: 8
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  id: 29
+  type: 1
   enabledInBuild: 0
   icon: {fileID: 21300000, guid: 22ebb074f4a6be446b9e9a132ff9036d, type: 3}
   Data:
@@ -21,3 +31,4 @@ MonoBehaviour:
     airDuration: 0.4
     behaviour: {fileID: 0}
     mana: 25
+  canCastInAir: 1

@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
-#if ENABLE_INPUT_SYSTEM && STARTER_ASSETS_PACKAGES_CHECKED
 using UnityEngine.InputSystem;
-#endif
 
 namespace StarterAssets
 {
@@ -12,7 +10,6 @@ namespace StarterAssets
 		public bool rightClick;
 		public bool leftClick;
 
-		
 		public Vector3 InputDirection => new Vector3(move.x, 0.0f, move.y).normalized;
 		public float RotationY;
 
