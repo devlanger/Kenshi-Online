@@ -77,6 +77,9 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     private void InitENet()
     {
+        if (!ConnectionController.Instance)
+            return;
+
         //if (ConnectionController.Instance != null)
         //{
             _netClient = new NetManager(this);
@@ -98,6 +101,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
     private void SendPositionUpdate()
     {
+        if(_myPlayer == null)
+        {
+            return;
+        }
+
         var x = _myPlayer.transform.position.x;
         var y = _myPlayer.transform.position.y;
         var z = _myPlayer.transform.position.z;
@@ -166,6 +174,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     
     public static void SendPacket(NetPeer peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
+        if(peer == null) return;
+        if (peer.ConnectionState != ConnectionState.Connected) return;
+
+
         PacketId packetId = (PacketId)packet.packetId;
         if (packetId != PacketId.PositionUpdateRequest)
         {

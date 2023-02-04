@@ -280,6 +280,7 @@ namespace StarterAssets
             }
             else
             {
+                _verticalVelocity = velocity.y;
                 _controller.velocity = velocity;
             }
         }

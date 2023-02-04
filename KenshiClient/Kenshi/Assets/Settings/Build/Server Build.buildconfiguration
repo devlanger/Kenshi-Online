@@ -1,0 +1,40 @@
+{
+    "Show": true,
+    "Dependencies": [],
+    "Components": [
+        {
+            "$type": "Unity.Build.Common.GeneralSettings, Unity.Build",
+            "ProductName": "gameserver",
+            "CompanyName": "Vulture Games",
+            "Version": "0.11"
+        },
+        {
+            "$type": "Unity.Build.Classic.ClassicBuildProfile, Unity.Build.Classic",
+            "$version": 1,
+            "Platform": "LinuxHeadlessSimulation",
+            "Configuration": 2
+        },
+        {
+            "$type": "Unity.Build.Common.SceneList, Unity.Build",
+            "$version": 1,
+            "BuildCurrentScene": false,
+            "SceneInfos": [
+                {
+                    "Scene": "GlobalObjectId_V1-1-38d8ecffa51a64fc3b4b8d36ab65a666-102900000-0",
+                    "AutoLoad": true
+                }
+            ]
+        },
+        {
+            "$type": "Unity.Build.Common.OutputBuildDirectory, Unity.Build",
+            "OutputDirectory": "/Users/piotrlanger/RiderProjects/KenshiBackend/Builds/GameServer/Build/Ubuntu"
+        },
+        {
+            "$type": "Unity.Build.Common.RunSettings, Unity.Build",
+            "RedirectOutput": false,
+            "BatchMode": true,
+            "NoGraphics": true,
+            "ExtraArguments": []
+        }
+    ]
+}

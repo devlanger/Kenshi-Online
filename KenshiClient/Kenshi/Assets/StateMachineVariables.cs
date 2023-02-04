@@ -15,4 +15,5 @@ public class StateMachineVariables : MonoBehaviour
     public bool Grounded;
     public bool Jumping;
     public int jumpIndex = 0;
+    public bool finishedAirCombo;
 }

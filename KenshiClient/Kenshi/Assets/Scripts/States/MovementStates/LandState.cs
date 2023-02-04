@@ -27,6 +27,7 @@ namespace StarterAssets
 
             stateMachine.ChangeState(new StandState());
             stateMachine.Variables.jumpIndex = 0;
+            stateMachine.Variables.finishedAirCombo = false;
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)

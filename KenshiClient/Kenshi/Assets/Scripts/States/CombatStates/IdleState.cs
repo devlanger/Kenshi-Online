@@ -23,7 +23,7 @@ namespace StarterAssets.CombatStates
         
         protected override void OnUpdate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Variables.attackIndex > 0 && Time.time > stateMachine.Variables.lastAttackTime + 1)
+            if (stateMachine.Variables.attackIndex > 0 && Time.time > stateMachine.Variables.lastAttackTime + 1 && stateMachine.Target.tps.Grounded)
             {
                 stateMachine.Variables.attackIndex = 0;
             }

@@ -18,7 +18,7 @@ public class InGameChatUI : MonoBehaviour
     {
         IsChatActive = false;
         RefreshState();
-        FindObjectOfType<ConnectionController>().OnMessageReceived += ChatReceived;
+        if(ConnectionController.Instance) ConnectionController.Instance.OnMessageReceived += ChatReceived;
 
         chat.PushMessage($"Welcome in Kenshi Online {Application.version} game room.");
         chat.inputField.onFocusSelectAll = true;

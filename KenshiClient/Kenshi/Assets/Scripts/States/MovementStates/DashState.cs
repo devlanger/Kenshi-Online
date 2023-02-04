@@ -104,6 +104,7 @@ namespace StarterAssets
         {
             if (stateMachine.IsLocal)
             {
+                stateMachine.Target.tps.SetVelocity(Vector3.zero);
                 startedInAir = stateMachine.Variables.Jumping;
                 GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
             }

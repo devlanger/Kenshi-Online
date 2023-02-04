@@ -14,6 +14,9 @@ public class PlayerStatsUI : MonoBehaviour
 
     private void Start()
     {
+        if (!ConnectionController.Instance)
+            return;
+
         nicknameText.SetText(ConnectionController.Instance.connectionDto.nickname);
     }
 }

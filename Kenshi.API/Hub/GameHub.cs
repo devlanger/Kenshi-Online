@@ -20,7 +20,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly ILogger<GameHub> _logger;
     private readonly ConnectionMultiplexer redis;
 
-    public const string CLIENT_VERSION = "0.0.10";
+    public const string CLIENT_VERSION = "0.11";
     
     public static string RedisString(IConfiguration config) =>
         Environment.GetEnvironmentVariable("REDIS_HOST") ?? config["ConnectionStrings:redis"];

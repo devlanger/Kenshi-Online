@@ -34,17 +34,22 @@ namespace StarterAssets.CombatStates
             
         }
 
-        public override bool Validate(PlayerStateMachine machine)
+        public override bool Validate(PlayerStateMachine stateMachine)
         {
-            if (machine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
+            if (stateMachine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
             {
-                if(((DashState)machine.Target.movementStateMachine.CurrentState).data.dashIndex != DashState.Data.DashIndex.forward)
+                if(((DashState)stateMachine.Target.movementStateMachine.CurrentState).data.dashIndex != DashState.Data.DashIndex.forward)
                 {
                     return false;
                 }
             }
+
+            if(stateMachine.Variables.finishedAirCombo)
+            {
+                return false;
+            }
             
-            return base.Validate(machine);
+            return base.Validate(stateMachine);
         }
 
         public AttackState(Data data)
@@ -193,7 +198,7 @@ namespace StarterAssets.CombatStates
 
             if (!dashForwardAttack)
             {
-                stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+                stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
             }
 
             stateMachine.Target.transform.position = data.pos;
@@ -221,9 +226,15 @@ namespace StarterAssets.CombatStates
                 stateMachine.Target.animator.SetTrigger("attack");
                 stateMachine.Target.animator.SetInteger("attack_id", 0);
             }
-            
+
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
             stateMachine.Target.tps.SetVelocity(Vector3.zero, true);
             stateMachine.Variables.IsAttacking = false;
+
+            if(!stateMachine.Target.tps.Grounded && stateMachine.Variables.attackIndex == 0)
+            {
+                stateMachine.Variables.finishedAirCombo = true;
+            }
         }
     }
 }
