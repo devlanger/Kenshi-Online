@@ -79,6 +79,9 @@ namespace StarterAssets.CombatStates
                         VfxController.Instance.SpawnFx(VfxController.VfxId.hit_heavy, stateMachine.Target.transform.position + Vector3.up, stateMachine.Target.transform.rotation);
                         break;
                 }
+
+                var clip = SfxController.Instance.manager.GetRandomMeleeHitSfx();
+                SfxController.Instance.PlaySound(clip.sfxId, 1);
             }
 
             if (!GameServer.IsServer && !stateMachine.Target.Interpolation.enabled)

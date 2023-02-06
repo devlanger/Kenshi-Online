@@ -163,15 +163,6 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         SendPacketToMany(list, packet, deliveryMethod);
     }
     
-    // public static void SendPacket(int peerId, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
-    // {
-    //     var peer = GameRoomNetworkController.Instance._netClient.GetPeerById(peerId);
-    //     if (peer != null)
-    //     {
-    //         SendPacket(peer, packet, deliveryMethod);
-    //     }
-    // }
-    
     public static void SendPacket(NetPeer peer, SendablePacket packet, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
     {
         if(peer == null) return;
@@ -201,7 +192,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 _myPlayerId = packet._playerId;
                 _myPlayer.NetworkId = _myPlayerId;
                 _players[_myPlayerId] = _myPlayer;
-                
+
+                MapLoader.MapToBeLoaded = packet.data.mapId;
+                MapLoader.LoadScene();
+
                 Connected = true;
                 Debug.Log("MyPlayerId: " + packet._playerId);
             }

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2477a148bef494eaaa879f1476bda4a7, type: 3}
+  m_Name: Sfx Manager
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  items:
+  - {fileID: 11400000, guid: a8b861ae71e8f459f87659f4e40ec46a, type: 2}
+  - {fileID: 11400000, guid: d67319fec7b594161988a371996ae6ec, type: 2}
+  - {fileID: 11400000, guid: 94ed94cfdcba2404db69139b37e08cb9, type: 2}
+  - {fileID: 11400000, guid: 3be4dfcbedeb64aeda004fc3106523a8, type: 2}
+  - {fileID: 11400000, guid: 93603d895ebe644cd9abef2965224eb5, type: 2}
+  - {fileID: 11400000, guid: 587c57cb41dd24a3dbca83b6d2756eb2, type: 2}
+  - {fileID: 11400000, guid: 766f82ef859444b3ebb80c4f5b8b3cc6, type: 2}
+  - {fileID: 11400000, guid: a0a2fb17dca27469394f182613d59e0c, type: 2}
+  hitIds: 0100000002000000030000000400000005000000060000000700000008000000
