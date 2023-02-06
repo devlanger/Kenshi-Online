@@ -1,3 +1,5 @@
+using Kenshi.API.Helpers;
+
 namespace Kenshi.API.Services;
 
 public class GameRoomService : IGameRoomService
@@ -20,6 +22,20 @@ public class GameRoomService : IGameRoomService
         return Rooms.Values.ToList();
     }
 
+    public int GetFreePort()
+    {
+        int startPort = 5000;
+        int freePort = startPort + 1;
+        
+        if (Rooms.Any())
+        {
+            // If there are pods in the cluster, find the highest used port number and add 1
+            freePort = Rooms.Values.Max(c => c.Port + 1);
+        }
+
+        return freePort;
+    }
+    
     public IGameRoomInstance GetRoomByName(string roomId)
     {
         if (!Rooms.ContainsKey(roomId))
@@ -40,13 +56,23 @@ public class GameRoomService : IGameRoomService
         GetRoomByName(roomName)?.AddPlayer(username);
     }
 
-    public void RemovePlayerFromRoom(string roomName, string username)
+    public void RemovePlayerFromRoom(string username)
     {
-        GetRoomByName(roomName)?.RemovePlayer(username);
+        var room = GetRoomForUsername(username);
+        if (room != null)
+        {
+            room.RemovePlayer(username);
+            
+            if (room.Players.Count == 0)
+            {
+                RemoveRoom(room.RoomId);
+            }
+        }
     }
 
     public void RemoveRoom(string id)
     {
+        Console.WriteLine($"Removed room {id}");
         Rooms.Remove(id);
     }
 
@@ -58,5 +84,19 @@ public class GameRoomService : IGameRoomService
     public IGameRoomInstance GetRoom(string dtoRoomId)
     {
         return Rooms.ContainsKey(dtoRoomId) ? Rooms[dtoRoomId] : null;
+    }
+
+    public IGameRoomInstance CreateRoom(string name)
+    {
+        int port = GetFreePort();
+        
+        return new GameRoomInstance()
+        {
+            DisplayName = name,
+            Port = port,
+            Started = false,
+            RoomId = KubernetesService.GetPodName(port),
+            MaxPlayers = 16,
+        };
     }
 }

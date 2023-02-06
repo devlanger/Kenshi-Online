@@ -1,3 +1,5 @@
+using Kenshi.Shared.Models;
+
 namespace Kenshi.API.Services;
 
 public interface IGameRoomInstance
@@ -10,4 +12,5 @@ public interface IGameRoomInstance
     List<string> Players { get; set; }
     void AddPlayer(string username);
     void RemovePlayer(string username);
+    public GameRoomDto GetDto();
 }

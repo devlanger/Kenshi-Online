@@ -102,7 +102,7 @@ public class RabbitConsumer : IHostedService
                 string json = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var dto = JsonConvert.DeserializeObject<UserRoomStateEventDto>(json);
                 Console.WriteLine($"{json}");
-                _gameRoomService.RemovePlayerFromRoom(dto.RoomId, dto.Username);
+                _gameRoomService.RemovePlayerFromRoom(dto.Username);
                 UserService.UsersInLobby.Add(dto.Username);
                 _gameHub.Clients.Clients(GameHub.GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("UpdatePlayersList", JsonConvert.SerializeObject(UserService.LoggedUsers));
                 var users = _gameRoomService.GetUsernamesInRoom(dto.RoomId);

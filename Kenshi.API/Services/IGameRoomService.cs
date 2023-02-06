@@ -8,8 +8,9 @@ public interface IGameRoomService
     List<IGameRoomInstance> GetRooms();
     List<string> GetUsernamesInRoom(string roomName);
     void AddPlayerToRoom(string roomName, string username);
-    void RemovePlayerFromRoom(string roomName, string username);
+    void RemovePlayerFromRoom(string username);
     void RemoveRoom(string id);
     IGameRoomInstance GetRoomForUsername(string playerName);
     IGameRoomInstance GetRoom(string dtoRoomId);
+    IGameRoomInstance CreateRoom(string name);
 }

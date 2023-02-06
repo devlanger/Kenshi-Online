@@ -42,6 +42,8 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public event Action<NetPeer, ClaimsDto, Vector3> OnPlayerSpawned;
     public event Action<int, Vector3> OnPlayerPositionUpdate;
     public event Action<int> OnPlayerDespawned;
+
+    public string MapId = "Map_1";
     
     public class ClaimsDto
     {
@@ -109,7 +111,10 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                         var playerId = peer.Id;
                         var claims = GetUserData(playerId, out var data);
                         SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
-                        SendPacket(playerId, new LoginResponsePacket(playerId), DeliveryMethod.ReliableOrdered);
+                        SendPacket(playerId, new LoginResponsePacket(playerId, new LoginResponsePacket.Data
+                        {
+                            mapId = MapId
+                        }), DeliveryMethod.ReliableOrdered);
                         SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
                         foreach (var p in _players)
                         {

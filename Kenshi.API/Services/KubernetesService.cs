@@ -17,7 +17,7 @@ public class KubernetesService
 
     private const int MAX_AVAILABLE_ROOMS = 5;
     
-    private string GetPodName(int port) => $"gameroom-{port}";
+    public static string GetPodName(int port) => $"gameroom-{port}";
 
     public KubernetesService(IConfiguration config)
     {
@@ -35,22 +35,9 @@ public class KubernetesService
         });
     }
 
-    public async Task<IGameRoomInstance> CreatePod(GameRoomPodSettings settings)
+    public async Task<bool> CreatePod(GameRoomPodSettings settings)
     {
-        int startPort = 5000;
-        // Find a free port
-        int freePort = startPort + 1;
-        
-        if (ListPods().Result.Any())
-        {
-            // If there are pods in the cluster, find the highest used port number and add 1
-            freePort = ListPods().Result.Max(c => int.Parse(c.Port) + 1);
-        }
-
-        if (freePort > startPort + MAX_AVAILABLE_ROOMS)
-        {
-            
-        }
+        int freePort = settings.Port;
         
         var container = await _client.Containers.CreateContainerAsync(new CreateContainerParameters()
         {
@@ -106,17 +93,11 @@ public class KubernetesService
 
         if (run)
         {
-            return new GameRoomInstance
-            {
-                DisplayName = settings.Name,
-                RoomId = GetPodName(freePort),
-                Port = freePort,
-                MaxPlayers = 16,
-            };
+            return true;
         }
         else
         {
-            return null;
+            return false;
         }
     }
 

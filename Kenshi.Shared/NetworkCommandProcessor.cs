@@ -48,6 +48,9 @@ namespace Kenshi.Shared
                     case "join_game":
                         await connection.SendAsync("JoinGameRoom", parameters[1]);
                         break;
+                    case "leave_game":
+                        await connection.SendAsync("LeaveGameRoom");
+                        break;
                     case "games":
                         await connection.SendAsync("ListGameRooms");
                         break;
