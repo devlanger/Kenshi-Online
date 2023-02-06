@@ -57,7 +57,12 @@ public class GameRoomService : IGameRoomService
         GetRoomByName(roomName)?.AddPlayer(username);
     }
 
-    public void RemovePlayerFromRoom(string username)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns>Room Id</returns>
+    public string RemovePlayerFromRoom(string username)
     {
         var room = GetRoomForUsername(username);
         if (room != null)
@@ -73,7 +78,11 @@ public class GameRoomService : IGameRoomService
             {
                 RemoveRoom(room.RoomId);
             }
+
+            return room.RoomId;
         }
+
+        return "";
     }
 
     public void RemoveRoom(string id)

@@ -19,7 +19,9 @@ public class GameRoomInstance : IGameRoomInstance
     {
         port = Port.ToString(),
         started = Started,
-        mapId = MapId
+        mapId = MapId,
+        players = Players,
+        leaderUsername = LeaderUsername
     };
 
     public void SetLeader(string roomPlayer)
@@ -34,6 +36,7 @@ public class GameRoomInstance : IGameRoomInstance
             return;
         }
         
+        UserService.UsersInLobby.Remove(username);
         Players.Add(username);
     }
 
@@ -44,6 +47,7 @@ public class GameRoomInstance : IGameRoomInstance
             return;
         }
         
+        UserService.UsersInLobby.Add(username);
         Players.Remove(username);
     }
 }

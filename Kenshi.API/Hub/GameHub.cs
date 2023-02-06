@@ -121,14 +121,6 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
         return podsList;
     }
-
-    public async Task SendChatMessageToAllInRoom(string roomId, string message)
-    {
-        string msg = $"{GetUsername()}: {message}";
-        Console.WriteLine($"send message {message}");
-        
-        await Clients.Users(GetPlayersInRoom(roomId)).SendAsync("ShowChatMessage", msg);
-    }
     
     public async Task SendChatMessageToAll(string message)
     {
@@ -213,8 +205,9 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         try
         {
-            _gameRoomService.RemovePlayerFromRoom(GetUsername());
-            Console.WriteLine($"{GetUsername()} has left Game Room");
+            string roomId = _gameRoomService.RemovePlayerFromRoom(GetUsername());
+            await BroadcastRoomChangesToPlayers(_gameRoomService.GetRoom(roomId));
+            Console.WriteLine($"{GetUsername()} has left Game Room {roomId}");
             
             await BroadcastRoomsList();
         }
@@ -241,7 +234,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
                 
                 Console.WriteLine($"{Context.ConnectionId} has joined Game Room port: {roomData.RoomId}");
                 roomData.AddPlayer(GetUsername());
-                await Clients.Client(Context.ConnectionId).SendAsync("JoinGameRoom", JsonConvert.SerializeObject(roomData.GetDto()));
+                await BroadcastRoomChangesToPlayers(roomData);
             }
             else
             {
@@ -254,7 +247,20 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             throw;
         }
     }
-    
+
+    private async Task BroadcastRoomChangesToPlayers(IGameRoomInstance gameRoomInstance)
+    {
+        if(gameRoomInstance == null)
+        {
+            return;
+        }
+        
+        var users = _gameRoomService.GetUsernamesInRoom(gameRoomInstance.RoomId);
+        var ids = GetUserConnectionIds(users);
+
+        await Clients.Clients(ids).SendAsync("JoinGameRoom", JsonConvert.SerializeObject(gameRoomInstance.GetDto()));
+    }
+
     public async Task JoinGameInstance()
     {
         try
@@ -342,8 +348,13 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         UserService.UsersInLobby.Remove(username);
         UserService.LoggedUsers.Remove(username);
         
-        _gameRoomService.RemovePlayerFromRoom(username);
-        
+        string roomId = _gameRoomService.RemovePlayerFromRoom(username);
+
+        if (roomId != "")
+        {
+            await BroadcastRoomChangesToPlayers(_gameRoomService.GetRoom(roomId));
+        }
+
         await BroadcastRoomsList();
         await BroadcastLobbyUsersList();
 
