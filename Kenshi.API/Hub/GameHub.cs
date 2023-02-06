@@ -46,11 +46,6 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _logger = logger;
     }
     
-    public async Task DeleteAllGameRooms()
-    {
-        await _service.DeleteAllPods();
-    }
-    
     public async Task DeleteGameRoom(string id)
     {
         try
@@ -81,13 +76,10 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             Console.WriteLine($"create game");
             
             var gameRoomInstance = _gameRoomService.CreateRoom(name);
+            gameRoomInstance.SetLeader(GetUsername());
             gameRoomInstance.AddPlayer(GetUsername());
-            // var pod = await _service.CreatePod(new GameRoomPodSettings()
-            // {
-            //     Port = gameRoomInstance.Port
-            // });
 
-            if (_gameRoomService != null)
+            if (gameRoomInstance != null)
             {
                 _gameRoomService.AddRoom(gameRoomInstance);
 
@@ -254,6 +246,47 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             else
             {
                 Console.WriteLine($"Room with id {roomId} is not present in GameRoomService.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
+    public async Task JoinGameInstance()
+    {
+        try
+        {
+            var roomData = _gameRoomService.GetRoomForUsername(GetUsername());
+
+            if (roomData != null)
+            {
+                if (!roomData.Started)
+                {
+                    if (roomData.LeaderUsername != GetUsername())
+                    {
+                        Console.WriteLine(
+                            $"{GetUsername()} cant start this game! [NO_LEADER]");
+                        return;
+                    }
+                    
+                    var pod = _service.CreatePod(new GameRoomPodSettings { Port = roomData.Port });
+                    if (pod.Result)
+                    {
+                        roomData.Started = true;
+                    }
+                }
+
+                if (roomData.Started)
+                {
+                    Console.WriteLine(
+                        $"{Context.ConnectionId} has joined Game Room Instance port: {roomData.RoomId}");
+                    
+                    await Clients.Client(Context.ConnectionId).SendAsync("JoinGameInstance",
+                        JsonConvert.SerializeObject(roomData.GetDto()));
+                }
             }
         }
         catch (Exception e)

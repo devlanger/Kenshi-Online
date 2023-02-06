@@ -6696,8 +6696,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 12703365}
   m_HandleRect: {fileID: 12703364}
   m_Direction: 2
-  m_Value: 1.0000035
-  m_Size: 0.940083
+  m_Value: 1.0000012
+  m_Size: 0.94008297
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11156,7 +11156,7 @@ PrefabInstance:
     - target: {fileID: 8013493681687998499, guid: b811a5aad0f9348c89cb686bc4ae6973,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8013493681687998499, guid: b811a5aad0f9348c89cb686bc4ae6973,
         type: 3}
@@ -14787,10 +14787,10 @@ RectTransform:
   m_Father: {fileID: 1596389361}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 65, y: -55}
-  m_SizeDelta: {x: 100, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &941410282
 MonoBehaviour:
@@ -16249,8 +16249,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 43228109}
   m_HandleRect: {fileID: 43228108}
   m_Direction: 2
-  m_Value: 1.0000006
-  m_Size: 0.88821805
+  m_Value: 1
+  m_Size: 0.888218
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -23421,7 +23421,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000030517578, y: 2527452}
+  m_AnchoredPosition: {x: 0.000030517578, y: 2600208.2}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1749945451
@@ -23622,10 +23622,10 @@ RectTransform:
   m_Father: {fileID: 1596389361}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 165, y: -55}
-  m_SizeDelta: {x: 100, y: 30}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1768443735
 MonoBehaviour:
@@ -26390,7 +26390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aee32497dca974af2a8d8cc47f617d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useLocal: 1
+  useLocal: 0
   host: 146.59.16.113
   LoggedUsers: []
 --- !u!4 &2032751579

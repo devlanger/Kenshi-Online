@@ -4,13 +4,14 @@ namespace Kenshi.API.Services;
 
 public class GameRoomService : IGameRoomService
 {
+    private readonly KubernetesService _dockerService;
     public static Dictionary<string, IGameRoomInstance> Rooms = new Dictionary<string, IGameRoomInstance>();
-
-    public GameRoomService()
-    {
-        
-    }
     
+    public GameRoomService(KubernetesService dockerService)
+    {
+        _dockerService = dockerService;
+    }
+
     public void AddRoom(IGameRoomInstance room)
     {
         Console.WriteLine("Added room to game room service");
@@ -63,6 +64,11 @@ public class GameRoomService : IGameRoomService
         {
             room.RemovePlayer(username);
             
+            if (room.Players.Count == 1)
+            {
+                room.SetLeader(room.Players[0]);
+            }
+            
             if (room.Players.Count == 0)
             {
                 RemoveRoom(room.RoomId);
@@ -73,6 +79,10 @@ public class GameRoomService : IGameRoomService
     public void RemoveRoom(string id)
     {
         Console.WriteLine($"Removed room {id}");
+        if (Rooms[id].Started)
+        {
+            _dockerService.DeletePod(id);
+        }
         Rooms.Remove(id);
     }
 

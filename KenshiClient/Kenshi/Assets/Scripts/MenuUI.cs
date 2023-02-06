@@ -104,6 +104,12 @@ public class MenuUI : MonoBehaviour
 
                 FindObjectOfType<GameRoomLobby>().Activate();
                 break;
+            case "JoinGameInstance":
+                GameRoomDto dtoInstance = JsonConvert.DeserializeObject<GameRoomDto>(arg2);
+                GameRoomNetworkController.Port = ushort.Parse(dtoInstance.port);
+                
+                FindObjectOfType<GameRoomLobby>().LoadGame();
+                break;
         }
     }
     

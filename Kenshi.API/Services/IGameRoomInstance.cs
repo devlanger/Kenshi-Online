@@ -4,6 +4,9 @@ namespace Kenshi.API.Services;
 
 public interface IGameRoomInstance
 {
+    bool Started { get; set; }
+    
+    string LeaderUsername { get; set; }
     int Port { get; set; }
     int MaxPlayers { get; set; }
     int PlayersCount { get; }
@@ -13,4 +16,5 @@ public interface IGameRoomInstance
     void AddPlayer(string username);
     void RemovePlayer(string username);
     public GameRoomDto GetDto();
+    void SetLeader(string roomPlayer);
 }

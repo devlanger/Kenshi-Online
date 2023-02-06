@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kenshi.Shared.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,10 +18,15 @@ public class GameRoomLobby : ViewUI
         enterButton.onClick.AddListener(Enter);
         leaveButton.onClick.AddListener(Leave);
     }
-    
-    public void Enter()
+
+    public void Fill(GameRoomDto roomDto)
     {
-        //await ConnectionController.Instance.ExecuteCommand("LeaveGameRoom");
+        enterButton.enabled = roomDto.started;
+    }
+    
+    public async void Enter()
+    {
+        await ConnectionController.Instance.ExecuteCommand("join_game_instance");
     }
     
     public async void Leave()
