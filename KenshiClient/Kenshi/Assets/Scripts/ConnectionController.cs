@@ -63,17 +63,21 @@ public class ConnectionController : MonoBehaviour
         bool connected = false;
         while (!connected)
         {
-            Debug.Log("trying to connect");
+            Debug.Log($"Connecting to the server: {Ip}");
             var t = Connect();
             yield return new WaitUntil(() => t.IsCompleted);
 
             if (Connection.State == HubConnectionState.Connected)
             {
                 connected = true;
+                Debug.Log("Connected successfully!");
             }
-            
-            Debug.Log("Reconnecting in 5 sec...");
-            yield return new WaitForSeconds(5);
+            else
+            {
+                Debug.Log("Reconnecting in 5 sec...");
+                yield return new WaitForSeconds(5);
+                
+            }
         }
     }
 
@@ -144,9 +148,21 @@ public class ConnectionController : MonoBehaviour
 
     public async Task ExecuteCommand(string command)
     {
+        if (Connection == null) return;
+        if (Connection.State != HubConnectionState.Connected)
+            return;
+        
         await NetworkCommandProcessor.ProccessCommand(command, Connection);
     }
-
+    
+    public async Task ExecuteCommandJson(string command, string json)
+    {
+        if (Connection == null) return;
+        if (Connection.State != HubConnectionState.Connected)
+            return;
+        await Connection.SendAsync(command, json);
+    }
+    
     public Task JoinGameRoom(string message)
     {
         Debug.Log(message);

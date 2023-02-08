@@ -22,7 +22,7 @@ namespace Kenshi.Shared
             
             Commands.Add(command, action);
         }
-        
+
         public static async Task<bool> ProccessCommand(string input, HubConnection connection)
         {
             string[] parameters = input.Split(' ');
@@ -69,11 +69,6 @@ namespace Kenshi.Shared
                 {
                     Commands[parameters[0]].Invoke(parameters);
                 }
-                /*if (!string.IsNullOrEmpty(input))
-                {
-                    commandsHistory.Push(input);
-                }
-            */
             }
             catch (Exception e)
             {

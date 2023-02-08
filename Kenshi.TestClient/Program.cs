@@ -32,10 +32,8 @@ namespace Kenshi.TestClient
                 ConnectToGameServer(parameters[1], ushort.Parse(parameters[2]));
             });
             
-            // Start the connection
             await connection.StartAsync();
             
-            // Subscribe to messages from the hub
             connection.On<string>("ListGameRooms", (message) =>
             {
                 Console.WriteLine(message);

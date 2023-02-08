@@ -26,7 +26,6 @@ public class PlayerCustomization : SerializedMonoBehaviour
     
     private void RefreshCustomizationVisuals(CustomizationData data)
     {
-        Debug.Log("Refresh visuals");
         var keys = new HashSet<ClothingPart>();
         foreach (var item in itemsWorn)
         {

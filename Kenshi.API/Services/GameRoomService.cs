@@ -111,11 +111,11 @@ public class GameRoomService : IGameRoomService
         
         return new GameRoomInstance()
         {
+            RoomNumber = port.ToString(),
             DisplayName = name,
             Port = port,
             Started = false,
             RoomId = KubernetesService.GetPodName(port),
-            MaxPlayers = 16,
         };
     }
 }

@@ -218,6 +218,31 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         }
     }
     
+    public async Task ChangeRoomSettings(string roomSettingsJson)
+    {
+        try
+        {
+            var roomData = _gameRoomService.GetRoomForUsername(GetUsername());
+
+            if (roomData != null)
+            {
+                if (roomData.LeaderUsername == GetUsername())
+                {
+                    roomData.Settings = JsonConvert.DeserializeObject<RoomSettingsDto>(roomSettingsJson);
+                    await BroadcastRoomChangesToPlayers(roomData);
+                }
+            }
+            else
+            {
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+    
     public async Task JoinGameRoom(string roomId)
     {
         try
@@ -258,7 +283,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         var users = _gameRoomService.GetUsernamesInRoom(gameRoomInstance.RoomId);
         var ids = GetUserConnectionIds(users);
 
-        await Clients.Clients(ids).SendAsync("JoinGameRoom", JsonConvert.SerializeObject(gameRoomInstance.GetDto()));
+        string dto = JsonConvert.SerializeObject(gameRoomInstance.GetDto());
+        await Clients.Clients(ids).SendAsync("JoinGameRoom", dto);
     }
 
     public async Task JoinGameInstance()

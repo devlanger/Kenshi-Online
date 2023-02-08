@@ -12,8 +12,7 @@ using UnityEngine.UI;
 public class MenuUI : MonoBehaviour
 {
     private ConnectionController connectionController;
-
-    [SerializeField] private TextMeshProUGUI nicknameLabel;
+    
     [SerializeField] private Button joinGameButton;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button refreshGameButton;
@@ -25,6 +24,7 @@ public class MenuUI : MonoBehaviour
     [Header("Players List")]
     [SerializeField] private OnlinePlayerListItem _playerListItem;
     [SerializeField] private ContentList playersList;
+    [SerializeField] private GameObject createRoomText;
     
     [SerializeField] private Canvas connectingCanvas;
     
@@ -72,7 +72,6 @@ public class MenuUI : MonoBehaviour
             return;
         }
         
-        nicknameLabel.SetText(obj.nickname);
         connectingCanvas.enabled = false;
     }
 
@@ -97,6 +96,8 @@ public class MenuUI : MonoBehaviour
                 {
                     SpawnRoomListItem(item);
                 }
+                
+                createRoomText.SetActive(list.Length == 0);
                 break;
             case "JoinGameRoom":
                 GameRoomDto dto = JsonConvert.DeserializeObject<GameRoomDto>(arg2);
