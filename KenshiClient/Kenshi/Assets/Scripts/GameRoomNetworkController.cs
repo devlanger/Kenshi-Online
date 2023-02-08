@@ -192,7 +192,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 _myPlayerId = packet._playerId;
                 _myPlayer.NetworkId = _myPlayerId;
                 _players[_myPlayerId] = _myPlayer;
-
+                _players[_myPlayerId].GetComponent<Rigidbody>().isKinematic = false;
+                
                 MapLoader.MapToBeLoaded = packet.data.mapId;
                 MapLoader.LoadScene();
 
