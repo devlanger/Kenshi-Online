@@ -489,6 +489,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1131449067}
   - component: {fileID: 1131449066}
+  - component: {fileID: 1131449068}
   m_Layer: 0
   m_Name: MapLoader
   m_TagString: Untagged
@@ -523,6 +524,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1131449068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1131449065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26a62557c892041fabddc81c5f066577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  manager: {fileID: 11400000, guid: 4b97c2e33f1a545b990e7dd7ccc51266, type: 2}
 --- !u!1 &1325337433
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,6 +591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handler: {fileID: 1351347437}
+  MapId: Map_1
 --- !u!1 &1351347435
 GameObject:
   m_ObjectHideFlags: 0

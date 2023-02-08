@@ -111,7 +111,6 @@ public class GameRoomLobby : ViewUI
     {
         roomNumberLabel.text = roomDto.roomNumber;
         roomNameLabel.text = roomDto.displayName;
-        enterButton.enabled = roomDto.started;
         
         playersList.Clear();
         foreach (var item in roomDto.players)
@@ -133,12 +132,12 @@ public class GameRoomLobby : ViewUI
             if (!roomDto.started)
             {
                 text.SetText("Start Game");
-                
             }
             else
             {
                 text.SetText("Join");
             }
+            enterButton.enabled = true;
         }
         else
         {
@@ -150,6 +149,7 @@ public class GameRoomLobby : ViewUI
             {
                 text.SetText("Wait for leader...");
             }
+            enterButton.enabled = roomDto.started;
         }
 
         settingsDto = roomDto.settings;
@@ -194,9 +194,7 @@ public class GameRoomLobby : ViewUI
             yield return 0;
         }
 
-        Debug.Log("Loaded");
         yield return new WaitUntil(() => GameRoomNetworkController.Instance.Connected);
         LoadingController.Instance.Deactivate();
-        Debug.Log("Deactiveeeeeee");
     }
 }

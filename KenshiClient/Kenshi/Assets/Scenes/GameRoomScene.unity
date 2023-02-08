@@ -6567,7 +6567,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1006999789}
   m_Direction: 2
   m_Value: 1.0000037
-  m_Size: 0.7236852
+  m_Size: 0.7236853
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6638,6 +6638,7 @@ GameObject:
   - component: {fileID: 1666079200}
   - component: {fileID: 1666079201}
   - component: {fileID: 1666079202}
+  - component: {fileID: 1666079203}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -6797,6 +6798,28 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   manager: {fileID: 11400000, guid: f18ff33a3915047789ffd79cc82fbd55, type: 2}
+--- !u!114 &1666079203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1666079191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26a62557c892041fabddc81c5f066577, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  manager: {fileID: 11400000, guid: 4b97c2e33f1a545b990e7dd7ccc51266, type: 2}
 --- !u!1001 &1677113201
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7259,12 +7282,12 @@ PrefabInstance:
         type: 3}
       propertyPath: serializationData.PrefabModificationsReferencedUnityObjects.Array.data[1]
       value: 
-      objectReference: {fileID: 1762682262}
+      objectReference: {fileID: 0}
     - target: {fileID: 2260334778433082897, guid: 64dce48905ffd9b4293e595fa6941544,
         type: 3}
       propertyPath: serializationData.PrefabModificationsReferencedUnityObjects.Array.data[2]
       value: 
-      objectReference: {fileID: 1762682263}
+      objectReference: {fileID: 0}
     - target: {fileID: 2260334778433082897, guid: 64dce48905ffd9b4293e595fa6941544,
         type: 3}
       propertyPath: serializationData.PrefabModificationsReferencedUnityObjects.Array.data[3]
@@ -7381,18 +7404,6 @@ GameObject:
 --- !u!1 &1762682261 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5761147985950009871, guid: 64dce48905ffd9b4293e595fa6941544,
-    type: 3}
-  m_PrefabInstance: {fileID: 1762682258}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1762682262 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2877056857904154523, guid: 64dce48905ffd9b4293e595fa6941544,
-    type: 3}
-  m_PrefabInstance: {fileID: 1762682258}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1762682263 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3168197341517645422, guid: 64dce48905ffd9b4293e595fa6941544,
     type: 3}
   m_PrefabInstance: {fileID: 1762682258}
   m_PrefabAsset: {fileID: 0}

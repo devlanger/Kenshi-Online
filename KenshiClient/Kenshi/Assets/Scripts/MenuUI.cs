@@ -109,6 +109,7 @@ public class MenuUI : MonoBehaviour
             case "JoinGameInstance":
                 GameRoomDto dtoInstance = JsonConvert.DeserializeObject<GameRoomDto>(arg2);
                 GameRoomNetworkController.Port = ushort.Parse(dtoInstance.port);
+                MapLoader.MapToBeLoaded = dtoInstance.settings.mapName;
                 
                 FindObjectOfType<GameRoomLobby>().Fill(dtoInstance);
                 FindObjectOfType<GameRoomLobby>().LoadGame();

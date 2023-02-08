@@ -304,7 +304,12 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
                         return;
                     }
                     
-                    var pod = _service.CreatePod(new GameRoomPodSettings { Port = roomData.Port });
+                    var pod = _service.CreatePod(new GameRoomPodSettings
+                    {
+                        Port = roomData.Port, 
+                        MapName = roomData.Settings.mapName
+                    });
+                    
                     if (pod.Result)
                     {
                         roomData.Started = true;

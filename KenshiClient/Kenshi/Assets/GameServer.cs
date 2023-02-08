@@ -56,6 +56,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         public string containerName;
         public ushort port;
         public string redis;
+        public string mapName;
     }
 
     private void Awake()
@@ -113,7 +114,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                         SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
                         SendPacket(playerId, new LoginResponsePacket(playerId, new LoginResponsePacket.Data
                         {
-                            mapId = MapId
+                            mapId = MapLoader.MapToBeLoaded
                         }), DeliveryMethod.ReliableOrdered);
                         SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
                         foreach (var p in _players)

@@ -82,7 +82,8 @@ public class KubernetesService
                 $"GAME_SERVER_PORT={freePort}",
                 $"REDIS_HOST=redis",
                 $"RABBIT_MQ_HOST=kenshirabbitmq",
-                $"JWT_SECRET={_configuration["Jwt:Key"]}"
+                $"JWT_SECRET={_configuration["Jwt:Key"]}",
+                $"MAP_NAME={settings.MapName}",
             }
         });
         

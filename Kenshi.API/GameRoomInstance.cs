@@ -10,7 +10,6 @@ public class GameRoomInstance : IGameRoomInstance
     public string RoomId { get; set; }
     public string DisplayName { get; set; }
     public string LeaderUsername { get; set; }
-    public string MapId { get; set; } = "Map_1";
     public List<string> Players { get; set; } = new List<string>();
     public bool Started { get; set; }
     public int Port { get; set; }
@@ -24,7 +23,6 @@ public class GameRoomInstance : IGameRoomInstance
         displayName = DisplayName,
         port = Port.ToString(),
         started = Started,
-        mapId = MapId,
         players = Players,
         leaderUsername = LeaderUsername,
         settings = Settings
