@@ -9,28 +9,17 @@ using UnityEngine;
 
 public class GameServerBuilder
 {
-    [MenuItem("Building/Build Game Client for MacOS")]
-    public static void BuildGameClient ()
-    {
-        // Get filename.
-        string path = EditorUtility.SaveFolderPanel("Choose Location of Game Client", "", "");
-        string[] levels = new string[] {"Assets/Scenes/MenuScene.unity", "Assets/Scenes/GameRoomScene.unity"};
-        UnityEditor.OSXStandalone.UserBuildSettings.architecture = OSArchitecture.x64ARM64;
-        
-        BuildPipeline.BuildPlayer(new BuildPlayerOptions()
-        {
-            scenes = levels,
-            locationPathName = path + "/kenshi.app",
-            target = BuildTarget.StandaloneOSX
-        });
-    }
-    
     [MenuItem("Building/Build Game Server for Ubuntu")]
     public static void BuildGameServer ()
     {
         // Get filename.
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
-        string[] levels = new string[] {"Assets/Scenes/GameServerScene.unity"};
+        string[] levels = new string[] {
+            "Assets/Scenes/GameServerScene.unity", 
+            "Assets/Scenes/Map_Forest.unity",
+            "Assets/Scenes/Map_Dungeon1.unity",
+            "Assets/Scenes/Map_Crypt.unity",
+        };
 
         BuildPipeline.BuildPlayer(new BuildPlayerOptions()
         {

@@ -9,6 +9,7 @@ using Kenshi.Shared;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
+using Sirenix.OdinInspector;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using UnityEngine;
@@ -80,19 +81,22 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         if (!ConnectionController.Instance)
             return;
 
-        //if (ConnectionController.Instance != null)
-        //{
-            _netClient = new NetManager(this);
-            _netClient.UnconnectedMessagesEnabled = true;
-            _netClient.UpdateTime = 15;
-            _netClient.Start();
-            string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
-            _netClient.Connect(host, Port, ConnectionController.Token);
-
-            Debug.Log($"Connecting {host}:{Port}");
-        //}
+        ConnectEnet();
     }
 
+    [Button]
+    private void ConnectEnet()
+    {
+        _netClient = new NetManager(this);
+        _netClient.UnconnectedMessagesEnabled = true;
+        _netClient.UpdateTime = 15;
+        _netClient.Start();
+        string host = ConnectionController.Instance ? ConnectionController.Host : "127.0.0.1";
+        _netClient.Connect(host, Port, ConnectionController.Instance ? ConnectionController.Token : "");
+
+        Debug.Log($"Connecting {host}:{Port}");
+    }
+    
     private void UpdateENet()
     {
         if (ConnectionController.Instance != null)
