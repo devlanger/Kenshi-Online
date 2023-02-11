@@ -12,7 +12,7 @@ jobs:
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
         projectPath:
-           - KenshiClient/Kenshi
+          - KenshiClient/Kenshi
     steps:
       - uses: actions/checkout@v2
         with:
