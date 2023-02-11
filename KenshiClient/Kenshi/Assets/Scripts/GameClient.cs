@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 using LiteNetLib;
-using Riptide;
 using ConnectionState = LiteNetLib.ConnectionState;
 
 public class GameClient : MonoBehaviour, INetEventListener

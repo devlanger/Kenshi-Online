@@ -3,7 +3,6 @@ using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using Kenshi.Utils;
 using LiteNetLib;
-using Riptide;
 using UnityEngine;
 
 namespace StarterAssets.CombatStates

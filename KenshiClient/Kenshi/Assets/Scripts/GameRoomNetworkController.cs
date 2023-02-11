@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using ENet;
 using Kenshi.Shared;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;

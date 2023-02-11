@@ -61,7 +61,7 @@ public class GameServerBuilder
             
             string argument = script;
             UnityEngine.Debug.Log("============== Start Executing [" + argument + "] ===============");
-            ProcessStartInfo startInfo = new ProcessStartInfo("/bin/bash")
+            ProcessStartInfo startInfo = new ProcessStartInfo(@"C:\Program Files\Git\git-bash.exe")
             {
                 WorkingDirectory = path,
                 UseShellExecute = false,
