@@ -25,7 +25,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     public static string RedisString(IConfiguration config) =>
         Environment.GetEnvironmentVariable("REDIS_HOST") ?? config["ConnectionStrings:redis"];
     
-    private string GetUsername() => (string)Context.Items["username"];
+    private string GetUsername() => (string)Context.Items["username"] ?? "Test-user";
     
     public GameHub(KubernetesService service,
         IConfiguration config,
@@ -73,17 +73,19 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         try
         {
-            Console.WriteLine($"create game");
+            Console.WriteLine($"create game {name}");
             
-            var gameRoomInstance = _gameRoomService.CreateRoom(name);
+            var gameRoomInstance = _gameRoomService.CreateRoom(name, false);
+
             gameRoomInstance.SetLeader(GetUsername());
             gameRoomInstance.AddPlayer(GetUsername());
 
             if (gameRoomInstance != null)
             {
-                _gameRoomService.AddRoom(gameRoomInstance);
+                //_gameRoomService.AddRoom(gameRoomInstance);
 
                 var podsList = await GetGamesRooms();
+                
                 await Clients.All.SendAsync("ListGameRooms", JsonConvert.SerializeObject(podsList.ToList()));
                 await Clients.Clients(Context.ConnectionId).SendAsync("JoinGameRoom", JsonConvert.SerializeObject(gameRoomInstance.GetDto()));
             }
@@ -251,6 +253,13 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
             if (roomData != null)
             {
+                //Test Server = ignore lobby & join automatically
+                if (roomData.TestServer)
+                {
+                    await Clients.Client(Context.ConnectionId).SendAsync("JoinGameInstance",
+                        JsonConvert.SerializeObject(roomData.GetDto()));
+                }
+                
                 if (_gameRoomService.GetRoomForUsername(GetUsername()) != null)
                 {
                     Console.WriteLine($"{GetUsername()} already in room!");

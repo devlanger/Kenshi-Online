@@ -5,6 +5,7 @@ namespace Kenshi.API.Services;
 public interface IGameRoomInstance
 {
     bool Started { get; set; }
+    bool TestServer { get; set; }
     
     string RoomNumber { get; set; }
     string LeaderUsername { get; set; }

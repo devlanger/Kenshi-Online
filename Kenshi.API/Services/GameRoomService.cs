@@ -105,17 +105,20 @@ public class GameRoomService : IGameRoomService
         return Rooms.ContainsKey(dtoRoomId) ? Rooms[dtoRoomId] : null;
     }
 
-    public IGameRoomInstance CreateRoom(string name)
+    public IGameRoomInstance CreateRoom(string name, bool isTest)
     {
         int port = GetFreePort();
-        
-        return new GameRoomInstance()
+        var room = new GameRoomInstance()
         {
             RoomNumber = port.ToString(),
             DisplayName = name,
             Port = port,
             Started = false,
             RoomId = KubernetesService.GetPodName(port),
+            TestServer = isTest
         };
+        AddRoom(room);
+        
+        return room;
     }
 }

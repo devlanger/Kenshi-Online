@@ -202,6 +202,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
                 Connected = true;
                 Debug.Log("MyPlayerId: " + packet._playerId);
+                Debug.Log("Map: " + packet.data.mapId);
             }
             else if (packetId == PacketId.LoginEvent)
             {   

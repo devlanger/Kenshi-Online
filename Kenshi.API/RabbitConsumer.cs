@@ -19,6 +19,7 @@ public class RabbitConsumer : IHostedService
     private IModel _connectedChannel;
     private IModel _disconnectedChannel;
     private readonly string _host;
+    private readonly string _port;
 
     public RabbitConsumer(IConfiguration config, IGameRoomService gameRoomService, IHubContext<GameHub> gameHub)
     {
@@ -26,6 +27,7 @@ public class RabbitConsumer : IHostedService
         _gameRoomService = gameRoomService;
         _gameHub = gameHub;
         _host = _configuration["ConnectionStrings:rabbitmq"];
+        _port = _configuration["ConnectionStrings:rabbitmq_port"];
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -36,7 +38,7 @@ public class RabbitConsumer : IHostedService
         {
             try
             {
-                factory = new ConnectionFactory() { HostName = _host };
+                factory = new ConnectionFactory() { HostName = _host, Port = int.Parse(_port) };
                 _connection = factory.CreateConnection();
             }
             catch (Exception e)

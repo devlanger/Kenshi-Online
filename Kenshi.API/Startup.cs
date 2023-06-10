@@ -3,6 +3,7 @@ using Hangfire;
 using Kenshi.API.Extensions;
 using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
+using Kenshi.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Prometheus;
@@ -37,7 +38,7 @@ public class Startup
         //    app.UseSwaggerUI();
         //}
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
         
         app.UseMetricServer();
         app.UseHttpMetrics();
@@ -58,6 +59,14 @@ public class Startup
         
         var service = app.ApplicationServices.GetRequiredService<KubernetesService>();
         RecurringJob.AddOrUpdate(() => MethodCall(service), "*/5 * * * * *");
+        
+        var roomsService = app.ApplicationServices.GetService<IGameRoomService>();
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (environment == "Development")
+        {
+            Console.WriteLine("Create debug room at port 5001 for testing locally (run server manually).");
+            roomsService.CreateRoom("5001", true);
+        }
     }
 
     public static async Task MethodCall(KubernetesService service)

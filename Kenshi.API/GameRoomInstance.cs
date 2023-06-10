@@ -6,6 +6,7 @@ namespace Kenshi.API;
 
 public class GameRoomInstance : IGameRoomInstance
 {
+    public bool TestServer { get; set; }
     public string RoomNumber { get; set; }
     public string RoomId { get; set; }
     public string DisplayName { get; set; }
