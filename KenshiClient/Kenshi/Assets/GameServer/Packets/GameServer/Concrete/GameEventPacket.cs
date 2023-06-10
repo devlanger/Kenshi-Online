@@ -13,6 +13,7 @@ namespace Kenshi.Shared.Packets.GameServer
         {
             player_died = 1,
             player_respawn = 2,
+            score_changed = 3,
         }
         
         public GameEventId eventId;
@@ -21,6 +22,13 @@ namespace Kenshi.Shared.Packets.GameServer
         {
             public int playerId;
             public Vector3 respawnPos;
+        }
+        
+        public class ScoreChanged
+        {
+            public string nickname;
+            public int score;
+            public int maxScore;
         }
         
         public class PlayerDied
@@ -40,6 +48,7 @@ namespace Kenshi.Shared.Packets.GameServer
 
         public PlayerDied diedData = new PlayerDied();
         public PlayerRespawn respawnData = new PlayerRespawn();
+        public ScoreChanged scoreChanged = new ScoreChanged();
 
         public GameEventPacket()
         {
@@ -57,7 +66,13 @@ namespace Kenshi.Shared.Packets.GameServer
             eventId = GameEventId.player_died;
             this.diedData = data;
         }
-
+        
+        public GameEventPacket(ScoreChanged data)
+        {
+            eventId = GameEventId.score_changed;
+            this.scoreChanged = data;
+        }
+        
         public override void Serialize(NetDataWriter writer)
         {
             writer.Put((byte)eventId);
@@ -73,6 +88,12 @@ namespace Kenshi.Shared.Packets.GameServer
                 case GameEventId.player_respawn:
                     writer.Put(respawnData.playerId);
                     PutVector3(respawnData.respawnPos);
+                    break;
+                
+                case GameEventId.score_changed:
+                    writer.Put(scoreChanged.nickname);
+                    writer.Put(scoreChanged.score);
+                    writer.Put(scoreChanged.maxScore);
                     break;
             }
         }
@@ -97,6 +118,15 @@ namespace Kenshi.Shared.Packets.GameServer
                     {
                         playerId = reader.GetInt(),
                         respawnPos = ReadVector3(reader)
+                    };
+                    break;
+                
+                case GameEventId.score_changed:
+                    scoreChanged = new ScoreChanged()
+                    {
+                        nickname = reader.GetString(),
+                        score = reader.GetInt(),
+                        maxScore = reader.GetInt(),
                     };
                     break;
             }

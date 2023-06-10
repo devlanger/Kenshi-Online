@@ -21,6 +21,8 @@ namespace StarterAssets.CombatStates
             if (GameServer.IsServer)
             {
                 stateMachine.Target.ActivateNavAgent(false);
+                
+                
             }
             
             if (stateMachine.Target.animator != null)

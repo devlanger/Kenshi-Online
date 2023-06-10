@@ -29,5 +29,10 @@ public class MapLoader : MonoBehaviour
             Debug.LogError($"Cant load map {MapToBeLoaded}");
             throw;
         }
+
+        if (GameServer.IsServer)
+        {
+            FindObjectOfType<SpawnPointsController>().LoadSpawnPoints();
+        }
     }
 }

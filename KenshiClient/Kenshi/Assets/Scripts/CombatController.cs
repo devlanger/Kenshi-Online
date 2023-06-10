@@ -13,6 +13,7 @@ namespace StarterAssets
         public static CombatController Instance;
 
         public event Action<StatEventPacket.Data> OnStatsChanged;
+        public event Action<Player> OnPlayerDeath;
         
         private void Awake()
         {
@@ -76,6 +77,11 @@ namespace StarterAssets
                 maxValue = (ushort)100,
                 playerId = deadPlayer.NetworkId
             });
+        }
+
+        public void DeadPlayer(Player hitTarget)
+        {
+            OnPlayerDeath?.Invoke(hitTarget);
         }
     }
 }

@@ -19,7 +19,7 @@ using StarterAssets.CombatStates;
 public class GameServer : MonoBehaviour, INetEventListener, INetLogger
 {
     public static GameServer Instance;
-    
+
     public NetManager _netServer;
     private NetPeer _ourPeer;
     [SerializeField] private GameServerEventsHandler handler;
@@ -28,7 +28,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public static bool IsServer => GameRoomNetworkController.Instance == null;
 
     private static int players = 0;
-    
+
     private static IDockerClient _client;
     private static ConnectionMultiplexer redis;
 
@@ -60,6 +60,16 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         Instance = this;
     }
 
+    public void DisconnectPlayer(NetPeer player)
+    {
+        player.Disconnect();
+    }
+    
+    public void DisconnectAllPlayers()
+    {
+        _netServer.DisconnectAll();
+    }
+    
     public void StartServer()
     {
         try
@@ -70,20 +80,20 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         {
             Debug.Log(e);
         }
-        
+
         NetDebug.Logger = this;
         _netServer = new NetManager(this);
         _netServer.Start(Configuration.port);
         _netServer.BroadcastReceiveEnabled = true;
         _netServer.UpdateTime = 15;
-        
+
         Debug.Log($"Circle ENet Server started on {Configuration.port}");
         started = true;
     }
-    
+
     void Update()
     {
-        if(started)
+        if (started)
             _netServer.PollEvents();
     }
 
@@ -93,88 +103,94 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         if (_netServer != null)
             _netServer.Stop();
     }
-    
+
     private void HandlePacket(NetPeer peer, NetPacketReader reader)
+    {
+        while (!reader.EndOfData)
         {
-            while (!reader.EndOfData)
+            var packetId = (PacketId)reader.GetByte();
+
+            if (packetId != PacketId.PositionUpdateRequest)
+                Debug.Log($"HandlePacket received: {packetId}");
+            switch (packetId)
             {
-                var packetId = (PacketId)reader.GetByte();
+                case PacketId.LoginRequest:
+                    var playerId = peer.Id;
+                    var claims = GetUserData(playerId, out var data);
+                    SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
+                    SendPacket(playerId, new LoginResponsePacket(playerId, new LoginResponsePacket.Data
+                    {
+                        mapId = MapLoader.MapToBeLoaded
+                    }), DeliveryMethod.ReliableOrdered);
+                    SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
+                    foreach (var p in _players)
+                    {
+                        SendPacket(playerId, new LoginEventPacket(p.Key, claims.Name), DeliveryMethod.ReliableOrdered);
+                    }
 
-                if (packetId != PacketId.PositionUpdateRequest)
-                    Debug.Log($"HandlePacket received: {packetId}");
-                switch (packetId)
-                {
-                    case PacketId.LoginRequest:
-                        var playerId = peer.Id;
-                        var claims = GetUserData(playerId, out var data);
-                        SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
-                        SendPacket(playerId, new LoginResponsePacket(playerId, new LoginResponsePacket.Data
-                        {
-                            mapId = MapLoader.MapToBeLoaded
-                        }), DeliveryMethod.ReliableOrdered);
-                        SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
-                        foreach (var p in _players)
-                        {
-                            SendPacket(playerId, new LoginEventPacket(p.Key, claims.Name), DeliveryMethod.ReliableOrdered);
-                        }
-                        break;
-                    case PacketId.PositionUpdateRequest:
-                        var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
-                        UnityMainThreadDispatcher.Instance().Enqueue(() =>
-                        {
-                            OnPlayerPositionUpdate?.Invoke(packet.playerId,
-                                new Vector3(packet.x, packet.y, packet.z));
-                        });
-                        SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z,
-                            packet.rotY, packet.speed), DeliveryMethod.Sequenced);
-                        break;
-                    case PacketId.FsmUpdate:
-                        var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
-                        switch (fsmPacket.stateId)
-                        {
-                            case FSMStateId.attack:
-                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var player))
-                                {
-                                    player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
-                                }
-                                break;
-                            
-                            case FSMStateId.ability_cast:
-                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var abilityPlayer))
-                                {
-                                    abilityPlayer.playerStateMachine.ChangeState(new AbilityCastState(fsmPacket.abilityData));
-                                }
-                                break;
-                            
-                            case FSMStateId.dash:
-                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var dashPlayer))
-                                {
-                                    dashPlayer.movementStateMachine.ChangeState(new DashState(fsmPacket.dashData));
-                                }
-                                break;
-                            default:
-                                if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var p1))
-                                {
-                                    switch (fsmPacket.stateId)
-                                    {
-                                        case FSMStateId.block:
-                                            p1.playerStateMachine.ChangeState(new BlockState());
-                                            break;
-                                        case FSMStateId.mana_regen:
-                                            p1.playerStateMachine.ChangeState(new ManaRegenState());
-                                            break;
-                                        case FSMStateId.stunned:
-                                            p1.playerStateMachine.ChangeState(new StunState());
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
+                    break;
+                case PacketId.PositionUpdateRequest:
+                    var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
+                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        OnPlayerPositionUpdate?.Invoke(packet.playerId,
+                            new Vector3(packet.x, packet.y, packet.z));
+                    });
+                    SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z,
+                        packet.rotY, packet.speed), DeliveryMethod.Sequenced);
+                    break;
+                case PacketId.FsmUpdate:
+                    var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
+                    switch (fsmPacket.stateId)
+                    {
+                        case FSMStateId.attack:
+                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var player))
+                            {
+                                player.playerStateMachine.ChangeState(new AttackState(fsmPacket.attackData));
+                            }
 
-                        break;
-                }
+                            break;
+
+                        case FSMStateId.ability_cast:
+                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var abilityPlayer))
+                            {
+                                abilityPlayer.playerStateMachine.ChangeState(
+                                    new AbilityCastState(fsmPacket.abilityData));
+                            }
+
+                            break;
+
+                        case FSMStateId.dash:
+                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var dashPlayer))
+                            {
+                                dashPlayer.movementStateMachine.ChangeState(new DashState(fsmPacket.dashData));
+                            }
+
+                            break;
+                        default:
+                            if (GameServerEventsHandler.Instance._players.TryGetValue(peer.Id, out var p1))
+                            {
+                                switch (fsmPacket.stateId)
+                                {
+                                    case FSMStateId.block:
+                                        p1.playerStateMachine.ChangeState(new BlockState());
+                                        break;
+                                    case FSMStateId.mana_regen:
+                                        p1.playerStateMachine.ChangeState(new ManaRegenState());
+                                        break;
+                                    case FSMStateId.stunned:
+                                        p1.playerStateMachine.ChangeState(new StunState());
+                                        break;
+                                }
+                            }
+
+                            break;
+                    }
+
+                    break;
             }
         }
+    }
 
     private Player GetPlayerById(int playerId)
     {
@@ -182,88 +198,88 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     }
 
     private void SendPacket(int peerId, SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        GameRoomNetworkController.SendPacket(_netServer.GetPeerById(peerId), p, DeliveryMethod.ReliableSequenced);
+    }
+
+    private void SendPacketToAll(SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+    {
+        if (_players.Count == 0)
         {
-            GameRoomNetworkController.SendPacket(_netServer.GetPeerById(peerId), p, DeliveryMethod.ReliableSequenced);
+            return;
         }
 
-        private void SendPacketToAll(SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)
+        List<NetPeer> list = new List<NetPeer>();
+
+        foreach (var id in _players.Where(p => p.Value.NetworkId < 1000))
         {
-            if (_players.Count == 0)
-            {
-                return;
-            }
-            
-            List<NetPeer> list = new List<NetPeer>();
-            
-            foreach (var id in _players.Where(p => p.Value.NetworkId < 1000))
-            {
-                list.Add(_netServer.GetPeerById(id.Key));
-            }
-            
-            if(list.Count > 0)
-                GameRoomNetworkController.SendPacketToMany(list, p, deliveryMethod);
+            list.Add(_netServer.GetPeerById(id.Key));
         }
 
-        public static ClaimsDto GetUserClaims(int playerId)
+        if (list.Count > 0)
+            GameRoomNetworkController.SendPacketToMany(list, p, deliveryMethod);
+    }
+
+    public static ClaimsDto GetUserClaims(int playerId)
+    {
+        var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokens[playerId]);
+        return new ClaimsDto()
         {
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(tokens[playerId]);
-            return new ClaimsDto()
-            {
-                Name = jwt.Claims.First(c => c.Type == ClaimTypes.Name).Value
-            };
-        }
-        
-        private static string GetRoomId(int port) => $"gameroom-{port}";
+            Name = jwt.Claims.First(c => c.Type == ClaimTypes.Name).Value
+        };
+    }
 
-        private void HandleLogout(int playerId)
+    private static string GetRoomId(int port) => $"gameroom-{port}";
+
+    private void HandleLogout(int playerId)
+    {
+        if (!_players.ContainsKey(playerId))
+            return;
+
+        string username = GetUserClaims(playerId).Name;
+        var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
         {
-            if (!_players.ContainsKey(playerId))
-                return;
+            State = RoomEventState.Left,
+            RoomId = GetRoomId(Configuration.port),
+            Username = username
+        });
 
-            string username = GetUserClaims(playerId).Name;
-            var json = JsonConvert.SerializeObject(new UserRoomStateEventDto
-            {
-                State = RoomEventState.Left,
-                RoomId = GetRoomId(Configuration.port),
-                Username = username
-            });
-            
-            try
-            {
-                new RabbitMqClient().SendConnectedUser("disconnected_user", json);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError(ex);
-            }
-
-            tokens.Remove(playerId);
-            UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerDespawned?.Invoke(playerId); });
-            SendPacketToAll(new LogoutEventPacket(playerId));
-            players--;
-            
-            Debug.Log($"User has disconnected {username}");
+        try
+        {
+            new RabbitMqClient().SendConnectedUser("disconnected_user", json);
         }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+        }
+
+        tokens.Remove(playerId);
+        UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerDespawned?.Invoke(playerId); });
+        SendPacketToAll(new LogoutEventPacket(playerId));
+        players--;
+
+        Debug.Log($"User has disconnected {username}");
+    }
 
     public void OnPeerConnected(NetPeer peer)
     {
         Debug.Log("[SERVER] We have new peer " + peer.EndPoint);
-        
+
         var claims = GetUserData(peer.Id, out var json);
 
         try
         {
             RabbitMqClient client = new RabbitMqClient();
-            client.SendConnectedUser("connected_user",json);
+            client.SendConnectedUser("connected_user", json);
         }
         catch (Exception e)
         {
             Debug.LogError(e);
         }
-        
+
         Debug.Log($"[GAME SERVER] Client connected - ID: {peer.Id} Name: {claims.Name}");
         players++;
-        
+
         UnityMainThreadDispatcher.Instance().Enqueue(() => { OnPlayerSpawned?.Invoke(peer, claims, Vector3.zero); });
         _ourPeer = peer;
     }
@@ -285,8 +301,9 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         Debug.Log("[SERVER] error " + socketErrorCode);
     }
 
-    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber, DeliveryMethod deliveryMethod)
-    {        
+    public void OnNetworkReceive(NetPeer peer, NetPacketReader reader, byte channelNumber,
+        DeliveryMethod deliveryMethod)
+    {
         HandlePacket(peer, reader);
     }
 
@@ -304,7 +321,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
         if (_netServer.ConnectedPeersCount < 100)
         {
             string token = request.Data.GetString();
-            if (JwtTokenService.VerifyToken(Configuration.jwtSecretKey, token))   
+            if (JwtTokenService.VerifyToken(Configuration.jwtSecretKey, token))
             {
                 var peer = request.Accept();
                 tokens[peer.Id] = token;

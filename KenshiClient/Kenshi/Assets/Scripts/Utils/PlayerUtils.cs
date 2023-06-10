@@ -63,6 +63,7 @@ namespace Kenshi.Utils
                     }), DeliveryMethod.ReliableOrdered);
 
                     hitTarget.playerStateMachine.ChangeState(new DeadState());
+                    CombatController.Instance.DeadPlayer(hitTarget);
                     response.dead = true;
                 }
 

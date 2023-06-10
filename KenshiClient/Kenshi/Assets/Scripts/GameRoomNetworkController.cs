@@ -265,6 +265,13 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                             p.playerStateMachine.ChangeState(new IdleState());
                         }
                         break;
+                    case GameEventPacket.GameEventId.score_changed:
+                        // if (_players.TryGetValue(gameEventPacket.respawnData.playerId, out var p2))
+                        // {
+                        //     p2.transform.position = gameEventPacket.respawnData.respawnPos;
+                        //     p2.playerStateMachine.ChangeState(new IdleState());
+                        // }
+                        break;
                 }
             }
             else if (packetId == PacketId.FsmUpdate)
