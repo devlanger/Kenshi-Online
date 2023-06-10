@@ -19,7 +19,7 @@ public class DebugCanvas : MonoBehaviour
     private void Click()
     {
         //SceneManager.LoadScene(1);
-        FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game 5001");
+        FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game gameroom-5001");
     }
 
     // Update is called once per frame

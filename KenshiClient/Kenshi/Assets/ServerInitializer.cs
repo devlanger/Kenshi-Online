@@ -22,7 +22,7 @@ public class ServerInitializer : MonoBehaviour
             containerName = Environment.GetEnvironmentVariable("CONTAINER_NAME") ?? "test",
             port = ushort.Parse(Environment.GetEnvironmentVariable("GAME_SERVER_PORT") ?? "5001"),
             redis = Environment.GetEnvironmentVariable("REDIS_HOST") ?? "redis",
-            mapName = Environment.GetEnvironmentVariable("MAP_NAME") ?? "Map_1",
+            mapName = Environment.GetEnvironmentVariable("MAP_NAME") ?? "Forest",
         };
 
         #if UNITY_EDITOR

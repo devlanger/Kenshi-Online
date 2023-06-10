@@ -7,12 +7,10 @@ using System.Net.Sockets;
 using System.Security.Claims;
 using Docker.DotNet;
 using Kenshi.Backend.Shared.Models;
-using Kenshi.Shared;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using UnityEngine;
 using LiteNetLib;
-using LiteNetLib.Utils;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using StarterAssets;
@@ -43,8 +41,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public event Action<int, Vector3> OnPlayerPositionUpdate;
     public event Action<int> OnPlayerDespawned;
 
-    public string MapId = "Map_1";
-    
     public class ClaimsDto
     {
         public string Name { get; set; }
