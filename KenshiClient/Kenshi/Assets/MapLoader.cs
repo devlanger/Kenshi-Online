@@ -23,6 +23,7 @@ public class MapLoader : MonoBehaviour
         try
         {
             SceneManager.LoadScene(map.sceneName, LoadSceneMode.Additive);
+            RenderSettings.skybox = map.skybox;
         }
         catch (Exception e)
         {

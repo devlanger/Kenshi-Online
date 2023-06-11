@@ -96,23 +96,26 @@ public class MenuUI : MonoBehaviour
                 {
                     SpawnRoomListItem(item);
                 }
-                
-                createRoomText.SetActive(list.Length == 0);
+
+                if (createRoomText != null)
+                {
+                    createRoomText.SetActive(list.Length == 0);
+                }
                 break;
             case "JoinGameRoom":
                 GameRoomDto dto = JsonConvert.DeserializeObject<GameRoomDto>(arg2);
                 GameRoomNetworkController.Port = ushort.Parse(dto.port);
                 
-                FindObjectOfType<GameRoomLobby>().Fill(dto);
-                FindObjectOfType<GameRoomLobby>().Activate();
+                FindObjectOfType<GameRoomLobby>()?.Fill(dto);
+                FindObjectOfType<GameRoomLobby>()?.Activate();
                 break;
             case "JoinGameInstance":
                 GameRoomDto dtoInstance = JsonConvert.DeserializeObject<GameRoomDto>(arg2);
                 GameRoomNetworkController.Port = ushort.Parse(dtoInstance.port);
                 MapLoader.MapToBeLoaded = dtoInstance.settings.mapName;
                 
-                FindObjectOfType<GameRoomLobby>().Fill(dtoInstance);
-                FindObjectOfType<GameRoomLobby>().LoadGame();
+                FindObjectOfType<GameRoomLobby>()?.Fill(dtoInstance);
+                FindObjectOfType<GameRoomLobby>()?.LoadGame();
                 break;
         }
     }

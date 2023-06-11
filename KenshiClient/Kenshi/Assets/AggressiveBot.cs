@@ -41,7 +41,7 @@ public class AggressiveBot : MonoBehaviour
                     _player.playerStateMachine.ChangeState(new AbilityCastState(new AbilityCastState.Data
                     {
                         abilityId = 23,
-                        hitPoint = _target.transform.position,
+                        hitPoint = _target.transform.position + Vector3.up,
                         startPos = transform.position,
                     }));
                     yield return new WaitForSeconds(UnityEngine.Random.Range(3, 8));
