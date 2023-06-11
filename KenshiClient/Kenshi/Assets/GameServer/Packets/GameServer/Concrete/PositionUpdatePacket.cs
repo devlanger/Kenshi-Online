@@ -34,6 +34,16 @@ namespace Kenshi.Shared.Packets.GameServer
             this.speed = speed;
         }
         
+        public PositionUpdatePacket(Player player, float speed)
+        {
+            this.playerId = player.NetworkId;
+            this.x = player.transform.position.x;
+            this.y = player.transform.position.y;
+            this.z = player.transform.position.z;
+            this.rotY = (byte)(player.transform.eulerAngles.y / 5);
+            this.speed = speed;
+        }
+        
         public override void Serialize(NetDataWriter writer)
         {
             base.Serialize(writer);

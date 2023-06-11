@@ -27,8 +27,8 @@ namespace DefaultNamespace
 
             if (deathCounter >= deathsToFinishGame)
             {
-                CombatController.Instance.OnPlayerDeath -= InstanceOnOnPlayerDeath;
                 _gameModeController.StartCoroutine(ShowScoreAndFinish());
+                CombatController.Instance.OnPlayerDeath -= InstanceOnOnPlayerDeath;
             }
         }
 
