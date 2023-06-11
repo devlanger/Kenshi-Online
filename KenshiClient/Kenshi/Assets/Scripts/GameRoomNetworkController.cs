@@ -223,6 +223,11 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 var packet = SendablePacket.Deserialize<PositionUpdatePacket>(packetId, reader);
                 UpdatePosition(packet);
             }
+            else if (packetId == PacketId.DeathmatchModeEnd)
+            {
+                var packet = SendablePacket.Deserialize<DeathmatchModeEndPacket>(packetId, reader);
+                FinishDeathmatchMode(packet);
+            }
             else if (packetId == PacketId.LogoutEvent)
             {
                 var packet = SendablePacket.Deserialize<LogoutEventPacket>(packetId, reader);
@@ -326,6 +331,14 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 }
             }
         }
+    }
+
+    private void FinishDeathmatchMode(DeathmatchModeEndPacket packet)
+    {
+        var ui = FindObjectOfType<DeathmatchCanvas>(true);
+        if (ui == null) return;
+        
+        ui.gameObject.SetActive(true);
     }
 
     private Player SpawnOtherPlayer(int playerId)

@@ -10,6 +10,7 @@ public class GameModeUISpawner : MonoBehaviour
 
     private void Start()
     {
-        Instantiate(deathmatchCanvas, transform);
+        var go = Instantiate(deathmatchCanvas, transform);
+        go.SetActive(false);
     }
 }

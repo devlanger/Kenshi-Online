@@ -74,7 +74,7 @@ public class GameRoomService : IGameRoomService
                 room.SetLeader(room.Players[0]);
             }
             
-            if (room.Players.Count == 0)
+            if (room.Players.Count == 0 && !room.TestServer)
             {
                 RemoveRoom(room.RoomId);
             }

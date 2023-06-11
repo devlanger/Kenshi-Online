@@ -1,4 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
+using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
 using StarterAssets;
+using UnityEngine;
 
 namespace DefaultNamespace
 {
@@ -22,8 +27,16 @@ namespace DefaultNamespace
 
             if (deathCounter >= deathsToFinishGame)
             {
-                _gameModeController.FinishGame();
+                CombatController.Instance.OnPlayerDeath -= InstanceOnOnPlayerDeath;
+                _gameModeController.StartCoroutine(ShowScoreAndFinish());
             }
+        }
+
+        private IEnumerator ShowScoreAndFinish()
+        {
+            GameRoomNetworkController.SendPacketToAll(new DeathmatchModeEndPacket(), DeliveryMethod.ReliableUnordered);
+            yield return new WaitForSeconds(5);
+            _gameModeController.FinishGame();
         }
     }
 }

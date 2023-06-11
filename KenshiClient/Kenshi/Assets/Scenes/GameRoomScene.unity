@@ -425,7 +425,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 1847
+    m_Bits: 4294967295
 --- !u!114 &147858818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6567,7 +6567,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1006999790}
   m_HandleRect: {fileID: 1006999789}
   m_Direction: 2
-  m_Value: 1.0000033
+  m_Value: 1.000004
   m_Size: 0.7236852
   m_NumberOfSteps: 0
   m_OnValueChanged:

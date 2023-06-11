@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(10)]
 public class SpawnPointsController : MonoBehaviour
 {
     public SpawnPoint[] spawnPoints;
@@ -13,7 +14,7 @@ public class SpawnPointsController : MonoBehaviour
         Instance = this;
     }
 
-    public void LoadSpawnPoints()
+    private void Start()
     {
         spawnPoints = GameObject.FindObjectsOfType<SpawnPoint>();
     }
