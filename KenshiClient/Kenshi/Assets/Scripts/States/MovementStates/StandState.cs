@@ -11,6 +11,11 @@ namespace StarterAssets
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+            
+            // stateMachine.Target.transform.rotation = Quaternion.Slerp(stateMachine.Target.transform.rotation, 
+            //     Quaternion.LookRotation(stateMachine.Target.Input.CameraForward), Time.deltaTime * 5); 
+            
             switch (stateMachine.Target.playerStateMachine.CurrentState.Id)
             {
                 case FSMStateId.idle:

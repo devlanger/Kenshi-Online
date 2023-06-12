@@ -33,7 +33,7 @@ namespace StarterAssets.CombatStates
         {
             UpdateAttackInput(stateMachine);
             AbilitiesController.Instance.UpdateInputs();
-            if (Input.GetKey(KeyCode.LeftControl))
+            if (Input.GetKey(KeyCode.Q))
             {
                 stateMachine.ChangeState(new BlockState());
             }

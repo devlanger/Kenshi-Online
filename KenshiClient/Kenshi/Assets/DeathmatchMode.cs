@@ -12,7 +12,7 @@ namespace DefaultNamespace
         public override GameType GameType => GameType.DEATHMATCH;
 
         public int deathCounter = 0;
-        public int deathsToFinishGame = 1;
+        public int deathsToFinishGame = 1000;
         
         public override void Initialize(GameModeController gameModeController)
         {

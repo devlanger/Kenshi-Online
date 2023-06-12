@@ -24,6 +24,8 @@ namespace StarterAssets
             public FSMState state;
         }
 
+        public event Action<FSMState> OnStateEnter;
+
         public void ChangeState(FSMState newState, float delayTime = 0)
         {
             try
@@ -54,7 +56,10 @@ namespace StarterAssets
             CurrentState = newState;
 
             if (newState != null)
+            {
                 newState.Enter(this, oldState);
+                OnStateEnter?.Invoke(newState);
+            }
         }
 
         public void UpdateQueue()

@@ -82,6 +82,8 @@ namespace StarterAssets
         private GameObject _mainCamera;
 
         private Player target;
+
+        public Transform playerRoot;
         
         private StarterAssetsInputs _input => target.Input;
 
@@ -121,7 +123,10 @@ namespace StarterAssets
         public void SetPlayer(Player player)
         {
             target = player;
-            _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
+            if (CinemachineCameraTarget != null)
+            {
+                _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
+            }
             
             _hasAnimator = player.TryGetComponent(out _animator);
             _controller = player.GetComponent<Rigidbody>();
@@ -149,6 +154,11 @@ namespace StarterAssets
 
         private void Update()
         {
+            if (target.IsLocalPlayer)
+            {
+                playerRoot.transform.position = target.transform.position + (target.transform.up * 2);
+            }
+
             _animationBlend = Mathf.Lerp(_animationBlend, _speed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
             
@@ -163,7 +173,7 @@ namespace StarterAssets
         public void CameraRotation()
         {
             // if there is an input and camera position is not fixed
-            if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
+            if (/*_input.look.sqrMagnitude >= _threshold && */!LockCameraPosition)
             {
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = 1f;
@@ -176,9 +186,13 @@ namespace StarterAssets
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
 
-            // Cinemachine will follow this target
-            CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
-                _cinemachineTargetYaw, 0.0f);
+            if (CinemachineCameraTarget != null)
+            {
+                // Cinemachine will follow this target
+                CinemachineCameraTarget.transform.rotation = Quaternion.Euler(
+                    _cinemachineTargetPitch + CameraAngleOverride,
+                    _cinemachineTargetYaw, 0.0f);
+            }
         }
 
         public void UpdateMovement(Vector3 velocity)

@@ -62,7 +62,8 @@ public class Startup
         
         var roomsService = app.ApplicationServices.GetService<IGameRoomService>();
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (environment == "Development")
+        bool createTestServer = true;
+        if (createTestServer)
         {
             Console.WriteLine("Create debug room at port 5001 for testing locally (run server manually).");
             roomsService.CreateRoom("5001", true);

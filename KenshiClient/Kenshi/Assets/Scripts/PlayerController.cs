@@ -39,9 +39,10 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         UpdateDashState();
+        UpdateCam();
     }
 
-    private void LateUpdate()
+    private void UpdateCam()
     {
         if (localPlayer.Input.InputDirection != Vector3.zero)
         {

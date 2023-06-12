@@ -64,14 +64,11 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.ChangeState(new IdleState());
             }
-            
-            Vector3 rot = (data.hitPoint - data.startPos).normalized;
-            rot.y = 0;
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot); 
         }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
@@ -92,6 +89,7 @@ namespace StarterAssets.CombatStates
             {
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, data), DeliveryMethod.ReliableOrdered);
             }
+            stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
 
             //TODO: Fix to work on server side
             if (stateMachine.IsLocal)
@@ -127,9 +125,17 @@ namespace StarterAssets.CombatStates
                 time = ability.airDuration;
             }
 
-            Vector3 rot = (data.hitPoint - data.startPos).normalized;
-            rot.y = 0;
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot); 
+            if (stateMachine.IsLocal)
+            {
+                Vector3 rot = (data.hitPoint - data.startPos).normalized;
+                rot.y = 0;
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(rot);
+            }
+            else
+            {
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
+            }
+
             stateMachine.Target.transform.position = data.startPos; 
         }
 
@@ -144,7 +150,8 @@ namespace StarterAssets.CombatStates
             }
 
             stateMachine.Variables.IsAttacking = false;
-            
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+
             if (!GameServer.IsServer && !stateMachine.Target.IsLocalPlayer)
             {
                 stateMachine.Target.Interpolation.enabled = true;

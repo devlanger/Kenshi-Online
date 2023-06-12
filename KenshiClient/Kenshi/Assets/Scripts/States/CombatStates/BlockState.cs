@@ -15,7 +15,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            if (Input.GetKeyUp(KeyCode.LeftControl))
+            if (Input.GetKeyUp(KeyCode.Q))
             {
                 stateMachine.ChangeState(new IdleState());
             }

@@ -81,6 +81,7 @@ namespace StarterAssets.CombatStates
                     stateMachine.ChangeState(new IdleState());
                 }  
             }
+            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
         }
 
         protected override void OnUpdate(PlayerStateMachine stateMachine)

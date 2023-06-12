@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace StarterAssets
 {
+    public abstract class GenericFSMState<T> : FSMState
+    {
+        public abstract T StateId { get; }
+    }
+    
     [System.Serializable]
     public abstract class FSMState
     {
@@ -59,7 +64,7 @@ namespace StarterAssets
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, Id), DeliveryMethod.ReliableOrdered);
             }
         }
-        
+
         protected abstract void OnUpdate(PlayerStateMachine stateMachine);
         protected abstract void OnInputUpdate(PlayerStateMachine stateMachine);
 

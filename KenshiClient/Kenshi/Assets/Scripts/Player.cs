@@ -95,10 +95,7 @@ public class Player : Mob
         
         playerStateMachine?.UpdateQueue();
         movementStateMachine?.UpdateQueue();
-    }
-
-    private void LateUpdate()
-    {
+        
         if (IsLocalPlayer)
         {
             Input.jump = false;
