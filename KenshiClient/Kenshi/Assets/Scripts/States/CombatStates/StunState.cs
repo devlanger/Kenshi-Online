@@ -8,21 +8,8 @@ namespace StarterAssets.CombatStates
     {
         public override FSMStateId Id => FSMStateId.stunned;
 
-        private float duration = 1;
+        public float Duration { get; private set; } = 1;
         
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-            if (ElapsedTime > duration)
-            {
-                stateMachine.ChangeState(new IdleState());
-            }
-        }
-
-        protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-        {
-            
-        }
-
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
             stateMachine.Target.movementStateMachine.ChangeState(new StandState());

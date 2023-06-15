@@ -48,26 +48,6 @@ namespace StarterAssets
                 stateMachine.Target.transform.rotation =
                     Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
             }
-            
-            if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
-            {
-                stateMachine.ChangeState(new DashState(new DashState.Data
-                {
-                    dashIndex = stateMachine.Target.Input.dashIndex
-                }));
-            }
-            else if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
-            {
-                stateMachine.ChangeState(new JumpState());
-            }
-        }
-
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-            if (tpsController._verticalVelocity < 0)
-            {
-                stateMachine.ChangeState(new FreeFallState());
-            }
         }
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)

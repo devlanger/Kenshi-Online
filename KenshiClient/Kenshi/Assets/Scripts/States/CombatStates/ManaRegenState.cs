@@ -13,10 +13,6 @@ namespace StarterAssets.CombatStates
 
         private float value = 0;
         private float startValue;
-        
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-        }
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
@@ -39,10 +35,6 @@ namespace StarterAssets.CombatStates
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            if (Input.GetKeyUp(KeyCode.R))
-            {
-                stateMachine.ChangeState(new IdleState());
-            }
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
         }
 

@@ -70,8 +70,8 @@ namespace StarterAssets
             }
         }
 
-        protected abstract void OnUpdate(PlayerStateMachine stateMachine);
-        protected abstract void OnInputUpdate(PlayerStateMachine stateMachine);
+        protected virtual void OnUpdate(PlayerStateMachine stateMachine){}
+        protected virtual void OnInputUpdate(PlayerStateMachine stateMachine){}
 
         protected virtual void OnFixedUpdate(PlayerStateMachine stateMachine)
         {

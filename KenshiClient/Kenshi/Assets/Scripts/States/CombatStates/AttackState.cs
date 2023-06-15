@@ -16,7 +16,7 @@ namespace StarterAssets.CombatStates
         private bool damaged = false;
         private float damageTime = 0.2f;
 
-        private float duration = 0.85f;
+        private float _duration = 0.85f;
         private float heavyAttackDuration = 1.25f;
         private float hitDistance = 1.75f;
 
@@ -55,32 +55,9 @@ namespace StarterAssets.CombatStates
         {
             this.data = data;
         }
-        
-        private bool UpdateAttackInput(PlayerStateMachine machine)
-        {
-            if (machine.Target.Input.leftClick)
-            {
-                machine.ChangeState(new AttackState(new Data()
-                {
-                    pos = machine.Target.transform.position,
-                    rot = 0
-                }));
-                return true;
-            }
-
-            return false;
-        }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            bool lastAttack = stateMachine.Variables.attackIndex == 0;
-            if (ElapsedTime > (lastAttack ? heavyAttackDuration - 0.3f : duration - 0.3f))
-            {
-                if (!UpdateAttackInput(stateMachine))
-                {
-                    stateMachine.ChangeState(new IdleState());
-                }  
-            }
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
         }
 
@@ -91,18 +68,19 @@ namespace StarterAssets.CombatStates
                 CheckDamage(stateMachine);
             }
             
+            var attackDuration = GetAttackDuration(stateMachine);
+            if (!(ElapsedTime < attackDuration)) return;
+            if (!dashForwardAttack)
+            {
+                stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 1f);
+            }
+        }
+
+        public float GetAttackDuration(PlayerStateMachine stateMachine)
+        {
             bool lastAttack = stateMachine.Variables.attackIndex == 0;
-            if (ElapsedTime > (lastAttack ? heavyAttackDuration : duration))
-            {
-                stateMachine.ChangeState(new IdleState());
-            }
-            else
-            {
-                if (!dashForwardAttack)
-                {
-                    stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 1f);
-                }
-            }
+            float attackDuration = lastAttack ? heavyAttackDuration : _duration;
+            return attackDuration;
         }
 
         private void CheckDamage(PlayerStateMachine machine)

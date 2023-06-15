@@ -11,7 +11,7 @@ namespace StarterAssets.CombatStates
     {
         public override FSMStateId Id => FSMStateId.hit;
 
-        private Data data;
+        public Data data;
         
         int _animIDJump = Animator.StringToHash("Jump");
         
@@ -33,18 +33,6 @@ namespace StarterAssets.CombatStates
         public HitState(Data hitData)
         {
             this.data = hitData;
-        }
-        
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-            if (ElapsedTime > data.duration)
-            {
-                stateMachine.ChangeState(new IdleState());
-            }
-        }
-
-        protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-        {
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)

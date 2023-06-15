@@ -8,7 +8,7 @@ namespace StarterAssets.CombatStates
 {
     public class AbilityCastState : FSMState
     {
-        private float time = 0.3f;
+        public float time = 0.3f;
 
         public Data data;
         
@@ -57,14 +57,6 @@ namespace StarterAssets.CombatStates
             }
 
             return base.Validate(machine);
-        }
-
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-            if (ElapsedTime > time)
-            {
-                stateMachine.ChangeState(new IdleState());
-            }
         }
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)

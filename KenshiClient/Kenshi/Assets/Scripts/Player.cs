@@ -1,10 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
 using StarterAssets.CombatStates;
+using StarterAssets.StateManagement;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -20,15 +23,21 @@ public class Player : Mob
     public float Ping => peer != null ? (float)((float)peer.Ping / 1000f) : 0f;
     
     public PlayerStateMachine playerStateMachine;
+    public PlayerStateManagement _playerStateManagement;
+    public PlayerStateManagement _movementStateManagement;
+
     public PlayerStateMachine movementStateMachine;
     public Animator animator;
     public NavMeshAgent agent;
 
     public NetPeer peer;
     public Dictionary<StatEventPacket.StatId, object> stats = new Dictionary<StatEventPacket.StatId, object>();
-
+    
     private void Awake()
     {
+        _playerStateManagement = new PlayerStateManagement();
+        _movementStateManagement = new PlayerStateManagement();
+        
         animator = GetComponent<Animator>();
         playerStateMachine = new PlayerStateMachine();
         playerStateMachine.Target = this;
@@ -84,10 +93,16 @@ public class Player : Mob
             if (state != UIInputController.State.WRITING_CHAT && 
                 state != UIInputController.State.ESCAPE)
             {
+                _playerStateManagement.UpdateInputStateManagement(playerStateMachine);
+                _movementStateManagement.UpdateInputStateManagement(movementStateMachine);
+                
                 movementStateMachine.CurrentState?.UpdateInput(movementStateMachine);
                 playerStateMachine.CurrentState?.UpdateInput(playerStateMachine);
             }
         }
+
+        _playerStateManagement.UpdateStateManagement(playerStateMachine);
+        _movementStateManagement.UpdateStateManagement(movementStateMachine);
         
         playerStateMachine.CurrentState?.Update(playerStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);

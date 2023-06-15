@@ -22,14 +22,6 @@ namespace StarterAssets
             return base.Validate(machine);
         }
 
-        protected override void OnUpdate(PlayerStateMachine stateMachine)
-        {
-            if (!tpsController.Grounded)
-            {
-                stateMachine.ChangeState(new FreeFallState());
-            }
-        }
-
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         { 
             var velocity = GetDirection(stateMachine);
@@ -45,22 +37,6 @@ namespace StarterAssets
             else
             {
                 stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
-            }
-            
-            if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
-            {
-                stateMachine.ChangeState(new DashState(new DashState.Data
-                {
-                    dashIndex = stateMachine.Target.Input.dashIndex
-                }));
-            }
-            else if (stateMachine.Target.Input.move == Vector2.zero)
-            {
-                stateMachine.ChangeState(new StandState());
-            }
-            else if (stateMachine.Target.Input.jump && stateMachine.Variables.jumpIndex < 2)
-            {
-                stateMachine.ChangeState(new JumpState());
             }
         }
 

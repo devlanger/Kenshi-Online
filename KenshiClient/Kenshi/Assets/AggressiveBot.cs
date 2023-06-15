@@ -1,11 +1,10 @@
-using System;
+using System.Collections;
 using System.Linq;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using Kenshi.Utils;
 using StarterAssets;
 using StarterAssets.CombatStates;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,14 +17,6 @@ public class BotAbilityCastState : GenericFSMState<AggressiveBot.State>
     public BotAbilityCastState(Player target)
     {
         _target = target;
-    }
-    
-    protected override void OnUpdate(PlayerStateMachine stateMachine)
-    {
-    }
-
-    protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-    {
     }
 
     protected override void OnEnter(PlayerStateMachine stateMachine)
@@ -69,11 +60,6 @@ public class BotAttackState : GenericFSMState<AggressiveBot.State>
         stateMachine.Target.Input.CameraForward = dir;
     }
 
-    protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-    {
-        
-    }
-
     protected override void OnEnter(PlayerStateMachine stateMachine)
     {
     }
@@ -111,10 +97,7 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
         dir.y = 0;
         return dir;
     }
-    protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-    {
-    }
-
+    
     protected override void OnEnter(PlayerStateMachine stateMachine)
     {
         _agent = stateMachine.Target.GetComponent<NavMeshAgent>();
@@ -130,15 +113,6 @@ public class BotIdleState : GenericFSMState<AggressiveBot.State>
 {
     public override FSMStateId Id { get; }
     public override AggressiveBot.State StateId => AggressiveBot.State.IDLE;
-
-    protected override void OnUpdate(PlayerStateMachine stateMachine)
-    {
-        
-    }
-
-    protected override void OnInputUpdate(PlayerStateMachine stateMachine)
-    {
-    }
 
     protected override void OnEnter(PlayerStateMachine stateMachine)
     {
@@ -252,6 +226,7 @@ public class AggressiveBot : MonoBehaviour
         {
             case FSMStateId.stunned:
             case FSMStateId.dead:
+            case FSMStateId.hit:
                 if (!(currentState is BotIdleState))
                 {
                     stateMachine.ChangeState(new BotIdleState());
@@ -345,21 +320,6 @@ public class AggressiveBot : MonoBehaviour
         }
     }
 
-    public bool CanDoStuff()
-    {
-        switch (_target.playerStateMachine.CurrentState.Id)
-        {
-            case FSMStateId.dead:
-            case FSMStateId.ability_cast:
-            case FSMStateId.attack:
-            case FSMStateId.hit:
-            case FSMStateId.stunned:
-                return false;
-        }
-
-        return true;
-    }
-
     private void Awake()
     {
         stateMachine = new PlayerStateMachine();
@@ -370,6 +330,17 @@ public class AggressiveBot : MonoBehaviour
         _player = GetComponent<Player>();
         _agent = GetComponent<NavMeshAgent>();
         _agent.updateRotation = false;
+
+        StartCoroutine(SendPosition());
+    }
+
+    private IEnumerator SendPosition()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.1f);
+            GameRoomNetworkController.SendPacketToAll(new PositionUpdatePacket(_player, _agent.speed));
+        }
     }
 
     private float GetDistanceToTarget(Player _target) =>
@@ -379,10 +350,11 @@ public class AggressiveBot : MonoBehaviour
     {
         UpdateStateManagement();
 
+        _player._playerStateManagement?.UpdateInputStateManagement(_player.playerStateMachine);
+        _player._movementStateManagement?.UpdateInputStateManagement(_player.movementStateMachine);
+        
         stateMachine.CurrentState?.Update(stateMachine);
         _player.playerStateMachine.CurrentState?.UpdateInput(_player.playerStateMachine);
         _player.movementStateMachine.CurrentState?.UpdateInput(_player.movementStateMachine);
-        
-        GameRoomNetworkController.SendPacketToAll(new PositionUpdatePacket(_player, _agent.speed));
     }
 }

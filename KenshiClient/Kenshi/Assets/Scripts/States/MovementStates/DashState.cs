@@ -12,7 +12,7 @@ namespace StarterAssets
         
         public override FSMStateId Id => FSMStateId.dash;
 
-        private bool startedInAir = false;
+        public bool StartedInAir { get; private set; } = false;
 
         public DashState(DashState.Data data)
         {
@@ -30,21 +30,6 @@ namespace StarterAssets
             }
             
             return base.Validate(machine);
-        }
-
-        protected override void OnUpdate(PlayerStateMachine machine)
-        {
-            if (ElapsedTime > 0.3f)
-            {
-                if (machine.Variables.Grounded && startedInAir)
-                {
-                    machine.ChangeState(new LandState());
-                }
-                else
-                {
-                    machine.ChangeState(new StandState());
-                }
-            }
         }
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
@@ -96,16 +81,12 @@ namespace StarterAssets
             }
         }
 
-        protected override void OnInputUpdate(PlayerStateMachine machine)
-        {
-        }
-
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
             if (stateMachine.IsLocal)
             {
                 stateMachine.Target.tps.SetVelocity(Vector3.zero);
-                startedInAir = stateMachine.Variables.Jumping;
+                StartedInAir = stateMachine.Variables.Jumping;
                 GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
             }
 
