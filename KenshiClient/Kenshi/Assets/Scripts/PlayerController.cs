@@ -41,7 +41,6 @@ public class PlayerController : MonoBehaviour
         UpdateDashState();
         UpdateCam();
     }
-
     private void UpdateCam()
     {
         if (localPlayer.Input.InputDirection != Vector3.zero)

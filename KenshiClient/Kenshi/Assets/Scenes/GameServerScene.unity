@@ -604,6 +604,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e59c9e49205941f782ba9ad02e24b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
+  stateMachine:
+    Target: {fileID: 0}
+    Variables: {fileID: 0}
 --- !u!1 &1131449065
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,6 +785,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e59c9e49205941f782ba9ad02e24b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state: 0
+  stateMachine:
+    Target: {fileID: 0}
+    Variables: {fileID: 0}
 --- !u!1 &1530317816
 GameObject:
   m_ObjectHideFlags: 0

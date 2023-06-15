@@ -2,6 +2,7 @@ using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace StarterAssets.CombatStates
 {
@@ -152,6 +153,8 @@ namespace StarterAssets.CombatStates
             stateMachine.Variables.IsAttacking = false;
             stateMachine.Target.movementStateMachine.ChangeState(new StandState());
 
+            stateMachine.Target.GetComponent<PlayableDirector>()?.Stop();
+            
             if (!GameServer.IsServer && !stateMachine.Target.IsLocalPlayer)
             {
                 stateMachine.Target.Interpolation.enabled = true;

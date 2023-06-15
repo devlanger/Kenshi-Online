@@ -78,6 +78,8 @@ public class Player : Mob
     {
         if (IsLocalPlayer)
         {
+            tps.CameraRotation();
+
             var state = UIInputController.Instance.CurrentState;
             if (state != UIInputController.State.WRITING_CHAT && 
                 state != UIInputController.State.ESCAPE)
@@ -87,10 +89,7 @@ public class Player : Mob
             }
         }
         
-        playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
         playerStateMachine.CurrentState?.Update(playerStateMachine);
-        
-        movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
         movementStateMachine.CurrentState?.Update(movementStateMachine);
         
         playerStateMachine?.UpdateQueue();
@@ -98,13 +97,25 @@ public class Player : Mob
         
         if (IsLocalPlayer)
         {
-            Input.jump = false;
-            Input.rightClick = false;
-            Input.leftClick = false;
             Input.dashing = false;
             Input.dashIndex = DashState.Data.DashIndex.none;
             
-            tps.CameraRotation();
+            tps.UpdateRootPosition();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        playerStateMachine.CurrentState?.FixedUpdate(playerStateMachine);
+        movementStateMachine.CurrentState?.FixedUpdate(movementStateMachine);
+    }
+
+    private void LateUpdate()
+    {
+        if (IsLocalPlayer)
+        {
+            playerStateMachine.CurrentState?.LateUpdate(playerStateMachine);
+            movementStateMachine.CurrentState?.LateUpdate(movementStateMachine);
         }
     }
 

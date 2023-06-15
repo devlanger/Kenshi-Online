@@ -13,6 +13,29 @@ namespace StarterAssets
         
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
+            var velocity = tps.GetVelocity();
+            velocity.y = 0;
+
+            if (velocity != Vector3.zero)
+            {
+                Vector3 forward = stateMachine.Target.Input.CameraForward;
+                Vector3 toOther = velocity;
+
+                if (Vector3.Dot(forward, toOther) > -0.1f)
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(velocity);
+                }
+                else
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
+                }
+            }
+            else
+            {
+                stateMachine.Target.transform.rotation =
+                    Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+            }
+            
             if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
             {
                 stateMachine.ChangeState(new DashState(new DashState.Data

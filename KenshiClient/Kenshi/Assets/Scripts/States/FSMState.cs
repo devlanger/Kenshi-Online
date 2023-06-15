@@ -47,6 +47,11 @@ namespace StarterAssets
             OnFixedUpdate(stateMachine);
         }
         
+        public void LateUpdate(PlayerStateMachine stateMachine)
+        {
+            OnLateUpdate(stateMachine);
+        }
+        
         public void Exit(PlayerStateMachine stateMachine)
         {
             OnExit(stateMachine);
@@ -72,6 +77,9 @@ namespace StarterAssets
         {
         }
 
+        protected virtual void OnLateUpdate(PlayerStateMachine stateMachine)
+        {
+        }
         protected abstract void OnEnter(PlayerStateMachine stateMachine);
         protected abstract void OnExit(PlayerStateMachine stateMachine);
     }

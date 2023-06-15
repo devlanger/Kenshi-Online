@@ -32,6 +32,21 @@ namespace StarterAssets
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         { 
+            var velocity = GetDirection(stateMachine);
+            velocity.y = 0;
+
+            Vector3 forward = stateMachine.Target.Input.CameraForward;
+            Vector3 toOther = velocity;
+            
+            if (velocity != Vector3.zero && Vector3.Dot(forward, toOther) > -0.1f)
+            {
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(velocity);
+            }
+            else
+            {
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
+            }
+            
             if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
             {
                 stateMachine.ChangeState(new DashState(new DashState.Data
@@ -63,14 +78,22 @@ namespace StarterAssets
             
             tpsController.UpdateGravity();
 
-            var velocity = tpsController.GetVelocity();
-            if(Physics.Raycast(stateMachine.Target.transform.position, -stateMachine.Target.transform.up, out RaycastHit hit, 0.1f, stateMachine.Variables.GroundLayers))
-            {
-                Vector3 forward = GetForwardTangent(velocity,hit.normal);
-                velocity = forward.normalized * (stateMachine.Target.Input.sprint ? tpsController.SprintSpeed : tpsController.MoveSpeed);
-            }
-            
+            var velocity = GetDirection(stateMachine);
             tpsController.UpdateMovement(velocity);
+        }
+
+        private Vector3 GetDirection(PlayerStateMachine stateMachine)
+        {
+            var velocity = tpsController.GetVelocity();
+            if (Physics.Raycast(stateMachine.Target.transform.position, -stateMachine.Target.transform.up, out RaycastHit hit,
+                    0.1f, stateMachine.Variables.GroundLayers))
+            {
+                Vector3 forward = GetForwardTangent(velocity, hit.normal);
+                velocity = forward.normalized *
+                           (stateMachine.Target.Input.sprint ? tpsController.SprintSpeed : tpsController.MoveSpeed);
+            }
+
+            return velocity;
         }
 
         public Vector3 GetForwardTangent(Vector3 moveDir, Vector3 up)

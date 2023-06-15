@@ -67,7 +67,16 @@ namespace StarterAssets
         // player
         private float _speed;
         private float _animationBlend;
-        private float _targetRotation = 0.0f;
+
+        private float _targetRotation
+        {
+            get
+            {
+                Vector3 inputDirection = _input.InputDirection;
+                return Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
+                       _mainCamera.transform.eulerAngles.y;
+            }
+        }
         private float _rotationVelocity;
         public float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
@@ -152,13 +161,16 @@ namespace StarterAssets
             return grounded;
         }
 
-        private void Update()
+        public void UpdateRootPosition()
         {
             if (target.IsLocalPlayer)
             {
                 playerRoot.transform.position = target.transform.position + (target.transform.up * 2);
             }
+        }
 
+        private void Update()
+        {
             _animationBlend = Mathf.Lerp(_animationBlend, _speed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
             
@@ -197,7 +209,7 @@ namespace StarterAssets
 
         public void UpdateMovement(Vector3 velocity)
         {
-            UpdateRotation();
+            //UpdateRotation();
             _controller.velocity = velocity;
         }
 
@@ -230,21 +242,6 @@ namespace StarterAssets
         private float GetInputMagnitude()
         {
             return _input.analogMovement ? _input.move.magnitude : 1f;
-        }
-
-        private void UpdateRotation()
-        {
-            Vector3 inputDirection = _input.InputDirection;
-            if (_input.move != Vector2.zero)
-            {
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                                  _mainCamera.transform.eulerAngles.y;
-
-                float rotation = Mathf.SmoothDampAngle(target.transform.eulerAngles.y, _targetRotation, ref _rotationVelocity,
-                    RotationSmoothTime);
-
-                target.transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-            }
         }
 
         public double _jumpTime = 0;

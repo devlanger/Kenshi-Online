@@ -26,6 +26,29 @@ namespace StarterAssets
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
+            var velocity = tpsController.GetVelocity();
+            velocity.y = 0;
+
+            if (velocity != Vector3.zero)
+            {
+                Vector3 forward = stateMachine.Target.Input.CameraForward;
+                Vector3 toOther = velocity;
+
+                if (Vector3.Dot(forward, toOther) > -0.1f)
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(velocity);
+                }
+                else
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
+                }
+            }
+            else
+            {
+                stateMachine.Target.transform.rotation =
+                    Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+            }
+            
             if (stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
             {
                 stateMachine.ChangeState(new DashState(new DashState.Data
@@ -57,7 +80,7 @@ namespace StarterAssets
             tpsController.UpdateGravity();
             var velocity = tpsController.GetVelocity();
             tpsController.UpdateMovement(velocity);
-    }
+        }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
@@ -69,7 +92,7 @@ namespace StarterAssets
                 stateMachine.Variables.jumpIndex++;
                 tpsController.SetVerticalVelocity();
             }
-            
+
             stateMachine.Target.animator?.SetBool("Grounded", false);
             stateMachine.Target.animator?.SetTrigger("jump");
             stateMachine.Target.animator?.SetInteger("jump_id", stateMachine.Variables.jumpIndex);

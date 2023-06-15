@@ -186,6 +186,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a429df36b9e4c8e9345297661a0abe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   _customizationView: {fileID: 0}
   _customizationManager: {fileID: 11400000, guid: 9879ee0056f8e4851a482f86ff23f2e2,
     type: 2}
@@ -257,7 +266,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 50, y: 50}
+  m_CellSize: {x: 75, y: 75}
   m_Spacing: {x: 3, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -289,6 +298,7 @@ MonoBehaviour:
   maxItems: 50
   parent: {fileID: 5151866652542805450}
   removeChildren: 1
+  ignoredItems: []
 --- !u!1001 &1100412303049763589
 PrefabInstance:
   m_ObjectHideFlags: 0

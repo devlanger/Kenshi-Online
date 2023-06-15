@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using StarterAssets;
@@ -7,9 +8,21 @@ using UnityEngine.InputSystem;
 public class InputsListener : MonoBehaviour
 {
     [SerializeField] private Player localPlayer;
+    [SerializeField] private NinjaPlayerinputs input;
 
     private StarterAssetsInputs inputs => localPlayer.Input;
-    
+
+    private void Awake()
+    {
+        input = new NinjaPlayerinputs();
+        input.Enable();
+    }
+
+    private void Update()
+    {
+        inputs.leftClick = this.input.Player.MouseLeft.IsPressed();
+    }
+
     public void OnMove(InputValue value)
     {
         inputs.MoveInput(value.Get<Vector2>());

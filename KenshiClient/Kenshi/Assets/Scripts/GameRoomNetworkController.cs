@@ -195,11 +195,12 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 _myPlayerId = packet._playerId;
                 _myPlayer.NetworkId = _myPlayerId;
                 _players[_myPlayerId] = _myPlayer;
-                _players[_myPlayerId].GetComponent<Rigidbody>().isKinematic = false;
                 
                 MapLoader.MapToBeLoaded = packet.data.mapId;
                 MapLoader.LoadScene();
 
+                _players[_myPlayerId].GetComponent<Rigidbody>().isKinematic = false;
+                _players[_myPlayerId].transform.position = SpawnPointsController.Instance != null ? SpawnPointsController.Instance.GetRandomSpawnPoint() : Vector3.up;
                 Connected = true;
                 Debug.Log("MyPlayerId: " + packet._playerId);
                 Debug.Log("Map: " + packet.data.mapId);

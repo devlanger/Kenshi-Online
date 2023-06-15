@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
@@ -121,9 +122,33 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
 
     protected override void OnExit(PlayerStateMachine stateMachine)
     {
+        _agent.SetDestination(_agent.transform.position);
     }
 }
 
+public class BotIdleState : GenericFSMState<AggressiveBot.State>
+{
+    public override FSMStateId Id { get; }
+    public override AggressiveBot.State StateId => AggressiveBot.State.IDLE;
+
+    protected override void OnUpdate(PlayerStateMachine stateMachine)
+    {
+        
+    }
+
+    protected override void OnInputUpdate(PlayerStateMachine stateMachine)
+    {
+    }
+
+    protected override void OnEnter(PlayerStateMachine stateMachine)
+    {
+    }
+
+    protected override void OnExit(PlayerStateMachine stateMachine)
+    {
+    }
+
+}
 
 public class BotRoamState : GenericFSMState<AggressiveBot.State>
 {
@@ -168,8 +193,8 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
     {
         _agent = stateMachine.Target.GetComponent<NavMeshAgent>();
         
-        destination = new Vector3(UnityEngine.Random.Range(-30, 30), stateMachine.Target.transform.position.y,
-            UnityEngine.Random.Range(-30, 30));
+        destination = stateMachine.Target.transform.position + new Vector3(UnityEngine.Random.Range(-25, 25), stateMachine.Target.transform.position.y,
+            UnityEngine.Random.Range(-25, 25));
     }
 
     protected override void OnExit(PlayerStateMachine stateMachine)
@@ -201,8 +226,13 @@ public class AggressiveBot : MonoBehaviour
         DASH_FORWARD = 9,
         DASH_RIGHT = 10,
         DASH_BACK = 11,
+        IDLE = 12
     }
-    
+
+    private void Start()
+    {
+        _player.stats[StatEventPacket.StatId.username] = $"Bot-{UnityEngine.Random.Range(1, 9999)}";
+    }
 
     private void OnStateEnter(FSMState state)
     {
@@ -217,8 +247,23 @@ public class AggressiveBot : MonoBehaviour
     public void UpdateStateManagement()
     {
         var currentState = stateMachine.CurrentState;
+
+        switch (_player.playerStateMachine.CurrentState.Id)
+        {
+            case FSMStateId.stunned:
+            case FSMStateId.dead:
+                if (!(currentState is BotIdleState))
+                {
+                    stateMachine.ChangeState(new BotIdleState());
+                }
+                return;
+        }
+        
         switch (currentState)
         {
+            case BotIdleState idleState:
+                stateMachine.ChangeState(new BotRoamState());
+                break;
             case BotAttackState attackState:
                 UpdateAttackState(attackState);
                 break;

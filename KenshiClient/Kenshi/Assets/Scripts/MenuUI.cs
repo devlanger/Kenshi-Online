@@ -37,7 +37,6 @@ public class MenuUI : MonoBehaviour
         connectionController.OnLogged += ConnectionControllerOnOnLogged;
         
         joinGameButton.onClick.AddListener(JoinGameClick);
-        exitGameButton.onClick.AddListener(ExitGameClick);
         refreshGameButton.onClick.AddListener(RefreshGameClick);
         
         connectionController.OnUsersUpdated += ConnectionControllerOnOnUsersUpdated;

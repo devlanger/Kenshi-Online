@@ -13,9 +13,6 @@ namespace StarterAssets
         {
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
             
-            // stateMachine.Target.transform.rotation = Quaternion.Slerp(stateMachine.Target.transform.rotation, 
-            //     Quaternion.LookRotation(stateMachine.Target.Input.CameraForward), Time.deltaTime * 5); 
-            
             switch (stateMachine.Target.playerStateMachine.CurrentState.Id)
             {
                 case FSMStateId.idle:
@@ -56,6 +53,7 @@ namespace StarterAssets
                     tpsController._verticalVelocity = 0f;
                 }
             }
+            
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)

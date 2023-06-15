@@ -52,9 +52,9 @@
                 },
                 {
                     "name": "MouseLeft",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "efd1094a-ca04-4532-acb3-86b42871cdd9",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false

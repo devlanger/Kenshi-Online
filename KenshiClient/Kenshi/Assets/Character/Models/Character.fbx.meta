@@ -208,7 +208,7 @@ ModelImporter:
       takeName: rig|rigAction
       internalID: 2796233005842590986
       firstFrame: 32
-      lastFrame: 60
+      lastFrame: 52
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -863,6 +863,7 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
+    importPhysicalCameras: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1

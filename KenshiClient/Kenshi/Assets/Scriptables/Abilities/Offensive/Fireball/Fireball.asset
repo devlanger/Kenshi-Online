@@ -27,8 +27,8 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 4867db53aa592a64a851c36645423699, type: 3}
   Data:
     name: Fireball
-    groundDuration: 0.7
-    airDuration: 0.7
+    groundDuration: 1
+    airDuration: 1
     behaviour: {fileID: 11400000, guid: 7e833d4b7e916478788ec9e08988386b, type: 2}
     mana: 25
   canCastInAir: 1
