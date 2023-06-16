@@ -12,6 +12,7 @@ public class SfxItem : DataObject<int>
 
 public enum SfxId
 {
+    undefined = 0,
     hit_1 = 1,
     hit_2 = 2,
     hit_3 = 3,
@@ -20,4 +21,7 @@ public enum SfxId
     hit_6 = 6,
     hit_7 = 7,
     hit_8 = 8,
+    Woosh_1 = 9,
+    Clash_1 = 10,
+    Smoke_1 = 11,
 }

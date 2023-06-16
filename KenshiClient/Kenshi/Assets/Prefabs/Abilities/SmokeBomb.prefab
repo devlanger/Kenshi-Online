@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 6254011326284892690}
   - component: {fileID: 2501939930703023653}
   - component: {fileID: 8629479130259209425}
+  - component: {fileID: -9003068627818745481}
   m_Layer: 0
   m_Name: SmokeBomb
   m_TagString: Untagged
@@ -252,8 +253,34 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: -9003068627818745481}
+        m_TargetAssemblyTypeName: CollisionSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   destroyOnHit: 1
   destroyAfter: 0
+--- !u!114 &-9003068627818745481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3271557652579845924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d2c610b34d24351bc553c607ea7684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxId: {fileID: 11400000, guid: ae02b8e7841f742ddab2a260c2a57279, type: 2}
+  volume: 0.1
 --- !u!1001 &4563882113020201411
 PrefabInstance:
   m_ObjectHideFlags: 0

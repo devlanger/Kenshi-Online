@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8164323998408450365}
   - component: {fileID: -3658223304742492155}
   - component: {fileID: 6505749722133580485}
+  - component: {fileID: 6042906414513249711}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: Untagged
@@ -4892,6 +4893,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 6042906414513249711}
+        m_TargetAssemblyTypeName: CollisionSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 6505749722133580485}
         m_TargetAssemblyTypeName: DamageTrigger, Assembly-CSharp
         m_MethodName: Trigger
@@ -4945,6 +4958,20 @@ MonoBehaviour:
   damage: 25
   distance: 3
   throwBack: 10
+--- !u!114 &6042906414513249711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2396338518217125097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d2c610b34d24351bc553c607ea7684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxId: {fileID: 11400000, guid: 4827bc3b3467b421dbc060bfee582611, type: 2}
+  volume: 1
 --- !u!1 &5644109113524021865
 GameObject:
   m_ObjectHideFlags: 0

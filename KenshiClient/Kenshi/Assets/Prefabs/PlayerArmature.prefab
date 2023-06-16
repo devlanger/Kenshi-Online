@@ -1168,6 +1168,10 @@ MonoBehaviour:
   playerStateMachine:
     Target: {fileID: 0}
     Variables: {fileID: 0}
+  _playerStateManagement:
+    StateId: 0
+  _movementStateManagement:
+    StateId: 0
   movementStateMachine:
     Target: {fileID: 0}
     Variables: {fileID: 0}
@@ -1224,6 +1228,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 67c8b33e424ccdc4486edf538ab91c5a, type: 3}
   - {fileID: 8300000, guid: 274649b0e221539409070ebf6c18918b, type: 3}
   - {fileID: 8300000, guid: a3194b8bbc96ef84fab1f98f4b7dae3e, type: 3}
+  footstepDirt: {fileID: 11400000, guid: 97ace93702a4b4c75b0970962d55fe80, type: 2}
 --- !u!114 &377938197895356575
 MonoBehaviour:
   m_ObjectHideFlags: 0

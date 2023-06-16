@@ -68,8 +68,11 @@ namespace StarterAssets.CombatStates
                         break;
                 }
 
-                var clip = SfxController.Instance.manager.GetRandomMeleeHitSfx();
-                SfxController.Instance.PlaySound(clip.sfxId, 1);
+                if (SfxController.Instance != null)
+                {
+                    var clip = SfxController.Instance.manager.GetRandomMeleeHitSfx();
+                    SfxController.Instance.PlaySound(clip.sfxId, 0.5f);
+                }
             }
 
             if (!GameServer.IsServer && !stateMachine.Target.Interpolation.enabled)

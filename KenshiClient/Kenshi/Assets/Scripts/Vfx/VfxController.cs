@@ -31,6 +31,12 @@ public class VfxController : Singleton<VfxController>
         return null;
     }
     
+    public GameObject SpawnFx(VfxScriptable vfxScriptable, Vector3 pos, Quaternion rot, Transform parent = null)
+    {
+        GameObject inst = GameObject.Instantiate(vfxScriptable.vfx, pos, rot, parent);
+        return inst;
+    }
+    
     public enum VfxId
     {
         hit_light = 1,

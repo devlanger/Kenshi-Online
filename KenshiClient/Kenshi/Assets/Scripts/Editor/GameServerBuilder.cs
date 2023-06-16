@@ -33,7 +33,27 @@ public class GameServerBuilder
     [MenuItem("Building/Deploy Game Server")]
     public static void DeployGameServer ()
     {
-        ExecuteShellScript("Deploying Game Server", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/gameserver/", "deploy.sh");
+        ProcessStartInfo startInfo = new ProcessStartInfo(@"/bin/zsh")
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardInput = true,
+            RedirectStandardError  = true
+        };
+        Process myProcess = new Process
+        {
+            StartInfo = startInfo
+        };
+        //
+        myProcess.Start();
+
+        myProcess.BeginOutputReadLine();
+        myProcess.BeginErrorReadLine();
+
+        myProcess.StandardInput.WriteLine(@"sudo /Applications/Unity/Hub/Editor/2022.3.1f1/Unity.app/Contents/MacOS/Unity -quit -batchmode -logFile build_log.txt -projectPath KenshiClient/Kenshi_clone_0 -executeMethod GameServerBuilder.BuildGameServer");
+        //myProcess.WaitForExit();
+        
+        //ExecuteShellScript("Deploying Game Server", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/gameserver/", "deploy.sh");
     }
     
     [MenuItem("Building/Deploy Backend")]

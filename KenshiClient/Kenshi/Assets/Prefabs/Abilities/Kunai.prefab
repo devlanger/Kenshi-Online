@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 2501939930703023653}
   - component: {fileID: 8629479130259209425}
   - component: {fileID: 810229242614807223}
+  - component: {fileID: 4038648721481143984}
   m_Layer: 0
   m_Name: Kunai
   m_TagString: Untagged
@@ -265,6 +266,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4038648721481143984}
+        m_TargetAssemblyTypeName: CollisionSound, Assembly-CSharp
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   destroyOnHit: 1
   destroyAfter: 0
 --- !u!114 &810229242614807223
@@ -279,12 +292,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00a20acc9db2047c29b3e6f6a4c42c51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damageOwner: 1
   type: 1
   hitType: 0
   damage: 10
   distance: 0
   throwBack: 1
-  collisionTarget: {fileID: 0}
+--- !u!114 &4038648721481143984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3271557652579845924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0d2c610b34d24351bc553c607ea7684, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxId: {fileID: 11400000, guid: 4c112f098eecf4e6f9835eb56bb88b81, type: 2}
+  volume: 0.5
 --- !u!1001 &7485039877619006726
 PrefabInstance:
   m_ObjectHideFlags: 0

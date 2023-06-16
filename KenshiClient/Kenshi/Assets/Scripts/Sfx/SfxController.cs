@@ -14,4 +14,14 @@ public class SfxController : Singleton<SfxController>
             SoundsManager.PlaySound(clip.clip, volume);
         }
     }
+    
+    public void PlaySound(SfxItem clip, float volume = 1)
+    {
+        SoundsManager.PlaySound(clip.clip, volume);
+    }
+    
+    public void PlaySound(AudioClip clip, float volume = 1)
+    {
+        SoundsManager.PlaySound(clip, volume);
+    }
 }

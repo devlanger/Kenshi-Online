@@ -30,4 +30,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 587c57cb41dd24a3dbca83b6d2756eb2, type: 2}
   - {fileID: 11400000, guid: 766f82ef859444b3ebb80c4f5b8b3cc6, type: 2}
   - {fileID: 11400000, guid: a0a2fb17dca27469394f182613d59e0c, type: 2}
+  - {fileID: 11400000, guid: 5ba07ef1dc63b4b47a08791117046ebf, type: 2}
+  - {fileID: 11400000, guid: 4c112f098eecf4e6f9835eb56bb88b81, type: 2}
+  - {fileID: 11400000, guid: ae02b8e7841f742ddab2a260c2a57279, type: 2}
+  - {fileID: 11400000, guid: ec42694c93ba84833a229aab01cc69e5, type: 2}
+  - {fileID: 11400000, guid: baab16908023a402ab4d748040233e20, type: 2}
+  - {fileID: 11400000, guid: 5781c1481196446d3a4357ec1307bcd9, type: 2}
+  - {fileID: 11400000, guid: 62398cabb37c74915ad9717e024e5051, type: 2}
+  - {fileID: 11400000, guid: 240b729b5e6374a1c8e0ca8d858cbb7a, type: 2}
+  - {fileID: 11400000, guid: df8e2bdf8f6cb4a07a74666a3773564f, type: 2}
   hitIds: 0100000002000000030000000400000005000000060000000700000008000000
+  hitWoosh:
+  - {fileID: 11400000, guid: ec42694c93ba84833a229aab01cc69e5, type: 2}
+  - {fileID: 11400000, guid: baab16908023a402ab4d748040233e20, type: 2}
+  - {fileID: 11400000, guid: 5781c1481196446d3a4357ec1307bcd9, type: 2}
+  - {fileID: 11400000, guid: 62398cabb37c74915ad9717e024e5051, type: 2}
+  dashSfx:
+  - {fileID: 11400000, guid: 240b729b5e6374a1c8e0ca8d858cbb7a, type: 2}
+  - {fileID: 11400000, guid: df8e2bdf8f6cb4a07a74666a3773564f, type: 2}

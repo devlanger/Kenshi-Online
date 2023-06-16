@@ -99,6 +99,12 @@ namespace StarterAssets
                 int v = (int)data.dashIndex;
                 SetAnimation(stateMachine, v);
             }
+
+            if (SfxController.Instance != null)
+            {
+                var clip = SfxController.Instance.manager.GetRandomDashSfx();
+                SfxController.Instance.PlaySound(clip.sfxId, 0.5f);
+            }
         }
 
         private void SetAnimation(PlayerStateMachine stateMachine, int v)

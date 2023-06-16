@@ -95,7 +95,7 @@ namespace StarterAssets.CombatStates
              {
                  return;
              }
-
+             
             bool lastAttack = machine.Variables.attackIndex == 0;
             var c = Physics.OverlapSphere(machine.Target.transform.position, hitDistance);
             foreach (var pCollider in c)
@@ -179,9 +179,16 @@ namespace StarterAssets.CombatStates
                 stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
             }
 
+            if (SfxController.Instance != null)
+            {
+                var clip = SfxController.Instance.manager.GetRandomMeleeWooshSfx();
+                SfxController.Instance.PlaySound(clip.sfxId, 0.5f);
+            }
+            
             stateMachine.Target.transform.position = data.pos;
             stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
             stateMachine.Variables.IsAttacking = true;
+            stateMachine.Variables.lastAttackTime = Time.time;
             stateMachine.Variables.attackIndex++;
             if (stateMachine.Target.animator != null)
             {
@@ -193,8 +200,6 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.Variables.attackIndex = 0;
             }
-            
-            stateMachine.Variables.lastAttackTime = Time.time;
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)

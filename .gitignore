@@ -3,8 +3,10 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-Builds
+Builds/*
 KenshiClient/Kenshi_clone_0
 data/dump.rdb
 KenshiClient/Kenshi_clone_1
 elasticsearch-data
+
+!Builds/Dockerfile

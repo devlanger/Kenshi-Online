@@ -19,6 +19,8 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.Target.animator.SetBool("dead", true);
             }
+            
+            stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
         }
 
         protected override void OnExit(PlayerStateMachine stateMachine)
@@ -32,6 +34,8 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.Target.animator.SetBool("dead", false);
             }
+            
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
         }
     }
 }
