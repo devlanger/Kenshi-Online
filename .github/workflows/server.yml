@@ -11,6 +11,8 @@ jobs:
       matrix:
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
+        standaloneBuildSubtarget:
+          - Server
         projectPath:
           - KenshiClient/Kenshi
     steps:
