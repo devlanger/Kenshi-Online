@@ -42,10 +42,10 @@ public class KubernetesService
         var container = await _client.Containers.CreateContainerAsync(new CreateContainerParameters()
         {
             Name = GetPodName(freePort),
-            Image = "piotrlanger/kenshigs:latest",
+            Image = "piotrlanger/shindogs:latest",
             Labels = new Dictionary<string, string>()
             {
-                { "app", "kenshi-gameserver" },
+                { "app", "shindo-gameserver" },
                 { "port", freePort.ToString() }
             },
             ExposedPorts = new Dictionary<string, EmptyStruct>()
