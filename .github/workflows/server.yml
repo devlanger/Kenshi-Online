@@ -10,7 +10,9 @@ jobs:
       fail-fast: false
       matrix:
         targetPlatform:
-          - LinuxHeadlessSimulation # Build a Linux 64-bit standalone.
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+        standaloneBuildSubtarget:
+          - Server
         projectPath:
           - KenshiClient/Kenshi
     steps:
