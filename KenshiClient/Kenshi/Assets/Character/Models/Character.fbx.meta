@@ -27,7 +27,13 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: 
+    rigImportWarnings: "Avatar Rig Configuration mis-match. Bone length in configuration
+      does not match position in animation file:\n\t'DEF-thigh.L' : position error
+      = 99.562111 mm\n\t'DEF-shin.L' : position error = 433.135712 mm\n\t'DEF-foot.L'
+      : position error = 401.201385 mm\n\t'DEF-toe.L' : position error = 113.882446
+      mm\n\t'DEF-thigh.R' : position error = 99.562103 mm\n\t'DEF-shin.R' : position
+      error = 433.135712 mm\n\t'DEF-foot.R' : position error = 401.201385 mm\n\t'DEF-toe.R'
+      : position error = 113.882469 mm\n"
     animationImportErrors: 
     animationImportWarnings: "\nClip 'rig|Abilities' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
@@ -35,24 +41,25 @@ ModelImporter:
       will be discarded.\n\t'DEF-spine.003' has scale animation that will be discarded.\n\t'DEF-spine.004'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-spine.004'
       has scale animation that will be discarded.\n\t'DEF-neck' has scale animation
-      that will be discarded.\n\t'DEF-forearm.L' has scale animation that will be
-      discarded.\n\t'DEF-f_ring.03.L' has scale animation that will be discarded.\n\t'DEF-upper_arm.R'
-      has translation animation that will be discarded.\n\t'DEF-forearm.R' has scale
-      animation that will be discarded.\n\t'DEF-f_middle.03.R' has scale animation
-      that will be discarded.\n\t'DEF-f_ring.03.R' has scale animation that will
-      be discarded.\n\t'DEF-f_pinky.02.R' has scale animation that will be discarded.\n\t'DEF-f_pinky.03.R'
-      has scale animation that will be discarded.\n\t'DEF-thigh.L' has scale animation
-      that will be discarded.\n\t'DEF-shin.L' has scale animation that will be discarded.\n\t'DEF-foot.L'
-      has scale animation that will be discarded.\n\t'DEF-toe.L' has scale animation
-      that will be discarded.\n\t'DEF-thigh.R' has scale animation that will be discarded.\n\t'DEF-shin.R'
-      has scale animation that will be discarded.\n\t'DEF-foot.R' has scale animation
-      that will be discarded.\n\t'DEF-toe.R' has scale animation that will be discarded.\n\nClip
-      'rig|Attacks' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'DEF-spine'
-      has scale animation that will be discarded.\n\t'DEF-spine.001' has scale animation
-      that will be discarded.\n\t'DEF-spine.002' has scale animation that will be
-      discarded.\n\t'DEF-spine.003' has scale animation that will be discarded.\n\t'DEF-spine.004'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-spine.004'
+      that will be discarded.\n\t'DEF-head' has scale animation that will be discarded.\n\t'DEF-forearm.L'
+      has scale animation that will be discarded.\n\t'DEF-f_ring.03.L' has scale
+      animation that will be discarded.\n\t'DEF-upper_arm.R' has translation animation
+      that will be discarded.\n\t'DEF-forearm.R' has scale animation that will be
+      discarded.\n\t'DEF-f_middle.03.R' has scale animation that will be discarded.\n\t'DEF-f_ring.03.R'
+      has scale animation that will be discarded.\n\t'DEF-f_pinky.02.R' has scale
+      animation that will be discarded.\n\t'DEF-f_pinky.03.R' has scale animation
+      that will be discarded.\n\t'DEF-thigh.L' has scale animation that will be discarded.\n\t'DEF-shin.L'
+      has scale animation that will be discarded.\n\t'DEF-foot.L' has scale animation
+      that will be discarded.\n\t'DEF-toe.L' has scale animation that will be discarded.\n\t'DEF-thigh.R'
+      has scale animation that will be discarded.\n\t'DEF-shin.R' has scale animation
+      that will be discarded.\n\t'DEF-foot.R' has scale animation that will be discarded.\n\t'DEF-toe.R'
+      has scale animation that will be discarded.\n\nClip 'rig|Attacks' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'DEF-spine' has scale animation
+      that will be discarded.\n\t'DEF-spine.001' has scale animation that will be
+      discarded.\n\t'DEF-spine.002' has scale animation that will be discarded.\n\t'DEF-spine.003'
+      has scale animation that will be discarded.\n\t'DEF-spine.004' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'DEF-spine.004'
       has scale animation that will be discarded.\n\t'DEF-neck' has scale animation
       that will be discarded.\n\t'DEF-head' has scale animation that will be discarded.\n\t'DEF-upper_arm.L'
       has scale animation that will be discarded.\n\t'DEF-forearm.L' has scale animation
@@ -123,10 +130,11 @@ ModelImporter:
       that will be discarded.\n\t'DEF-spine.003' has scale animation that will be
       discarded.\n\t'DEF-spine.004' is inbetween humanoid transforms and has rotation
       animation that will be discarded.\n\t'DEF-spine.004' has scale animation that
-      will be discarded.\n\t'DEF-neck' has scale animation that will be discarded.\n\t'DEF-upper_arm.L'
-      has translation animation that will be discarded.\n\t'DEF-upper_arm.L' has
-      scale animation that will be discarded.\n\t'DEF-forearm.L' has scale animation
-      that will be discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-f_index.01.L'
+      will be discarded.\n\t'DEF-neck' has scale animation that will be discarded.\n\t'DEF-head'
+      has scale animation that will be discarded.\n\t'DEF-upper_arm.L' has translation
+      animation that will be discarded.\n\t'DEF-upper_arm.L' has scale animation
+      that will be discarded.\n\t'DEF-forearm.L' has scale animation that will be
+      discarded.\n\t'DEF-hand.L' has scale animation that will be discarded.\n\t'DEF-f_index.01.L'
       has translation animation that will be discarded.\n\t'DEF-f_index.02.L' has
       scale animation that will be discarded.\n\t'DEF-f_index.03.L' has scale animation
       that will be discarded.\n\t'DEF-thumb.01.L' has translation animation that

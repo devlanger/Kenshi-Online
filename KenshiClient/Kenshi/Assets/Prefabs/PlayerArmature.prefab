@@ -1299,9 +1299,7 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 5104418058201880092}
-    - {fileID: 5761147985950009871}
+    ReferencedUnityObjects: []
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -1346,8 +1344,8 @@ MonoBehaviour:
       Entry: 3
       Data: 1
     - Name: $v
-      Entry: 10
-      Data: 0
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -1370,8 +1368,8 @@ MonoBehaviour:
       Entry: 3
       Data: 4
     - Name: $v
-      Entry: 10
-      Data: 1
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -2872,6 +2870,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8016412588606473749, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 57c1e0a77f6104b73badd6a6838310fc, type: 2}
+    - target: {fileID: -8016412588606473749, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
+    - target: {fileID: -6002508473797582251, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
+    - target: {fileID: -1526964690268444965, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
     - target: {fileID: -809828480950454423, guid: 6842ea769bb0549339805680149d15e9,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2882,6 +2900,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
+    - target: {fileID: 2802763668615107451, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
+    - target: {fileID: 5742066667910392887, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
+    - target: {fileID: 5742066667910392887, guid: 6842ea769bb0549339805680149d15e9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 57c1e0a77f6104b73badd6a6838310fc, type: 2}
     - target: {fileID: 8417361359673230750, guid: 6842ea769bb0549339805680149d15e9,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2926,18 +2959,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63e2f37ded9d34337bfc6c35fc919be9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &5104418058201880092 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -7640558969779515294, guid: 6842ea769bb0549339805680149d15e9,
-    type: 3}
-  m_PrefabInstance: {fileID: 5990281411832596094}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5761147985950009871 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -7146521406498821007, guid: 6842ea769bb0549339805680149d15e9,
-    type: 3}
-  m_PrefabInstance: {fileID: 5990281411832596094}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6101102378190446997 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6842ea769bb0549339805680149d15e9,
