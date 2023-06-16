@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Kenshi.Shared.Packets.GameServer;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]

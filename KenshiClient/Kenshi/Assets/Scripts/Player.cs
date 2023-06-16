@@ -7,7 +7,6 @@ using LiteNetLib;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using StarterAssets.StateManagement;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 

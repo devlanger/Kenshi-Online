@@ -4,7 +4,6 @@ using Kenshi.Shared.Enums;
 using LiteNetLib.Utils;
 using StarterAssets;
 using StarterAssets.CombatStates;
-using Unity.VisualScripting;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
