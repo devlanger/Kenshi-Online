@@ -32,6 +32,8 @@ public class MovePlayableBehaviour : PlayableBehaviour
         if (playable.GetPlayState() == PlayState.Playing)
         {
             var p = owner.GetComponent<Player>();
+            if(!p.IsLocalPlayer) p.GetComponent<Rigidbody>().isKinematic = false;
+
             p.tps.SetVelocity(p.transform.rotation * data.velocity);
         }
     }
@@ -41,6 +43,8 @@ public class MovePlayableBehaviour : PlayableBehaviour
     {
         var p = owner.GetComponent<Player>();
         p.tps.SetVelocity(Vector3.zero);
+        
+        if(!p.IsLocalPlayer) p.GetComponent<Rigidbody>().isKinematic = true;
     }
 
     // Called each frame while the state is set to Play

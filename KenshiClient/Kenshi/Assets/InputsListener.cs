@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kenshi.Shared.Enums;
 using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -21,6 +22,26 @@ public class InputsListener : MonoBehaviour
     private void Update()
     {
         inputs.leftClick = this.input.Player.MouseLeft.IsPressed();
+        inputs.rightClick = this.input.Player.MouseRight.IsPressed();
+        inputs.sprint = this.input.Player.Sprint.IsPressed();
+        inputs.tab = this.input.Player.Tab.IsPressed();
+    }
+
+    public void OnJump(InputValue value)
+    {
+        switch (localPlayer.movementStateMachine.CurrentState)
+        {
+            case FreeFallState state:
+            case JumpState jumpStates:
+                if (localPlayer.movementStateMachine.Variables.jumpIndex < 2)
+                {
+                    inputs.jump = value.isPressed;
+                }
+                break;
+            default:
+                inputs.jump = value.isPressed;
+                break;
+        }
     }
 
     public void OnMove(InputValue value)
@@ -34,35 +55,5 @@ public class InputsListener : MonoBehaviour
         {
             inputs.LookInput(value.Get<Vector2>());
         }
-    }
-
-    public void OnJump(InputValue value)
-    {
-        inputs.JumpInput(value.isPressed);
-    }
-
-    public void OnMouseRight(InputValue value)
-    {
-        inputs.RightClickInput(value.isPressed);
-    }
-		
-    public void OnMouseLeft(InputValue value)
-    {
-        inputs.LeftClickInput(value.isPressed);
-    }
-		
-    public void OnTab(InputValue value)
-    {
-        TabInput(value.isPressed);
-    }
-
-    private void TabInput(bool valueIsPressed)
-    {
-        inputs.tab = valueIsPressed;
-    }
-
-    public void OnSprint(InputValue value)
-    {
-        inputs.SprintInput(value.isPressed);
     }
 }

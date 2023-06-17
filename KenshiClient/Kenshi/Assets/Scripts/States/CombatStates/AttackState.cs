@@ -20,12 +20,11 @@ namespace StarterAssets.CombatStates
         private float heavyAttackDuration = 1.25f;
         private float hitDistance = 1.75f;
 
-        private bool dashForwardAttack = false;
-        
         public class Data
         {
-            public Vector3 pos;
-            public float rot;
+            public Vector3 pos = Vector3.zero;
+            public float rot = 0;
+            public bool dashForwardAttack = false;
         }
 
         public AttackState()
@@ -35,14 +34,6 @@ namespace StarterAssets.CombatStates
 
         public override bool Validate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
-            {
-                if(((DashState)stateMachine.Target.movementStateMachine.CurrentState).data.dashIndex != DashState.Data.DashIndex.forward)
-                {
-                    return false;
-                }
-            }
-
             if(stateMachine.Variables.finishedAirCombo)
             {
                 return false;
@@ -70,10 +61,15 @@ namespace StarterAssets.CombatStates
             
             var attackDuration = GetAttackDuration(stateMachine);
             if (!(ElapsedTime < attackDuration)) return;
-            if (!dashForwardAttack)
+            if (!data.dashForwardAttack)
             {
                 stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 1f);
             }
+            else
+            {
+                stateMachine.Target.tps.SetVelocity(stateMachine.Target.transform.forward * 5f);
+            }
+            stateMachine.Target.tps.UpdateGravity();
         }
 
         public float GetAttackDuration(PlayerStateMachine stateMachine)
@@ -123,13 +119,24 @@ namespace StarterAssets.CombatStates
                     {
                         attacker = machine.Target,
                         hitTarget = hitTarget,
-                        damage = 15,
+                        damage = 8,
                         direction = lastAttack ? (dir.normalized * 15) : (dir.normalized * 0.5f),
-                        hitType = lastAttack ? DamageData.HitType.heavy : DamageData.HitType.light
+                        hitType = GetHitType(lastAttack)
                     });
                 }
             }
             damaged = true;
+        }
+
+        private DamageData.HitType GetHitType(bool lastAttack)
+        {
+            var hitType = lastAttack ? DamageData.HitType.heavy : DamageData.HitType.light;
+            if (data.dashForwardAttack)
+            {
+                hitType = DamageData.HitType.stun;
+            }
+            
+            return hitType;
         }
 
         public class DamageData
@@ -162,19 +169,11 @@ namespace StarterAssets.CombatStates
                 {
                     pos = stateMachine.Target.transform.position,
                     rot = 0,
+                    dashForwardAttack = data.dashForwardAttack
                 }), DeliveryMethod.ReliableOrdered);
             }
 
-            if (stateMachine.Target.movementStateMachine.CurrentState.Id == FSMStateId.dash)
-            {
-                if (((DashState)stateMachine.Target.movementStateMachine.CurrentState).data.dashIndex ==
-                    DashState.Data.DashIndex.forward)
-                {
-                    dashForwardAttack = true;
-                }
-            }
-
-            if (!dashForwardAttack)
+            if (!data.dashForwardAttack)
             {
                 stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
             }

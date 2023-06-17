@@ -69,6 +69,7 @@ namespace Kenshi.Shared.Packets.GameServer
                     {
                         pos = ReadVector3(reader),
                         rot = reader.GetFloat(),
+                        dashForwardAttack = reader.GetInt() == 1,
                     };
                     break;
                 case FSMStateId.hit:
@@ -104,6 +105,7 @@ namespace Kenshi.Shared.Packets.GameServer
                 case FSMStateId.attack:
                     PutVector3(attackData.pos);
                     writer.Put(attackData.rot);
+                    writer.Put(attackData.dashForwardAttack ? 1 : 0);
                     break;
                 
                 case FSMStateId.hit:

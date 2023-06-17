@@ -126,6 +126,10 @@ MonoBehaviour:
   playerStateMachine:
     Target: {fileID: 0}
     Variables: {fileID: 0}
+  _playerStateManagement:
+    StateId: 0
+  _movementStateManagement:
+    StateId: 0
   movementStateMachine:
     Target: {fileID: 0}
     Variables: {fileID: 0}
@@ -156,6 +160,7 @@ MonoBehaviour:
   Grounded: 0
   Jumping: 0
   jumpIndex: 0
+  finishedAirCombo: 0
 --- !u!65 &5558266306602655100
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -175,8 +180,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 1.7417213, z: 0.5}
-  m_Center: {x: 0, y: 0.87086064, z: 0}
+  m_Size: {x: 0.5, y: 1.741721, z: 0.5}
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &5924514504045062219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +212,7 @@ MonoBehaviour:
   CameraAngleOverride: 0
   LockCameraPosition: 0
   _verticalVelocity: 0
+  playerRoot: {fileID: 0}
   cameraSpeedY: 3
   cameraSpeedX: 3
   _jumpTime: 0

@@ -68,15 +68,6 @@ namespace StarterAssets
         private float _speed;
         private float _animationBlend;
 
-        private float _targetRotation
-        {
-            get
-            {
-                Vector3 inputDirection = _input.InputDirection;
-                return Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
-                       _mainCamera.transform.eulerAngles.y;
-            }
-        }
         private float _rotationVelocity;
         public float _verticalVelocity;
         private float _terminalVelocity = 53.0f;
@@ -232,7 +223,7 @@ namespace StarterAssets
                 _speed = targetSpeed;
             }
 
-            Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+            Vector3 targetDirection = Quaternion.LookRotation(_input.CameraForward) * _input.InputDirection;
 
             var velocity = (targetDirection.normalized * _speed) +
                        new Vector3(0.0f, _verticalVelocity, 0.0f);

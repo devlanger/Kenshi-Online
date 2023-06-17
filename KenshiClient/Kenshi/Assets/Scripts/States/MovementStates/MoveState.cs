@@ -42,7 +42,7 @@ namespace StarterAssets
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
-            if (tpsController == null || !stateMachine.IsLocal)
+            if (tpsController == null || !stateMachine.IsBot && !stateMachine.IsLocal)
             {
                 return;
             }

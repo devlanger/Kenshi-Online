@@ -36,10 +36,9 @@ namespace StarterAssets.StateManagement
                     {
                         stateMachine.ChangeState(new JumpState());
                     }
-
                     break;
                 case AttackState attackState:
-                    if (stateMachine.Target.Input.leftClick)
+                    if (stateMachine.Target.movementStateMachine.CurrentState.Id != FSMStateId.dash && stateMachine.Target.Input.leftClick)
                     {
                         if (attackState.ElapsedTime > attackState.GetAttackDuration(stateMachine) - 0.3f)
                         {
@@ -54,10 +53,20 @@ namespace StarterAssets.StateManagement
                 case IdleState idleState:
                     if (stateMachine.Target.Input.leftClick)
                     {
-                        stateMachine.ChangeState(new AttackState()
+                        if (stateMachine.Target.movementStateMachine.CurrentState is DashState dashState)
                         {
-                            data = new AttackState.Data { pos = stateMachine.Target.transform.position }
-                        });
+                            stateMachine.ChangeState(new AttackState()
+                            {
+                                data = new AttackState.Data { pos = stateMachine.Target.transform.position, dashForwardAttack = dashState.data.dashIndex == DashState.Data.DashIndex.forward }
+                            });   
+                        }
+                        else
+                        {
+                            stateMachine.ChangeState(new AttackState()
+                            {
+                                data = new AttackState.Data { pos = stateMachine.Target.transform.position }
+                            });
+                        }
                     }
 
                     if(stateMachine.IsLocal)
@@ -85,7 +94,10 @@ namespace StarterAssets.StateManagement
                     {
                         stateMachine.ChangeState(new JumpState());
                     }
-
+                    else
+                    {
+                        stateMachine.Target.Input.jump = false;
+                    }
                     break;
                 case ManaRegenState manaRegenState:
                     if (stateMachine.IsLocal)
@@ -113,7 +125,6 @@ namespace StarterAssets.StateManagement
                     {
                         stateMachine.ChangeState(new JumpState());
                     }
-
                     break;
                 case StandState standState:
                     switch (stateMachine.Target.playerStateMachine.CurrentState.Id)

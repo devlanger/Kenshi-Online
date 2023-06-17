@@ -34,7 +34,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
+            stateMachine.Target.movementStateMachine.ChangeState(new FreezeMoveState());
             
             if (stateMachine.Target.animator != null)
             {
@@ -90,9 +90,14 @@ namespace StarterAssets.CombatStates
         {
             if (GameServer.IsServer || stateMachine.IsLocal)
             {
+                stateMachine.Target.tps.UpdateGravity();
+
                 if (ElapsedTime < 0.3f)
                 {
-                    stateMachine.Target.tps.SetVelocity(data.direction);
+                    if (data.hitType != AttackState.DamageData.HitType.stun)
+                    {
+                        stateMachine.Target.tps.SetVelocity(data.direction);
+                    }
                 }
             }
         }
@@ -120,6 +125,8 @@ namespace StarterAssets.CombatStates
             {
                 //stateMachine.Target.Interpolation.enabled = true;
             }
+            
+            stateMachine.Target.movementStateMachine.ChangeState(new StandState());
         }
     }
 }

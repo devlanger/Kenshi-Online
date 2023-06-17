@@ -41,14 +41,11 @@ namespace StarterAssets
         {
             if (!tps.GroundedCheck())
             {
-                if(stateMachine.IsLocal)
+                if(stateMachine.IsLocal || (GameServer.IsServer && stateMachine.Target.IsBot))
                 {
-                    if (!tps.GroundedCheck())
-                    {
-                        tps.UpdateGravity();
-                        var velocity = tps.GetVelocity();
-                        tps.UpdateMovement(velocity);
-                    }
+                    tps.UpdateGravity();
+                    var velocity = tps.GetVelocity();
+                    tps.UpdateMovement(velocity);
                 }
             }
         }

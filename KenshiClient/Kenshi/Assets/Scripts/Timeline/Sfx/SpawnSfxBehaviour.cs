@@ -30,6 +30,8 @@ public class SpawnSfxBehaviour : PlayableBehaviour
     {
         if (playable.GetPlayState() == PlayState.Playing)
         {
+            if (GameServer.IsServer) return;
+            
             SfxController.Instance.PlaySound(data.clip, data.volume);
         }
     }

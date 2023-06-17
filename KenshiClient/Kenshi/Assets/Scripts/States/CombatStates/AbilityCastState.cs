@@ -66,6 +66,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
+            Debug.Log("Cast skill");
             if (stateMachine.IsLocal)
             {
                 GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
@@ -134,6 +135,9 @@ namespace StarterAssets.CombatStates
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
+            if(!stateMachine.IsLocal)
+                stateMachine.Target.GetComponent<Rigidbody>().isKinematic = true;
+
             var animator = stateMachine.Variables.Animator;
 
             if (animator != null)
