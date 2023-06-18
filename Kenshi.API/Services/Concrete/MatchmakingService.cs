@@ -28,12 +28,13 @@ public class MatchmakingService : IMatchmakingService
             Lobbies = new HashSet<Lobby>();
         }
     }
-
+    
     public async Task UpdateMatchmakingLobbies()
     {
         int roomSize = 4;
         var allPlayers = Lobbies
             .Where(l => l.State == MatchmakingState.Searching)
+            .OrderBy(l => l.WaitStartTime)
             .SelectMany(l => l.Users)
             .ToList();
 
@@ -41,7 +42,7 @@ public class MatchmakingService : IMatchmakingService
         for (int i = 0; i < allPlayers.Count; i = i + roomSize)
         {
             var usersToMatchmake = allPlayers.Skip(i).Take(roomSize).ToList();
-            if (usersToMatchmake.Count >= 2)
+            if (usersToMatchmake.Count >= 1)
             {
                 var room = _gameRoomService.CreateRoom("room", false);
                 _gameRoomService.StartGameInstance(room);
@@ -87,6 +88,7 @@ public class MatchmakingService : IMatchmakingService
     public void StartLobbyMatchmaking(Lobby lobby)
     {
         SetLobbyState(lobby, MatchmakingState.Searching);
+        lobby.WaitStartTime = DateTime.UtcNow;
     }
     
     public void StopLobbyMatchmaking(Lobby lobby)

@@ -9,6 +9,10 @@ public class Lobby
 
     public List<UserService.User> Users { get; set; }
     
+    public DateTimeOffset WaitStartTime { get; set; }
+
+    public double WaitTime => DateTimeOffset.UtcNow.Subtract(WaitStartTime).TotalSeconds;
+    
     public MatchmakingState State { get; set; }
 
     public Lobby()

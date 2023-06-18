@@ -24,7 +24,7 @@ public class UserService
         public Lobby Lobby { get; set; }
         
         public string ConnectionId { get; set; }
-
+        
         public User()
         {
             Customization = new Dictionary<int, int>();
