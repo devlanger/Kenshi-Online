@@ -42,7 +42,7 @@ public class MatchmakingService : IMatchmakingService
         for (int i = 0; i < allPlayers.Count; i = i + roomSize)
         {
             var usersToMatchmake = allPlayers.Skip(i).Take(roomSize).ToList();
-            if (usersToMatchmake.Count >= 1)
+            if (usersToMatchmake.Count >= 2)
             {
                 var room = _gameRoomService.CreateRoom("room", false);
                 _gameRoomService.StartGameInstance(room);

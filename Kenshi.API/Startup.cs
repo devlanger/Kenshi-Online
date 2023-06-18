@@ -58,23 +58,18 @@ public class Startup
             x.MapHub<GameHub>("/gameHub");
         });
         
-        JobHelper.SetSerializerSettings(new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.All
-        });
-        
-        app.UseHangfireServer(new BackgroundJobServerOptions()
-        {
-        });
-        app.UseHangfireDashboard();
-        
         var service = app.ApplicationServices.GetRequiredService<KubernetesService>();
-        RecurringJob.AddOrUpdate("removal", () => MethodCall(service), "*/5 * * * * *");
+        new Thread(new ThreadStart(() =>
+        {
+            MethodCall(service);
+        })).Start();
+        
         var ss = app.ApplicationServices.GetRequiredService<IMatchmakingService>();
         new Thread(new ThreadStart(() =>
         {
             UpdateMatchmake(ss);
         })).Start();
+        
         var roomsService = app.ApplicationServices.GetService<IGameRoomService>();
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         bool createTestServer = true;
@@ -87,7 +82,11 @@ public class Startup
 
     public async Task MethodCall(KubernetesService service)
     {            
-        await service.DeletePodsWithZeroPlayers();
+        while (true)
+        {        
+            //await service.DeletePodsWithZeroPlayers();
+            await Task.Delay(5000, new CancellationToken());
+        }
     }
     
     public async Task UpdateMatchmake(IMatchmakingService matchmakingService)
