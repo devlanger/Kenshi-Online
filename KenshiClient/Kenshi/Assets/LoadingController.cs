@@ -29,11 +29,11 @@ public class LoadingController : ViewUI
         slider.value = 0;
     }
 
-    private void Update()
+    public void SetProgress(float progess)
     {
         if (IsActive)
         {
-            slider.value += Time.deltaTime * 0.5f;
+            slider.value = progess;
         }
     }
 }

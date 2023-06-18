@@ -388,6 +388,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
         Debug.Log("Client disconnected from server");
+        LoadingController.Instance.Deactivate();
         SceneManager.LoadScene(0);
     }
 

@@ -1,6 +1,7 @@
 using Docker.DotNet.Models;
 using k8s.Models;
 using Kenshi.API.Helpers;
+using Kenshi.API.Models;
 using Kenshi.API.Services;
 using Kenshi.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -15,6 +16,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly IConfiguration _config;
     private readonly JwtTokenService _tokenService;
     private readonly IGameRoomService _gameRoomService;
+    private readonly IMatchmakingService _matchmakingService;
     private readonly UserService _userService;
     private readonly MetricsService _metricsService;
     private readonly ILogger<GameHub> _logger;
@@ -33,7 +35,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         IGameRoomService gameRoomService,
         UserService userService,
         MetricsService metricsService,
-        ILogger<GameHub> logger)
+        ILogger<GameHub> logger, 
+        IMatchmakingService matchmakingService)
     {   
         redis = ConnectionMultiplexer.Connect(RedisString(config));
 
@@ -44,6 +47,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _userService = userService;
         _metricsService = metricsService;
         _logger = logger;
+        _matchmakingService = matchmakingService;
     }
     
     public async Task DeleteGameRoom(string id)
@@ -180,7 +184,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             return new List<string>();
         }
         
-        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value.id)?.ToList();
+        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value.Id)?.ToList();
     }
 
     public List<string> GetPlayersInRoom(string port)
@@ -244,7 +248,31 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             throw;
         }
     }
+
     
+    public async Task StartMatchmaking()
+    {
+        var user = _userService.GetUserByConnectionId(Context.ConnectionId);
+        if (user == null)
+        {
+            return;
+        }
+        
+        _matchmakingService.StartLobbyMatchmaking(user.Lobby);
+    }
+
+    public async Task StopMatchmaking()
+    {
+        var user = _userService.GetUserByConnectionId(Context.ConnectionId);
+        if (user == null)
+        {
+            return;
+        }
+        
+        _matchmakingService.StopLobbyMatchmaking(user.Lobby);
+        await Clients.Clients(user.Lobby.Users.Select(u => u.ConnectionId)).SendAsync("SetMatchmakingState", "false");
+    }
+
     public async Task JoinGameRoom(string roomId)
     {
         try
@@ -363,11 +391,18 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         Context.Items["username"] = username;
         UserService.UsersInLobby.Add(username);
         UserService.LoggedUsers.Add(username);
-        UserService.userIds[username] = new UserService.User
+        var user = new UserService.User
         {
-            id = Context.ConnectionId,
-            customization = new Dictionary<int, int>()
+            Id = Context.ConnectionId,
+            Username = username,
+            Customization = new Dictionary<int, int>(),
+            ConnectionId = Context.ConnectionId
         };
+        
+        UserService.userIds[username] = user;
+        
+        _matchmakingService.AddUserToLobby(user, new Lobby());
+        
         var token = _tokenService.GenerateToken(GetUsername());
         await BroadcastLobbyUsersList();
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {username} has joined lobby");
@@ -385,6 +420,8 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     {
         var username = GetUsername();
         await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {GetUsername()} has left lobby");
+        _matchmakingService.RemoveUserFromLobby(UserService.userIds[username]);
+
         UserService.UsersInLobby.Remove(username);
         UserService.LoggedUsers.Remove(username);
         

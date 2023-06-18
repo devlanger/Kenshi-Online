@@ -97,6 +97,7 @@ public class ConnectionController : MonoBehaviour
             RegisterStringEventListener("UpdatePlayersList");
             RegisterStringEventListener("ListGameRooms");
             RegisterStringEventListener("JoinGameRoom");
+            RegisterStringEventListener("SetMatchmakingState");
             RegisterStringEventListener("JoinGameInstance");
             RegisterStringEventListener("ShowChatMessage");
             RegisterStringEventListener("ShowConnectionMessage");

@@ -18,6 +18,20 @@ public class GameRoomService : IGameRoomService
         Rooms.Add(room.RoomId, room);
     }
 
+    public void StartGameInstance(IGameRoomInstance roomData)
+    {
+        var pod = _dockerService.CreatePod(new GameRoomPodSettings
+        {
+            Port = roomData.Port, 
+            MapName = roomData.Settings.mapName
+        });
+                    
+        if (pod.Result)
+        {
+            roomData.Started = true;
+        }
+    } 
+    
     public List<IGameRoomInstance> GetRooms()
     {
         return Rooms.Values.ToList();

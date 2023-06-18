@@ -2,8 +2,10 @@ using System.Text;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Kenshi.API.Helpers;
+using Kenshi.API.Hub;
 using Kenshi.API.Metrics;
 using Kenshi.API.Services;
+using Kenshi.API.Services.Concrete;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -17,8 +19,10 @@ public static class ApplicationServicesExtension
         services.AddTransient<KubernetesService>();
         services.AddTransient<JwtTokenService>();
         services.AddTransient<IGameRoomService, GameRoomService>();
+        services.AddTransient<IMatchmakingService, MatchmakingService>();
         services.AddTransient<UserService>();
         services.AddTransient<MetricsService>();
+        services.AddScoped<GameHub>();
 
         services.AddSingleton<ILoggerProvider>(new NestLoggerProvider(new Uri(configuration["ConnectionStrings:elasticsearch"])));
         

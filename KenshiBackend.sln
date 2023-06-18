@@ -2,10 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.API", "Kenshi.API\Kenshi.API.csproj", "{7A7454CB-3D58-414A-B05A-0E5926981410}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Tests", "Kenshi.Tests\Kenshi.Tests.csproj", "{173FC282-F85B-4C79-A2CC-81E7034F4A32}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.TestClient", "Kenshi.TestClient\Kenshi.TestClient.csproj", "{61F2223F-5176-4D8D-9327-88DDA71789ED}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Shared", "Kenshi.Shared\Kenshi.Shared.csproj", "{760CD983-B09B-4183-9240-17F87361A870}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Backend.Shared", "Kenshi.Backend.Shared\Kenshi.Backend.Shared.csproj", "{9D80F23F-1E02-4E68-AA06-85F72CBF2FE1}"
@@ -20,14 +16,6 @@ Global
 		{7A7454CB-3D58-414A-B05A-0E5926981410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A7454CB-3D58-414A-B05A-0E5926981410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A7454CB-3D58-414A-B05A-0E5926981410}.Release|Any CPU.Build.0 = Release|Any CPU
-		{173FC282-F85B-4C79-A2CC-81E7034F4A32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{173FC282-F85B-4C79-A2CC-81E7034F4A32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{173FC282-F85B-4C79-A2CC-81E7034F4A32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{173FC282-F85B-4C79-A2CC-81E7034F4A32}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61F2223F-5176-4D8D-9327-88DDA71789ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{760CD983-B09B-4183-9240-17F87361A870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{760CD983-B09B-4183-9240-17F87361A870}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{760CD983-B09B-4183-9240-17F87361A870}.Release|Any CPU.ActiveCfg = Release|Any CPU

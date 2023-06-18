@@ -1,3 +1,6 @@
+using Kenshi.API.Models;
+using Microsoft.AspNetCore.SignalR;
+
 namespace Kenshi.API.Services;
 
 public class UserService
@@ -12,8 +15,20 @@ public class UserService
 
     public class User
     {
-        public string id;
-        public Dictionary<int, int> customization = new Dictionary<int, int>();
+        public string Id { get; set; }
+        
+        public string Username { get; set; }
+        
+        public Dictionary<int, int> Customization { get; set; }
+        
+        public Lobby Lobby { get; set; }
+        
+        public string ConnectionId { get; set; }
+
+        public User()
+        {
+            Customization = new Dictionary<int, int>();
+        }
     }
     
     public static bool IsUserLogged(string username)
@@ -27,6 +42,11 @@ public class UserService
         {
             return "";
         }
-        return userIds[username].id;
+        return userIds[username].Id;
+    }
+
+    public User? GetUserByConnectionId(string id)
+    {
+        return userIds.Values.FirstOrDefault(u => u.Id == id);
     }
 }
