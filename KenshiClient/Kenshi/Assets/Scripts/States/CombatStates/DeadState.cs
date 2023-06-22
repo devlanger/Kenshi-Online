@@ -1,4 +1,6 @@
 using Kenshi.Shared.Enums;
+using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,6 +15,7 @@ namespace StarterAssets.CombatStates
             if (GameServer.IsServer)
             {
                 stateMachine.Target.ActivateNavAgent(false);
+                GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, Id), DeliveryMethod.ReliableOrdered);
             }
             
             if (stateMachine.Target.animator != null)

@@ -24,20 +24,6 @@ namespace Kenshi.Utils
             var damage = data.damage;
             var response = new HitResponse();
 
-            if (hitTarget.playerStateMachine.CurrentState.Id == FSMStateId.dead)
-            {
-                response.success = false;
-                response.dead = true;
-                return response;
-            }
-            
-            if (hitTarget.playerStateMachine.CurrentState.Id == FSMStateId.block)
-            {
-                response.success = false;
-                response.blocked = true;
-                return response;
-            }
-
             var hitData = new HitState.Data
             {
                 attackerId = attacker.NetworkId,
@@ -48,49 +34,72 @@ namespace Kenshi.Utils
                 hitType = data.hitType
             };
 
-            if (hitTarget.GetStat(StatEventPacket.StatId.health, out ushort health))
+            switch (hitTarget.playerStateMachine.CurrentState.Id)
             {
-                health = (ushort)Mathf.Max(0, health - damage);
-                if (health <= 0)
-                {
-                    health = 0;
-                    GameRoomNetworkController.SendPacketToAll(new GameEventPacket(new GameEventPacket.PlayerDied
-                    {
-                        playerId = hitTarget.NetworkId,
-                        targetName = (string)hitTarget.stats[StatEventPacket.StatId.username],
-                        attackerName = (string)attacker.stats[StatEventPacket.StatId.username],
-                        dt = GameEventPacket.PlayerDied.DeathType.melee
-                    }), DeliveryMethod.ReliableOrdered);
-
-                    hitTarget.playerStateMachine.ChangeState(new DeadState());
-                    CombatController.Instance.DeadPlayer(hitTarget);
+                case FSMStateId.block:
+                    response.success = false;
+                    response.blocked = true;
+                    break;
+                case FSMStateId.dead:
+                    response.success = false;
                     response.dead = true;
-                }
+                    break;
+                default:
+                    if (hitTarget.GetStat(StatEventPacket.StatId.health, out ushort health) && health > 0)
+                    {
+                        health = (ushort)Mathf.Max(0, health - damage);
+                        if (health <= 0)
+                        {
+                            health = 0;
+                            GameRoomNetworkController.SendPacketToAll(new GameEventPacket(new GameEventPacket.PlayerDied
+                            {
+                                playerId = hitTarget.NetworkId,
+                                targetName = (string)hitTarget.stats[StatEventPacket.StatId.username],
+                                attackerName = (string)attacker.stats[StatEventPacket.StatId.username],
+                                dt = GameEventPacket.PlayerDied.DeathType.melee
+                            }), DeliveryMethod.ReliableOrdered);
 
-                CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
-                {
-                    statId = StatEventPacket.StatId.health,
-                    value = health,
-                    maxValue = (ushort)100,
-                    playerId = hitTarget.NetworkId
-                });
+                            response.dead = true;
+                        }
 
-                response.success = true;
+                        CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
+                        {
+                            statId = StatEventPacket.StatId.health,
+                            value = health,
+                            maxValue = (ushort)100,
+                            playerId = hitTarget.NetworkId
+                        });
+
+                        response.success = true;
+                    }
+                    break;
             }
 
-            if (hitTarget.playerStateMachine.CurrentState.Id != FSMStateId.dead)
+            if (response.success)
             {
                 switch (data.hitType)
                 {
                     case AttackState.DamageData.HitType.stun:
-                        hitTarget.playerStateMachine.ChangeState(new StunState());
-                        break; 
-                    default:
-                        GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(hitData.targetId, hitData),
+                        GameRoomNetworkController.SendPacketToAll(
+                            new UpdateFsmStatePacket(hitData.targetId, hitData),
                             DeliveryMethod.ReliableOrdered);
-                
+
+                        hitTarget.playerStateMachine.ChangeState(new HitState(hitData));
+                        hitTarget.playerStateMachine.ChangeState(new StunState());
+                        break;
+                    default:
+                        GameRoomNetworkController.SendPacketToAll(
+                            new UpdateFsmStatePacket(hitData.targetId, hitData),
+                            DeliveryMethod.ReliableOrdered);
+
                         hitTarget.playerStateMachine.ChangeState(new HitState(hitData));
                         break;
+                }
+
+                if (response.dead && hitTarget.playerStateMachine.CurrentState.Id != FSMStateId.dead)
+                {
+                    hitTarget.playerStateMachine.ChangeState(new DeadState());
+                    CombatController.Instance.DeadPlayer(hitTarget);
                 }
             }
 

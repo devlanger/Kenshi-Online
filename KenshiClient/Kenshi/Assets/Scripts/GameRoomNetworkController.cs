@@ -199,6 +199,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 MapLoader.MapToBeLoaded = packet.data.mapId;
                 MapLoader.LoadScene();
 
+                _players[_myPlayerId].tps.SetVelocity(Vector3.zero);
                 _players[_myPlayerId].GetComponent<Rigidbody>().isKinematic = false;
                 _players[_myPlayerId].transform.position = SpawnPointsController.Instance != null ? SpawnPointsController.Instance.GetRandomSpawnPoint() : Vector3.up;
                 Connected = true;
@@ -283,7 +284,6 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             else if (packetId == PacketId.FsmUpdate)
             {
                 var fsmPacket = SendablePacket.Deserialize<UpdateFsmStatePacket>(packetId, reader);
-
                 var playerNotNull = _players.TryGetValue(fsmPacket.targetId, out var player);
                 switch (fsmPacket.stateId)
                 {
@@ -327,6 +327,12 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                         if (playerNotNull)
                         {
                             player.playerStateMachine.ChangeState(new StunState());
+                        }
+                        break;
+                    case FSMStateId.dead:
+                        if (playerNotNull)
+                        {
+                            player.playerStateMachine.ChangeState(new DeadState());
                         }
                         break;
                 }
