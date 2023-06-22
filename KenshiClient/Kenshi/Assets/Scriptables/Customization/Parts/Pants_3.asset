@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a198a027f52d3485e82c4d14d9786cd8, type: 3}
-  m_Name: Boots
+  m_Name: Pants_3
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,6 +21,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  id: 1
-  part: {fileID: 7915567186337379344, guid: f439cf462cd484b22b8d3f6936c44197, type: 3}
-  slot: 4
+  id: 13
+  part: {fileID: 2603356226510535514, guid: fc9ee89b766534e26bbc36880eaac49a, type: 3}
+  slot: 3

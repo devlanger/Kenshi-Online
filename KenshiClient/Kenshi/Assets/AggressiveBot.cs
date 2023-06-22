@@ -327,7 +327,7 @@ public class AggressiveBot : MonoBehaviour
 
     private int GetRandomSkillId()
     {
-        return skillIds[UnityEngine.Random.Range(0, skillIds.Count)];
+        return skillIds[UnityEngine.Random.Range(0, skillIds.Count - 1)];
     }
 
     private void UpdateAttackState(BotAttackState state)

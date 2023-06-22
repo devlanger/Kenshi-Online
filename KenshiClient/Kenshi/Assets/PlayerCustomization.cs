@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -8,7 +10,7 @@ using UnityEngine.Serialization;
 public class PlayerCustomization : SerializedMonoBehaviour
 {
     [SerializeField] private CustomizationManager _customizationManager;
-    [SerializeField] private CustomizationData customizationData;
+    public CustomizationData customizationData;
 
     [SerializeField] private Dictionary<ClothingPart, GameObject> itemsWorn = new Dictionary<ClothingPart, GameObject>();
 
@@ -20,16 +22,16 @@ public class PlayerCustomization : SerializedMonoBehaviour
 
     public void SetCustomizationSlot(ClothingPart part, int itemId)
     {
-        customizationData.clothes[part] = itemId;
+        customizationData.items[part] = itemId;
         RefreshCustomizationVisuals(customizationData);
     }
-    
+
     private void RefreshCustomizationVisuals(CustomizationData data)
     {
         var keys = new HashSet<ClothingPart>();
         foreach (var item in itemsWorn)
         {
-            if (item.Value != null && customizationData.clothes.ContainsKey(item.Key))
+            if (item.Value != null && customizationData.items.ContainsKey(item.Key))
             {
                 Destroy(item.Value.gameObject);
                 keys.Add(item.Key);
@@ -41,7 +43,7 @@ public class PlayerCustomization : SerializedMonoBehaviour
             itemsWorn.Remove(key);
         }
         
-        foreach (var item in customizationData.clothes)
+        foreach (var item in customizationData.items)
         {
             var inst = WearItem(item.Value);
             itemsWorn[item.Key] = inst;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using StarterAssets;
 using StarterAssets.CombatStates;
 using UnityEngine;
@@ -34,6 +35,12 @@ public class PlayerController : MonoBehaviour
         localPlayer.gameObject.layer = 10;
         localPlayer.IsLocalPlayer = true;
         localPlayer.Interpolation.enabled = false;
+        
+        if (PlayerPrefs.HasKey("customization"))
+        {
+            var customization = JsonConvert.DeserializeObject<CustomizationData>(PlayerPrefs.GetString("customization"));
+            localPlayer.GetComponentInChildren<PlayerCustomization>().SetCustomization(customization);
+        }
     }
 
     private void Update()

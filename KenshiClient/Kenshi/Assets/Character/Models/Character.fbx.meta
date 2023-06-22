@@ -7,6 +7,16 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Black
+    second: {fileID: 2100000, guid: 4b9e1c5f10a4244eaaf2238e85055304, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Handpads
+    second: {fileID: 2100000, guid: 57c1e0a77f6104b73badd6a6838310fc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Pants
     second: {fileID: 2100000, guid: 4f19e158775ac42b3819ceb762d5426e, type: 2}
   - first:
@@ -27,13 +37,7 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: "Avatar Rig Configuration mis-match. Bone length in configuration
-      does not match position in animation file:\n\t'DEF-thigh.L' : position error
-      = 99.562111 mm\n\t'DEF-shin.L' : position error = 433.135712 mm\n\t'DEF-foot.L'
-      : position error = 401.201385 mm\n\t'DEF-toe.L' : position error = 113.882446
-      mm\n\t'DEF-thigh.R' : position error = 99.562103 mm\n\t'DEF-shin.R' : position
-      error = 433.135712 mm\n\t'DEF-foot.R' : position error = 401.201385 mm\n\t'DEF-toe.R'
-      : position error = 113.882469 mm\n"
+    rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: "\nClip 'rig|Abilities' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar

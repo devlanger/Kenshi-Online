@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a198a027f52d3485e82c4d14d9786cd8, type: 3}
-  m_Name: Shorts
+  m_Name: No_Head
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,6 +21,6 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  id: 10
-  part: {fileID: 2603356226510535514, guid: fd6f7da2b254f4fe6ac7c02b54f28081, type: 3}
-  slot: 3
+  id: 4
+  part: {fileID: 0}
+  slot: 1
