@@ -32,3 +32,4 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: 1b4c47725ec3548eab2dd17417ce0a3e, type: 2}
     mana: 25
   canCastInAir: 1
+  description: Strikes lightning spear and deals damage in front of the user.

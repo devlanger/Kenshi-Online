@@ -16,4 +16,5 @@ public class StateMachineVariables : MonoBehaviour
     public bool Jumping;
     public int jumpIndex = 0;
     public bool finishedAirCombo;
+    public bool AlternateDashAnimation { get; set; }
 }

@@ -194,9 +194,10 @@ public class GameRoomLobby : ViewUI
             yield return 0;
         }
         
-        LoadingController.Instance.SetProgress(asyncLoad.progress);
+        LoadingController.Instance.SetProgress(Math.Min(0.75f, asyncLoad.progress));
         yield return new WaitUntil(() => GameRoomNetworkController.Instance.Connected);
         LoadingController.Instance.SetProgress(1);
         LoadingController.Instance.Deactivate();
+        yield return new WaitForSeconds(0.2f);
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
@@ -8,13 +9,21 @@ using UnityEngine;
 
 namespace Kenshi.Utils
 {
-    public class PlayerUtils
+    public static class PlayerUtils
     {
         public class HitResponse
         {
             public bool blocked;
             public bool dead;
             public bool success = false;
+        }
+
+        public static float FlatDistance(Vector3 one, Vector3 two)
+        {
+            one.y = 0;
+            two.y = 0;
+            float dist = Vector3.Distance(one, two);
+            return dist;
         }
         
         public static HitResponse HitSingleTarget(AttackState.DamageData data)

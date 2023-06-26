@@ -32,3 +32,5 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: fa6f866299f334976b779b31888312e3, type: 2}
     mana: 25
   canCastInAir: 1
+  description: Slashes through air and sends wind cut-shaped projectiles. Knocks
+    back enemies and deal wind damage.

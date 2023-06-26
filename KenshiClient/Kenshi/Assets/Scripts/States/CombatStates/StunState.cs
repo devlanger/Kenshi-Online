@@ -1,6 +1,7 @@
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
+using UnityEngine;
 
 namespace StarterAssets.CombatStates
 {
@@ -9,6 +10,8 @@ namespace StarterAssets.CombatStates
         public override FSMStateId Id => FSMStateId.stunned;
 
         public float Duration { get; private set; } = 1;
+
+        private GameObject fx;
         
         protected override void OnEnter(PlayerStateMachine stateMachine)
         {
@@ -20,12 +23,16 @@ namespace StarterAssets.CombatStates
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, Id), DeliveryMethod.ReliableOrdered);
             }
          
-            //TODO: Spawn stun particles
-            
             if (stateMachine.Target.animator != null)
             {
                 stateMachine.Target.animator.SetTrigger("hit");
                 stateMachine.Target.animator.SetInteger("hit_id", 10);
+            }
+
+            if (!GameServer.IsServer)
+            {
+                fx = VfxController.Instance.SpawnFx(VfxController.VfxId.stun, stateMachine.Target.transform.position, Quaternion.identity, 
+                    stateMachine.Target.transform); 
             }
         }
 
@@ -40,6 +47,11 @@ namespace StarterAssets.CombatStates
             {
                 stateMachine.Target.animator.SetTrigger("hit");
                 stateMachine.Target.animator.SetInteger("hit_id", 0);
+            }
+
+            if (!GameServer.IsServer)
+            {
+                GameObject.Destroy(fx.gameObject);
             }
         }
     }

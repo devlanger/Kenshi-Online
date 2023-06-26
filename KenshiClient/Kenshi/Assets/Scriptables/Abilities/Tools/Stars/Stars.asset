@@ -32,3 +32,4 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: 2b126f64f8b7343d08fb0b3f8ede3dc2, type: 2}
     mana: 5
   canCastInAir: 1
+  description: Creates a trap of stars to deal damage and slow down enemy for 2sec.

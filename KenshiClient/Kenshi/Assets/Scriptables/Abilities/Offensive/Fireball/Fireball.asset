@@ -32,3 +32,5 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: 7e833d4b7e916478788ec9e08988386b, type: 2}
     mana: 25
   canCastInAir: 1
+  description: Shoots fireball projectile which explodes, deal AoE damage and knocks
+    back.

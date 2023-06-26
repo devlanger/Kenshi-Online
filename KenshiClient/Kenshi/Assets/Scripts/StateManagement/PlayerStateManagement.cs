@@ -55,10 +55,14 @@ namespace StarterAssets.StateManagement
                     {
                         if (stateMachine.Target.movementStateMachine.CurrentState is DashState dashState)
                         {
-                            stateMachine.ChangeState(new AttackState()
+                            if (dashState.data.dashIndex == DashState.Data.DashIndex.forward)
                             {
-                                data = new AttackState.Data { pos = stateMachine.Target.transform.position, dashForwardAttack = dashState.data.dashIndex == DashState.Data.DashIndex.forward }
-                            });   
+                                stateMachine.ChangeState(new AttackState()
+                                {
+                                    data = new AttackState.Data { pos = stateMachine.Target.transform.position, 
+                                        dashForwardAttack = dashState.data.dashIndex == DashState.Data.DashIndex.forward }
+                                });   
+                            }   
                         }
                         else
                         {
@@ -69,7 +73,7 @@ namespace StarterAssets.StateManagement
                         }
                     }
 
-                    if(stateMachine.IsLocal)
+                    if(stateMachine.IsLocal && stateMachine.Target.movementStateMachine.CurrentState.Id != FSMStateId.dash)
                     {
                         AbilitiesController.Instance.UpdateInputs();
                         if (UnityEngine.Input.GetKey(KeyCode.Q))
@@ -97,6 +101,15 @@ namespace StarterAssets.StateManagement
                     else
                     {
                         stateMachine.Target.Input.jump = false;
+                    }
+                    break;
+                case DashState dashState:
+                    if (dashState.ElapsedTime > dashState.Duration - 0.15f && stateMachine.Target.Input.dashIndex != DashState.Data.DashIndex.none)
+                    {
+                        stateMachine.ChangeState(new DashState(new DashState.Data
+                        {
+                            dashIndex = stateMachine.Target.Input.dashIndex
+                        }));
                     }
                     break;
                 case ManaRegenState manaRegenState:
@@ -181,7 +194,7 @@ namespace StarterAssets.StateManagement
                     }
                     break;
                 case DashState dashState:
-                    if (dashState.ElapsedTime > 0.3f)
+                    if (dashState.ElapsedTime > dashState.Duration)
                     {
                         if (stateMachine.Variables.Grounded && dashState.StartedInAir)
                         {

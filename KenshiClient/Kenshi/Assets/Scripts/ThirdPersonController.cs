@@ -164,8 +164,16 @@ namespace StarterAssets
         {
             _animationBlend = Mathf.Lerp(_animationBlend, _speed, Time.deltaTime * SpeedChangeRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
+
+            if (target.playerStateMachine.Target.Input.move.y < 0)
+            {
+                _animator?.SetFloat(_animIDSpeed, -1);
+            }
+            else
+            {
+                _animator?.SetFloat(_animIDSpeed, _animationBlend);
+            }
             
-            _animator?.SetFloat(_animIDSpeed, _animationBlend);
             _animator?.SetFloat(_animIDMotionSpeed, GetInputMagnitude());
             
             Grounded = GroundedCheck();

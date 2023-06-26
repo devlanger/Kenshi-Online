@@ -32,3 +32,4 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: 49b60bc559c7f4debb1832571416d094, type: 2}
     mana: 15
   canCastInAir: 0
+  description: Lands a trap which stun enemy and deal low amount of damage.

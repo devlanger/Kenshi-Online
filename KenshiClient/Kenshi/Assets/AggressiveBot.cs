@@ -51,13 +51,13 @@ public class BotAttackState : GenericFSMState<AggressiveBot.State>
     
     protected override void OnUpdate(PlayerStateMachine stateMachine)
     {
+        dir = _target.transform.position - stateMachine.Target.transform.position;
+        dir.y = 0;
         stateMachine.Target.Input.CameraForward = dir;
     }
 
     protected override void OnEnter(PlayerStateMachine stateMachine)
     {
-        dir = _target.transform.position - stateMachine.Target.transform.position;
-        dir.y = 0;
         stateMachine.Target.Input.leftClick = true;
     }
 
@@ -81,9 +81,9 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
         _target = target;
     }
 
-    public static bool MoveBot(Player target, Vector3 direction, NavMeshAgent path)
+    public static bool MoveBot(Player target, Vector3 direction, NavMeshAgent agent)
     {
-        if (Vector3.Distance(target.transform.position, path.destination) < 1)
+        if (PlayerUtils.FlatDistance(target.transform.position, agent.destination) < 1)
         {
             target.Input.move = new Vector2(0, 0);
             return false;
@@ -92,8 +92,11 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
         Vector3 dir = direction - target.transform.position;
         dir.y = 0;
         dir.Normalize();
-        
-        target.Input.CameraForward = dir;
+
+        if (target.playerStateMachine.CurrentState.Id != FSMStateId.attack)
+        {
+            target.Input.CameraForward = dir;
+        }
         target.Input.move = new Vector2(0, 1);
         return true;
     }
@@ -102,7 +105,8 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
     {
         _agent.speed = stateMachine.Target.tps.SprintSpeed;
         stateMachine.Target.Input.sprint = true;
-        _agent.SetDestination(_target.transform.position);
+
+        _agent.SetClosestDestination(_target.transform.position);
 
         Vector3 dir = _agent.steeringTarget;
         if (!_agent.enabled)
@@ -122,6 +126,19 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
     {
         stateMachine.Target.Input.move = Vector3.zero;
         _target.Input.sprint = false;
+    }
+}
+
+public static class NavAgentUtils
+{
+    public static void SetClosestDestination(this NavMeshAgent agent, Vector3 pos)
+    {
+        agent.SetDestination(pos);
+
+        // if (NavMesh.SamplePosition(pos, out var hit, 50, NavMesh.AllAreas))
+        // {
+        //     agent.SetDestination(hit.position);
+        // }
     }
 }
 
@@ -161,20 +178,25 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
         return null;
     }
     
-    private Vector3 GetDirToTarget(PlayerStateMachine stateMachine)
-    {
-        Vector3 dir = destination - stateMachine.Target.transform.position;
-        dir.y = 0;
-        return dir;
-    }
-    
     protected override void OnUpdate(PlayerStateMachine stateMachine)
     {
+        if (PlayerUtils.FlatDistance(stateMachine.Target.transform.position, destination) < 1)
+        {
+            stateMachine.Target.Input.move = Vector2.zero;
+            return;
+        }
+        
         _agent.speed = stateMachine.Target.tps.SprintSpeed;
         stateMachine.Target.Input.sprint = true;
-        _agent.SetDestination(destination);
+        _agent.SetClosestDestination(destination);
 
-        BotChaseState.MoveBot(stateMachine.Target, _agent.steeringTarget, _agent);
+        Vector3 dir = _agent.steeringTarget;
+        if (!_agent.enabled)
+        {
+            dir = destination - stateMachine.Target.transform.position;
+            dir.y = 0;
+        }
+        BotChaseState.MoveBot(stateMachine.Target, dir, _agent);
     }
 
     protected override void OnInputUpdate(PlayerStateMachine stateMachine)
@@ -188,14 +210,22 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
         _agent.updatePosition = false;
         stateMachine.Target.Input.sprint = true;
 
-        destination = stateMachine.Target.transform.position + new Vector3(UnityEngine.Random.Range(-25, 25), stateMachine.Target.transform.position.y,
-            UnityEngine.Random.Range(-25, 25));
-        
-        NavMeshHit myNavHit;
-        if(NavMesh.SamplePosition(destination, out myNavHit, 100 , NavMesh.AllAreas))
+        if (Physics.Raycast(stateMachine.Target.transform.position, -Vector3.up, out var hit))
         {
-            destination = myNavHit.position;
+            destination = stateMachine.Target.transform.position + new Vector3(UnityEngine.Random.Range(-25, 25), hit.point.y,
+                UnityEngine.Random.Range(-25, 25));
         }
+        else
+        {
+            destination = stateMachine.Target.transform.position + new Vector3(UnityEngine.Random.Range(-25, 25), stateMachine.Target.transform.position.y,
+                UnityEngine.Random.Range(-25, 25));
+        }
+        
+        //NavMeshHit myNavHit;
+        // if(NavMesh.SamplePosition(destination, out myNavHit, 100 , NavMesh.AllAreas))
+        // {
+        //     destination = myNavHit.position;
+        // }
     }
 
     protected override void OnExit(PlayerStateMachine stateMachine)
@@ -203,6 +233,10 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
         stateMachine.Target.Input.sprint = false;
         stateMachine.Target.Input.move = Vector3.zero;
     }
+}
+
+public static class BotUtils
+{
 }
 
 public class AggressiveBot : MonoBehaviour
@@ -313,7 +347,7 @@ public class AggressiveBot : MonoBehaviour
             return;
         }
 
-        if (GetDistanceToTarget(chaseState._target) <= 3f)
+        if (GetDistanceToTarget(chaseState._target) <= 2.6f)
         {
             stateMachine.ChangeState(new BotAttackState(chaseState._target));
             return;
@@ -338,7 +372,7 @@ public class AggressiveBot : MonoBehaviour
             return;
         }
 
-        if (GetDistanceToTarget(state._target) > 3f)
+        if (GetDistanceToTarget(state._target) > 2.6f)
         {
             stateMachine.ChangeState(new BotChaseState(state._target));
         }
@@ -383,7 +417,7 @@ public class AggressiveBot : MonoBehaviour
     }
 
     private float GetDistanceToTarget(Player _target) =>
-        _target == null ? 999f : Vector3.Distance(stateMachine.Target.transform.position, _target.transform.position);
+        _target == null ? 999f : PlayerUtils.FlatDistance(stateMachine.Target.transform.position, _target.transform.position);
 
     private void Update()
     {

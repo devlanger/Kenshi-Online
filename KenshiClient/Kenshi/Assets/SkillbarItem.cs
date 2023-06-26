@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class SkillbarItem : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private Image icon;
     public int hotkeyId;
     public AbilityScriptable.Type type;
@@ -19,6 +20,7 @@ public class SkillbarItem : MonoBehaviour
         }
 
         nameText?.SetText(ability.name);
+        descriptionText?.SetText(ability.description);
         icon.enabled = ability.icon != null;
         icon.sprite = ability.icon;
     }

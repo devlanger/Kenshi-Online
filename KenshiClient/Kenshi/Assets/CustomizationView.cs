@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,11 @@ public class CustomizationView : ViewUI
 {
     [SerializeField] private PlayerCustomization character;
     [SerializeField] private CustomizationManager _customizationManager;
+
+    private void Awake()
+    {
+        character.SetCustomization(PlayerController.GetCustomization());
+    }
 
     public void WearItem(int itemId)
     {

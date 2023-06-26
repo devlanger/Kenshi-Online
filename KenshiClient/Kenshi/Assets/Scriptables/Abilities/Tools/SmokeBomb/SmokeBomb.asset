@@ -32,3 +32,4 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: 5a134cb46e4064639ac0e0bc72bf0607, type: 2}
     mana: 20
   canCastInAir: 1
+  description: Throws smoke bomb which creates a smoke field.

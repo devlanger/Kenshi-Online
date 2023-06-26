@@ -32,3 +32,5 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: ca44c6474036f4dbe85a0f1dd250a5c0, type: 2}
     mana: 25
   canCastInAir: 1
+  description: Casts wind energy into the hand and strikes forward. When hits the
+    enemy it will knock back and deal damage.

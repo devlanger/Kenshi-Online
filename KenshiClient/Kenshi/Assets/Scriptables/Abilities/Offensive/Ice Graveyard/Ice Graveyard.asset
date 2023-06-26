@@ -32,3 +32,4 @@ MonoBehaviour:
     behaviour: {fileID: 11400000, guid: dd00874cedf174de4806bc9a2443bb46, type: 2}
     mana: 25
   canCastInAir: 1
+  description: 

@@ -72,7 +72,9 @@ public class PlayPanelController : MonoBehaviour
 
         if (useTestServer)
         {
-            //FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game gameroom-5001");
+            ConnectionControllerOnOnMessageReceived("SetMatchmakingState", "true");
+            FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game gameroom-5001");
+            return;
         }
 
         await _connectionController.ExecuteCommand(!isSearching ? $"start_matchmaking" : "stop_matchmaking");

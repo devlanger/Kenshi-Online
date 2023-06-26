@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cinemachine;
+using Kenshi.Shared.Enums;
 using Newtonsoft.Json;
 using StarterAssets;
 using StarterAssets.CombatStates;
@@ -28,6 +30,7 @@ public class PlayerController : MonoBehaviour
     public Player localPlayer;
 
     [SerializeField] private DashInput dashInput;
+    [SerializeField] private CinemachineVirtualCamera _virtualCamera;
     
     private void Awake()
     {
@@ -36,11 +39,17 @@ public class PlayerController : MonoBehaviour
         localPlayer.IsLocalPlayer = true;
         localPlayer.Interpolation.enabled = false;
         
+        localPlayer.GetComponentInChildren<PlayerCustomization>().SetCustomization(GetCustomization());
+    }
+
+    public static CustomizationData GetCustomization()
+    {
         if (PlayerPrefs.HasKey("customization"))
         {
-            var customization = JsonConvert.DeserializeObject<CustomizationData>(PlayerPrefs.GetString("customization"));
-            localPlayer.GetComponentInChildren<PlayerCustomization>().SetCustomization(customization);
+            return JsonConvert.DeserializeObject<CustomizationData>(PlayerPrefs.GetString("customization"));
         }
+
+        return new CustomizationData();
     }
 
     private void Update()
@@ -65,6 +74,18 @@ public class PlayerController : MonoBehaviour
         Physics.Raycast(Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition), out RaycastHit hit, 100, localPlayer.playerStateMachine.Variables._aimLayerMask);
         localPlayer.Input.HitPoint =
             hit.collider == null ? Camera.main.transform.forward * 100 : hit.point;
+
+        switch (localPlayer._movementStateManagement.StateId)
+        {
+            case FSMStateId.move:
+            case FSMStateId.jump:
+            case FSMStateId.freefall:
+                _virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(_virtualCamera.m_Lens.FieldOfView, localPlayer.Input.sprint ? 75 : 60, 0.05f);
+                break;
+            default:
+                _virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(_virtualCamera.m_Lens.FieldOfView, 60, 0.05f);
+                break;
+        }
     }
 
 

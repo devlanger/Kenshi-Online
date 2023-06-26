@@ -17,7 +17,7 @@ RenderSettings:
   m_Fog: 1
   m_FogColor: {r: 0.54509807, g: 0.8235294, b: 0.92941177, a: 1}
   m_FogMode: 3
-  m_FogDensity: 0.01
+  m_FogDensity: 0.005
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.9386859, g: 0.90466136, b: 0.84687346, a: 1}
@@ -2528,8 +2528,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 649039898}
-  m_LocalRotation: {x: -0.6337557, y: -0.3046498, z: -0.29937854, w: 0.64491457}
-  m_LocalPosition: {x: 0.06328385, y: -4.759239, z: -0.06043005}
+  m_LocalRotation: {x: -0.14915001, y: 0.6969148, z: 0.68485624, w: 0.15177613}
+  m_LocalPosition: {x: -0.030393995, y: -4.7592387, z: 0.08205414}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6700,7 +6700,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1006999789}
   m_Direction: 2
   m_Value: 1.0000037
-  m_Size: 0.7236867
+  m_Size: 0.72368675
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6796,6 +6796,7 @@ MonoBehaviour:
     dashIndex: 0
     lastKey: 0
     keyTime: 0
+  _virtualCamera: {fileID: 712799743}
 --- !u!4 &1666079193
 Transform:
   m_ObjectHideFlags: 0

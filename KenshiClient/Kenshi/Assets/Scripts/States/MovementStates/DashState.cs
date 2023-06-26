@@ -13,9 +13,11 @@ namespace StarterAssets
         public override FSMStateId Id => FSMStateId.dash;
 
         public bool StartedInAir { get; private set; } = false;
+        public float Duration { get; set; }
 
         public DashState(DashState.Data data)
         {
+            Duration = 0.65f;
             this.data = data;
         }
 
@@ -34,7 +36,7 @@ namespace StarterAssets
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)
         {
-            if (stateMachine.IsLocal && ElapsedTime < 0.4f)
+            if (stateMachine.IsLocal && ElapsedTime < Duration - 0.1f)
             {
                 float speed = 20;
                 Vector3 dir = Vector3.zero;
@@ -90,14 +92,28 @@ namespace StarterAssets
                 GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(0, data), DeliveryMethod.ReliableOrdered);
             }
 
+            stateMachine.Variables.AlternateDashAnimation = !stateMachine.Variables.AlternateDashAnimation;
+
             if (GameServer.IsServer)
             {
                 GameRoomNetworkController.SendPacketToAll(new UpdateFsmStatePacket(stateMachine.Target.NetworkId, data), DeliveryMethod.ReliableOrdered);
             }
             else
             {
-                int v = (int)data.dashIndex;
-                SetAnimation(stateMachine, v);
+                if (stateMachine.Target.TryGetComponent(out AnimationsController animationsController))
+                {
+                    var animData = animationsController.GetDashAnimation(data.dashIndex,
+                        stateMachine.Variables.AlternateDashAnimation);
+                    
+                    SetAnimation(stateMachine, animData?.value ?? 0);
+
+                    if (animData.fx != null)
+                    {
+                        VfxController.Instance.SpawnFx(animData.fx, stateMachine.Target.transform.position,
+                            stateMachine.Target.transform.rotation);
+                    }
+                };
+                
             }
 
             if (SfxController.Instance != null)

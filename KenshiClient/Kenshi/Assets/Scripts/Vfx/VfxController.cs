@@ -42,6 +42,7 @@ public class VfxController : Singleton<VfxController>
         hit_light = 1,
         hit_heavy = 2,
         mana_load = 3,
+        stun = 4,
     }
 }
 

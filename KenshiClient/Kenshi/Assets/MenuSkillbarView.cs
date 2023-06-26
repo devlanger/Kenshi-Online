@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuSkillbarView : ViewUI
 {
@@ -10,6 +11,7 @@ public class MenuSkillbarView : ViewUI
     [SerializeField] private ContentList skillbookList;
     [SerializeField] private ContentList toolsList;
     [SerializeField] private SkillbarItem skillbookItem;
+    [SerializeField] private ScrollRect _scrollRect;
     
     private void Start()
     {
@@ -24,6 +26,7 @@ public class MenuSkillbarView : ViewUI
             bt.DragStart += (d) => { d.transform.parent = transform; };
             bt.abilityId = ability.id;
         }
+        //_scrollRect.ScrollToBottom();
     }
 
     private ContentList GetList(AbilityScriptable ability)
@@ -35,5 +38,17 @@ public class MenuSkillbarView : ViewUI
         }
 
         return list;
+    }
+}
+
+public static class ScrollRectExtensions
+{
+    public static void ScrollToTop(this ScrollRect scrollRect)
+    {
+        scrollRect.normalizedPosition = new Vector2(0, 1);
+    }
+    public static void ScrollToBottom(this ScrollRect scrollRect)
+    {
+        scrollRect.normalizedPosition = new Vector2(0, 0);
     }
 }

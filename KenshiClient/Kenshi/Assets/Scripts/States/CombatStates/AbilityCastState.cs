@@ -135,7 +135,7 @@ namespace StarterAssets.CombatStates
 
         protected override void OnExit(PlayerStateMachine stateMachine)
         {
-            if(!stateMachine.IsLocal)
+            if(!GameServer.IsServer && !stateMachine.IsLocal)
                 stateMachine.Target.GetComponent<Rigidbody>().isKinematic = true;
 
             var animator = stateMachine.Variables.Animator;

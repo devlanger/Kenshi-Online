@@ -11,6 +11,11 @@ public class SoundsListener : MonoBehaviour
     public VfxScriptable footstepDirt;
     private void OnFootstep(AnimationEvent animationEvent)
     {
+        if (GameServer.IsServer)
+        {
+            return;
+        }
+        
         if (animationEvent.animatorClipInfo.weight > 0.5f)
         {
             if (FootstepAudioClips.Length > 0)
@@ -25,6 +30,11 @@ public class SoundsListener : MonoBehaviour
 
     private void OnLand(AnimationEvent animationEvent)
     {
+        if (GameServer.IsServer)
+        {
+            return;
+        }
+
         if (animationEvent.animatorClipInfo.weight > 0.5f)
         {
             AudioSource.PlayClipAtPoint(LandingAudioClip, transform.position, FootstepAudioVolume);

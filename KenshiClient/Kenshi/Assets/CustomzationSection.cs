@@ -17,25 +17,34 @@ public class CustomzationSection : SerializedMonoBehaviour
     
     private void Awake()
     {
+        var l = new List<Tuple<ExtendedToggle, int>>();
         Toggle selected = null;
         foreach (var item in _customizationManager.items.Where(i => i.slot == part).ToList())
         {
             var inst = list.SpawnItem<ExtendedToggle>(itemPrefab);
-            inst.GetComponent<ExtendedToggle>().OnToggleOn.AddListener(() =>
-            {
-                _customizationView.WearItem(item.id);
-            });
             
             if (inst.TryGetComponent(out Toggle toggle))
             {
                 toggle.group = _group;
-                if (selected == null)
+                if (selected == null && PlayerController.GetCustomization().items.TryGetValue(part, out int id))
                 {
-                    selected = toggle;
+                    if (id == item.id)
+                    {
+                        selected = toggle;
+                    }
                 }
             }
+            l.Add(new (inst, item.id));
         }
         
         if(selected) selected.isOn = true;
+
+        foreach (var item in l)
+        {
+            item.Item1.GetComponent<ExtendedToggle>().OnToggleOn.AddListener(() =>
+            {
+                _customizationView.WearItem(item.Item2);
+            });
+        }
     }
 }
