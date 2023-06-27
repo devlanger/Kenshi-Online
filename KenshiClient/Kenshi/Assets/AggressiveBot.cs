@@ -81,7 +81,7 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
         _target = target;
     }
 
-    public static bool MoveBot(Player target, Vector3 direction, NavMeshAgent agent)
+    public static bool MoveBot(Player target, Vector3 destination, NavMeshAgent agent)
     {
         if (PlayerUtils.FlatDistance(target.transform.position, agent.destination) < 1)
         {
@@ -89,7 +89,7 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
             return false;
         }
 
-        Vector3 dir = direction - target.transform.position;
+        Vector3 dir = destination - target.transform.position;
         dir.y = 0;
         dir.Normalize();
 
@@ -108,13 +108,13 @@ public class BotChaseState : GenericFSMState<AggressiveBot.State>
 
         _agent.SetClosestDestination(_target.transform.position);
 
-        Vector3 dir = _agent.steeringTarget;
-        if (!_agent.enabled)
-        {
-            dir = _target.transform.position - stateMachine.Target.transform.position;
-            dir.y = 0;
-        }
-        MoveBot(stateMachine.Target, dir, _agent);
+        // Vector3 dir = _agent.steeringTarget;
+        // if (!_agent.enabled)
+        // {
+        //     dir = _target.transform.position - stateMachine.Target.transform.position;
+        //     dir.y = 0;
+        // }
+        MoveBot(stateMachine.Target, _agent.steeringTarget, _agent);
     }
     
     protected override void OnEnter(PlayerStateMachine stateMachine)
@@ -190,13 +190,7 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
         stateMachine.Target.Input.sprint = true;
         _agent.SetClosestDestination(destination);
 
-        Vector3 dir = _agent.steeringTarget;
-        if (!_agent.enabled)
-        {
-            dir = destination - stateMachine.Target.transform.position;
-            dir.y = 0;
-        }
-        BotChaseState.MoveBot(stateMachine.Target, dir, _agent);
+        BotChaseState.MoveBot(stateMachine.Target, _agent.steeringTarget, _agent);
     }
 
     protected override void OnInputUpdate(PlayerStateMachine stateMachine)

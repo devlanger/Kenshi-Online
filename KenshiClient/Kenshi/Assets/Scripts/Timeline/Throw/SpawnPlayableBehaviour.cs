@@ -48,17 +48,19 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
         {
             var p = owner.GetComponent<Player>();
             var abilityInfo = p.Input.abilityInfo;
+            Vector3 hitPoint = p.Input.HitPoint;
+
             Debug.Log("Throw");
             switch (data.spawnType)
             {
                 case Data.SpawnType.THROW:
                     GameObject inst = GameObject.Instantiate(data.throwable, abilityInfo.user.transform.position + 
-                                                                             (UnityEngine.Quaternion.LookRotation(abilityInfo.hitPoint - abilityInfo.user.transform.position) * data.spawnOffset),
-                        Quaternion.LookRotation(abilityInfo.hitPoint));
+                                                                             (UnityEngine.Quaternion.LookRotation(hitPoint - abilityInfo.user.transform.position) * data.spawnOffset),
+                        Quaternion.LookRotation(hitPoint));
 
                     inst.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
         
-                    Vector3 dir = (abilityInfo.hitPoint - inst.transform.position).normalized * data.speed;
+                    Vector3 dir = (hitPoint - inst.transform.position).normalized * data.speed;
         
                     inst.transform.rotation = Quaternion.LookRotation(dir);
                     inst.GetComponent<Rigidbody>().velocity = dir;
@@ -71,7 +73,7 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
                     break;
                 
                 case Data.SpawnType.AT_HIT_POINT:
-                    GameObject inst3 = GameObject.Instantiate(data.throwable, abilityInfo.hitPoint + (abilityInfo.user.transform.rotation * data.spawnOffset), Quaternion.identity);
+                    GameObject inst3 = GameObject.Instantiate(data.throwable, hitPoint + (abilityInfo.user.transform.rotation * data.spawnOffset), Quaternion.identity);
                     inst3.GetComponent<TriggerCollisionHandler>().owner = abilityInfo.user;
                     break;
                 

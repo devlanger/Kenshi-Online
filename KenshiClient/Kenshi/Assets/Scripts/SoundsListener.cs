@@ -9,7 +9,7 @@ public class SoundsListener : MonoBehaviour
 
     public AudioClip[] FootstepAudioClips;
     public VfxScriptable footstepDirt;
-    private void OnFootstep(AnimationEvent animationEvent)
+    public void OnFootstep(AnimationEvent animationEvent)
     {
         if (GameServer.IsServer)
         {
@@ -28,7 +28,7 @@ public class SoundsListener : MonoBehaviour
         VfxController.Instance.SpawnFx(footstepDirt, transform.position, Quaternion.identity);
     }
 
-    private void OnLand(AnimationEvent animationEvent)
+    public void OnLand(AnimationEvent animationEvent)
     {
         if (GameServer.IsServer)
         {

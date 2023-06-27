@@ -2,6 +2,7 @@ using System.IO;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer.Interfaces;
 using LiteNetLib.Utils;
+using UnityEngine;
 
 namespace Kenshi.Shared.Packets.GameServer
 {
@@ -13,13 +14,15 @@ namespace Kenshi.Shared.Packets.GameServer
         public float z;
         public byte rotY;
         public float speed;
-        
+        public Vector3 _inputHitPoint;
+
         public PositionUpdateRequestPacket()
         {
             
         }
         
-        public PositionUpdateRequestPacket(int playerId, float x, float y, float z, byte rotY, float speed)
+        public PositionUpdateRequestPacket(int playerId, float x, float y, float z, byte rotY, float speed,
+            Vector3 inputHitPoint)
         {
             this.playerId = playerId;
             this.x = x;
@@ -27,6 +30,7 @@ namespace Kenshi.Shared.Packets.GameServer
             this.z = z;
             this.rotY = rotY;
             this.speed = speed;
+            _inputHitPoint = inputHitPoint;
         }
 
         public override PacketId packetId => PacketId.PositionUpdateRequest;
@@ -41,6 +45,9 @@ namespace Kenshi.Shared.Packets.GameServer
             writer.Put(z);
             writer.Put(rotY);
             writer.Put(speed);
+            writer.Put(_inputHitPoint.x);
+            writer.Put(_inputHitPoint.y);
+            writer.Put(_inputHitPoint.z);
         }
         
         public override void Deserialize(NetDataReader reader)
@@ -53,6 +60,7 @@ namespace Kenshi.Shared.Packets.GameServer
             z = reader.GetFloat();
             rotY = reader.GetByte();
             speed = reader.GetFloat();
+            _inputHitPoint = new Vector3(reader.GetFloat(), reader.GetFloat(), reader.GetFloat());
         }
     }
 }

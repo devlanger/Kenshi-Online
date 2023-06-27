@@ -115,7 +115,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         var rotY = (byte)(_myPlayer.transform.eulerAngles.y / 5);
         var speed = _myPlayer.animator.GetFloat("Speed");
         
-        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY, speed);
+        var packet = new PositionUpdateRequestPacket(_myPlayerId, x, y, z, rotY, speed, _myPlayer.Input.HitPoint);
         SendPacket(MyPeer, packet, DeliveryMethod.Sequenced);
     }
     

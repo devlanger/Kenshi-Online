@@ -16,5 +16,6 @@ public class AbilityScriptable : DataObject<int>
     public Sprite icon;
     public AbilityData Data;
     public bool canCastInAir = true;
+    public bool useAbilitySignsAnimation = false;
     public string description;
 }

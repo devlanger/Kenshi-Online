@@ -29,7 +29,7 @@ public class GameServerEventsHandler : MonoBehaviour
         }
     }
 
-    private void ServerOnPlayerPositionUpdate(int arg1, Vector3 arg2)
+    private void ServerOnPlayerPositionUpdate(int arg1, Vector3 arg2, Vector3 inputHitPoint)
     {
         if (!_players.ContainsKey(arg1))
         {
@@ -37,6 +37,7 @@ public class GameServerEventsHandler : MonoBehaviour
         }
 
         _players[arg1].transform.position = arg2;
+        _players[arg1].Input.HitPoint = inputHitPoint;
     }
 
     private int lastBotId = 1000;

@@ -88,6 +88,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4376053830665056704, guid: bf5a01859ebe643ccb59058460362122,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3893294197879345259, guid: bf5a01859ebe643ccb59058460362122,
         type: 3}
       propertyPath: m_RootOrder
@@ -153,6 +158,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ServerPlayer(Bot)
       objectReference: {fileID: 0}
+    - target: {fileID: 5924514504045062219, guid: bf5a01859ebe643ccb59058460362122,
+        type: 3}
+      propertyPath: SprintSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 6545095662161360304, guid: bf5a01859ebe643ccb59058460362122,
         type: 3}
       propertyPath: m_IsActive
@@ -183,6 +193,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1654921469143713771}
+    - targetCorrespondingSourceObject: {fileID: 4416926081852918481, guid: bf5a01859ebe643ccb59058460362122,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7164115877063266211}
   m_SourcePrefab: {fileID: 100100000, guid: bf5a01859ebe643ccb59058460362122, type: 3}
 --- !u!1 &6013406905781073035 stripped
 GameObject:
@@ -199,19 +213,19 @@ NavMeshAgent:
   m_GameObject: {fileID: 6013406905781073035}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 100
   avoidancePriority: 50
-  m_AngularSpeed: 120
+  m_AngularSpeed: 360
   m_StoppingDistance: 0.2
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 2
+  m_ObstacleAvoidanceType: 3
 --- !u!136 &5621829501372691806
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -273,6 +287,22 @@ MonoBehaviour:
     Target: {fileID: 0}
     Variables: {fileID: 0}
   skillIds: 170000002600000024000000
+--- !u!114 &7164115877063266211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6013406905781073035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89c47e5d20fa64b1daab3949463d7067, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LandingAudioClip: {fileID: 0}
+  FootstepAudioVolume: 0.5
+  FootstepAudioClips: []
+  footstepDirt: {fileID: 11400000, guid: 97ace93702a4b4c75b0970962d55fe80, type: 2}
 --- !u!4 &6356893636227395121 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3893294197879345259, guid: bf5a01859ebe643ccb59058460362122,
