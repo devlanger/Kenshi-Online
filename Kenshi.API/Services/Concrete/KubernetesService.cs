@@ -14,15 +14,25 @@ public class KubernetesService
 {
     private readonly IConfiguration _configuration;
     private readonly IDockerClient _client;
+    private readonly ILogger<KubernetesService> _logger;
 
     private const int MAX_AVAILABLE_ROOMS = 5;
     
     public static string GetPodName(int port) => $"gameroom-{port}";
 
-    public KubernetesService(IConfiguration config)
+    public KubernetesService(IConfiguration config, ILogger<KubernetesService> logger)
     {
         _configuration = config;
-        _client = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
+        _logger = logger;
+        try
+        {
+            _client = new DockerClientConfiguration(new Uri("unix:///var/run/docker.sock")).CreateClient();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.ToString());
+            throw;
+        }
     }
 
     public async Task DeletePod(string id)
