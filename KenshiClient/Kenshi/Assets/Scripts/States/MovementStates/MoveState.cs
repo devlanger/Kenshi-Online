@@ -65,11 +65,21 @@ namespace StarterAssets
                     0.1f, stateMachine.Variables.GroundLayers))
             {
                 Vector3 forward = GetForwardTangent(velocity, hit.normal);
-                velocity = forward.normalized *
-                           (stateMachine.Target.Input.sprint ? tpsController.SprintSpeed : tpsController.MoveSpeed);
+                velocity = forward.normalized * GetSpeed(stateMachine);
             }
 
             return velocity;
+        }
+
+        private float GetSpeed(PlayerStateMachine stateMachine)
+        {
+            var speed = tpsController.MoveSpeed;
+            if (stateMachine.Target.Input.IsSprinting())
+            {
+                speed = tpsController.SprintSpeed;
+            }
+            
+            return speed;
         }
 
         public Vector3 GetForwardTangent(Vector3 moveDir, Vector3 up)

@@ -22,11 +22,6 @@ public class GameServerEventsHandler : MonoBehaviour
         server.OnPlayerSpawned += ServerOnOnPlayerSpawned;
         server.OnPlayerDespawned += ServerOnOnPlayerDespawned;
         server.OnPlayerPositionUpdate += ServerOnPlayerPositionUpdate;
-
-        foreach (var p in FindObjectsOfType<Player>())
-        {
-            AddBotToNetwork(p);
-        }
     }
 
     private void ServerOnPlayerPositionUpdate(int arg1, Vector3 arg2, Vector3 inputHitPoint)
@@ -55,7 +50,7 @@ public class GameServerEventsHandler : MonoBehaviour
         _players[arg1.Id].peer = arg1;
     }
     
-    private void AddBotToNetwork(Player p)
+    public void AddBotToNetwork(Player p)
     {
         AddPlayerToNetwork(lastBotId++, p);
         bots[p.NetworkId] = p;

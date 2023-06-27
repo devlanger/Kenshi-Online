@@ -30,6 +30,16 @@ namespace StarterAssets
 		public bool sprint;
 		public bool tab;
 
+		public bool IsSprinting()
+		{
+			var sprinting = sprint;
+			var sideOrForward = move.x != 0 && move.y >= 0 || move.y > 0;
+			
+			sprinting = sprinting && sideOrForward;
+
+			return sprinting;
+		}
+		
 		[Header("Movement Settings")]
 		public bool analogMovement;
 

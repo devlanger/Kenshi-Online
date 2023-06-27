@@ -80,7 +80,8 @@ public class PlayerController : MonoBehaviour
             case FSMStateId.move:
             case FSMStateId.jump:
             case FSMStateId.freefall:
-                _virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(_virtualCamera.m_Lens.FieldOfView, localPlayer.Input.sprint ? 75 : 60, 0.05f);
+                var wide = localPlayer.Input.IsSprinting();
+                _virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(_virtualCamera.m_Lens.FieldOfView, wide ? 75 : 60, 0.05f);
                 break;
             default:
                 _virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(_virtualCamera.m_Lens.FieldOfView, 60, 0.05f);

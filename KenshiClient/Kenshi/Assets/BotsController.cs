@@ -25,6 +25,7 @@ public class BotsController : MonoBehaviour
         {
             var inst = Instantiate(botPrefab, SpawnPointsController.Instance.GetRandomSpawnPoint(),
                 Quaternion.identity, botsParent);
+            handler.AddBotToNetwork(inst.GetComponent<Player>());
         }
     }
 }

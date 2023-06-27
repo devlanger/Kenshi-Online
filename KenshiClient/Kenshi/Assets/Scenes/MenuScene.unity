@@ -19655,7 +19655,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1223400716}
   m_HandleRect: {fileID: 1223400715}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -20578,62 +20578,62 @@ PrefabInstance:
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 65
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 65
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -60
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352427678065, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
@@ -22454,7 +22454,7 @@ MonoBehaviour:
   playButtonText: {fileID: 1723870880}
   timeText: {fileID: 430756115}
   matchmakingText: {fileID: 896768522}
-  useTestServer: 1
+  useTestServer: 0
 --- !u!1 &1718239036
 GameObject:
   m_ObjectHideFlags: 0
@@ -23295,7 +23295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -24567,7 +24567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -31542,7 +31542,7 @@ PrefabInstance:
     - target: {fileID: 5507396292425562198, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1972248.2
+      value: 1997867.6
       objectReference: {fileID: 0}
     - target: {fileID: 5676524939216836933, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
@@ -31852,7 +31852,7 @@ PrefabInstance:
     - target: {fileID: 6442575427398033601, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1962741.9
+      value: 1980614.4
       objectReference: {fileID: 0}
     - target: {fileID: 6450544556647172984, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}

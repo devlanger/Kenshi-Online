@@ -14,7 +14,7 @@ public class CustomizationItem : DataObject<int>
 [System.Serializable]
 public class CustomizationData
 {
-    public SerializedDictionary<ClothingPart, int> items = new SerializedDictionary<ClothingPart, int>();
+    public Dictionary<ClothingPart, int> items = new Dictionary<ClothingPart, int>();
 }
 
 public enum ClothingPart
