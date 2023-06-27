@@ -48,45 +48,45 @@ services:
     networks:
       - local-dev
 
-  grafana:
-    image: grafana/grafana
-    ports:
-      - 3001:3000
-    environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
-    volumes:
-      - grafana-data:/var/lib/grafana
-    networks:
-      - local-dev
+#  grafana:
+#    image: grafana/grafana
+#    ports:
+#      - 3001:3000
+#    environment:
+#      GF_SECURITY_ADMIN_USER: admin
+#      GF_SECURITY_ADMIN_PASSWORD: admin
+#    volumes:
+#      - grafana-data:/var/lib/grafana
+#    networks:
+#      - local-dev
     
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - 9091:9090
-    volumes:
-      - prometheus-data:/prometheus
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    restart: unless-stopped
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-    networks:
-      - local-dev
+#  prometheus:
+#    image: prom/prometheus
+#    ports:
+#      - 9091:9090
+#    volumes:
+#      - prometheus-data:/prometheus
+#      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#    restart: unless-stopped
+#    command:
+#      - "--config.file=/etc/prometheus/prometheus.yml"
+#    networks:
+#      - local-dev
   
-  elasticsearch:
-    image: elasticsearch:7.17.7
-    ports:
-      - 9201:9200
-      - 9301:9300
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    environment:
-      ES_JAVA_OPTS: "-Xms128m -Xms128m"
-      discovery.type: single-node
-      http.cors.enabled: true
-      http.cors.allow-origin: "*"
-    networks:
-      - local-dev
+#  elasticsearch:
+#    image: elasticsearch:7.17.7
+#    ports:
+#      - 9201:9200
+#      - 9301:9300
+#    volumes:
+#      - elasticsearch-data:/usr/share/elasticsearch/data
+#    environment:
+#      ES_JAVA_OPTS: "-Xms128m -Xms128m"
+#      discovery.type: single-node
+#      http.cors.enabled: true
+#      http.cors.allow-origin: "*"
+#    networks:
+#      - local-dev
         
 volumes:
   grafana-data:
