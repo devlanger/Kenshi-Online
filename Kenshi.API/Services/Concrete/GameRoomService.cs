@@ -6,10 +6,12 @@ public class GameRoomService : IGameRoomService
 {
     private readonly KubernetesService _dockerService;
     public static Dictionary<string, IGameRoomInstance> Rooms = new Dictionary<string, IGameRoomInstance>();
-    
-    public GameRoomService(KubernetesService dockerService)
+    private ILogger<GameRoomService> _logger;
+
+    public GameRoomService(KubernetesService dockerService, ILogger<GameRoomService> logger)
     {
         _dockerService = dockerService;
+        _logger = logger;
     }
 
     public void AddRoom(IGameRoomInstance room)
@@ -20,15 +22,23 @@ public class GameRoomService : IGameRoomService
 
     public void StartGameInstance(IGameRoomInstance roomData)
     {
-        var pod = _dockerService.CreatePod(new GameRoomPodSettings
+        try
         {
-            Port = roomData.Port, 
-            MapName = roomData.Settings.mapName
-        });
+            var pod = _dockerService.CreatePod(new GameRoomPodSettings
+            {
+                Port = roomData.Port, 
+                MapName = roomData.Settings.mapName
+            });
                     
-        if (pod.Result)
+            if (pod.Result)
+            {
+                roomData.Started = true;
+            }
+        }
+        catch (Exception e)
         {
-            roomData.Started = true;
+            _logger.LogError(e.ToString());
+            throw;
         }
     } 
     
