@@ -34,6 +34,10 @@ public class GameRoomService : IGameRoomService
             {
                 roomData.Started = true;
             }
+            else
+            {
+                _logger.LogError("Couldn't start pod.");
+            }
         }
         catch (Exception e)
         {
