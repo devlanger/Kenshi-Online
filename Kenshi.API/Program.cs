@@ -43,18 +43,14 @@ public class Program
         return builder.
             ConfigureAppConfiguration((ctx, config) =>
             {
-                //var builder = new ConfigurationBuilder()
-                //    .SetBasePath(Directory.GetCurrentDirectory());
-                //.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        
                 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 if (environment == "Development")
                 {
-                    config.AddJsonFile("appsettings.Development.json", optional: false);
+                    config.AddJsonFile("appsettings.Development.json", optional: false).AddEnvironmentVariables();
                 }
                 else if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
                 {
-                    config.AddJsonFile("appsettings.Docker.json", optional: false);
+                    config.AddJsonFile("appsettings.Docker.json", optional: false).AddEnvironmentVariables();
                 }
             }).
             ConfigureWebHostDefaults(x => x.UseStartup <Startup> ());

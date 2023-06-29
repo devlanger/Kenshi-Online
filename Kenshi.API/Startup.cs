@@ -26,11 +26,13 @@ public class Startup
     
     public void ConfigureServices(IServiceCollection services)
     {
+        string passwordString = $"Password={_configuration["MSSQL_SA_PASSWORD"]};";
+        Console.WriteLine(_configuration.GetConnectionString("master_database") + passwordString);
         services.AddDbContext<MasterDbContext>(options =>
-            options.UseSqlServer(_configuration.GetConnectionString("master_database")));
+            options.UseSqlServer(_configuration.GetConnectionString("master_database") + passwordString));
         
         services.AddDbContext<PlayerDbContext>(options =>
-            options.UseSqlServer(_configuration.GetConnectionString("player_database")));
+            options.UseSqlServer(_configuration.GetConnectionString("player_database") + passwordString));
 
         services.AddServices(_configuration);
         

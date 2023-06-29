@@ -17,6 +17,8 @@ services:
       context: .
       dockerfile: Kenshi.API/Dockerfile
     image: piotrlanger/kenshiapi
+    env_file:
+      - db.env
     ports:
       - 3330:3330
       - 3331:3331
