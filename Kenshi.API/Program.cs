@@ -20,18 +20,24 @@ public class Program
         using (var scope = host.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
-            try
+            for (int i = 0; i < 5; i++)
             {
-                var playerDbContext = services.GetRequiredService<PlayerDbContext>();
-                playerDbContext.Database.Migrate();
+                try
+                {
+                    var playerDbContext = services.GetRequiredService<PlayerDbContext>();
+                    playerDbContext.Database.Migrate();
 
-                var masterDbContext = services.GetRequiredService<MasterDbContext>();
-                masterDbContext.Database.Migrate();
-            }
-            catch (Exception ex)
-            {
-                // Handle any exceptions
-                Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
+                    var masterDbContext = services.GetRequiredService<MasterDbContext>();
+                    masterDbContext.Database.Migrate();
+
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // Handle any exceptions
+                    Console.WriteLine($"[{i}]An error occurred while migrating the database: " + ex.Message);
+                    Thread.Sleep(2000);
+                }
             }
         }
         

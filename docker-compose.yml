@@ -57,9 +57,7 @@ services:
   kenshirabbitmq:
     image: rabbitmq:3-management
     ports:
-      # AMQP protocol port
       - '5673:5672'
-      # HTTP management UI
       - '15673:15672'
     environment:
       HOST_PORT_RABBIT: 5672

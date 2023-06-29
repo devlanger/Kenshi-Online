@@ -43,7 +43,7 @@ public class RabbitConsumer : IHostedService
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Cant connect to rabbitmq [{_host}], retrying {i}/5");
+                Console.WriteLine($"Cant connect to rabbitmq [{_host}:{_port}], retrying {i}/5");
                 Thread.Sleep(5000);
             }
         }
