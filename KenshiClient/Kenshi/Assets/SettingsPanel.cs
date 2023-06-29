@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SettingsPanel : MonoBehaviour
@@ -11,11 +12,14 @@ public class SettingsPanel : MonoBehaviour
     [SerializeField] private TMP_Dropdown resolutionsDropdown;
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button applyButton;
+    [SerializeField] private Button logoutButton;
 
     public Dictionary<string, Resolution> res = new Dictionary<string, Resolution>();
 
     private void Awake()
     {
+        logoutButton.onClick.AddListener(LogoutClick);
+        
         fullscreenDropdown.ClearOptions();
         resolutionsDropdown.ClearOptions();
         
@@ -34,6 +38,13 @@ public class SettingsPanel : MonoBehaviour
         
         fullscreenDropdown.value = fullscreenDropdown.options.FindIndex(o => o.text == Screen.fullScreenMode.ToString());
         resolutionsDropdown.value = resolutionsDropdown.options.FindIndex(o => o.text == Screen.currentResolution.ToString());
+    }
+
+    private void LogoutClick()
+    {
+        PlayerPrefs.DeleteKey("login_username");
+        PlayerPrefs.DeleteKey("login_token");
+        SceneManager.LoadScene(0);
     }
 
     private void ApplySettings()

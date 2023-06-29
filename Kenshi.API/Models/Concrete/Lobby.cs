@@ -7,7 +7,7 @@ public class Lobby
 {
     public string Id { get; set; }
 
-    public List<UserService.User> Users { get; set; }
+    public List<GameUserService.GameUser> Users { get; set; }
     
     public DateTimeOffset WaitStartTime { get; set; }
 
@@ -18,7 +18,7 @@ public class Lobby
     public Lobby()
     {
         Id = Guid.NewGuid().ToString();
-        Users = new List<UserService.User>();
+        Users = new List<GameUserService.GameUser>();
         State = MatchmakingState.Idle;
     }
 }

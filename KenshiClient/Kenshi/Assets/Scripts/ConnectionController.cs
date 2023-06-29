@@ -38,9 +38,19 @@ public class ConnectionController : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            SceneManager.sceneLoaded += SceneManagerOnsceneLoaded;
             DontDestroyOnLoad(gameObject);
         }
         else
+        {
+            Destroy(gameObject);
+        }
+        
+    }
+
+    private void SceneManagerOnsceneLoaded(Scene arg0, LoadSceneMode arg1)
+    {
+        if (arg0.name == "LoginScene")
         {
             Destroy(gameObject);
         }
@@ -51,6 +61,11 @@ public class ConnectionController : MonoBehaviour
         if (Connection != null)
         {
             Connection.DisposeAsync();
+        }
+
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= SceneManagerOnsceneLoaded;
         }
     }
 
@@ -85,6 +100,8 @@ public class ConnectionController : MonoBehaviour
                 .WithUrl(useLocal ? $"http://localhost:3330/gameHub" : $"http://{host}:3330/gameHub", opts =>
                 {
                     opts.Headers["client_version"] = Application.version;
+                    opts.Headers["token"] = PlayerPrefs.GetString("login_token");
+                    opts.Headers["username"] = PlayerPrefs.GetString("login_username");
                 })
                 .Build();
 

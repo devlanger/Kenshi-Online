@@ -2,8 +2,10 @@ using Hangfire;
 using Kenshi.API.Extensions;
 using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
+using Kenshi.API.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using RabbitMQ.Client;
 
@@ -13,7 +15,27 @@ public class Program
 {
     public static void Main(string[] args) 
     {
-        CreateHostBuilder(args).Build().Run();
+        var host = CreateHostBuilder(args).Build();
+
+        using (var scope = host.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
+            {
+                var playerDbContext = services.GetRequiredService<PlayerDbContext>();
+                playerDbContext.Database.Migrate();
+
+                var masterDbContext = services.GetRequiredService<MasterDbContext>();
+                masterDbContext.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions
+                Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
+            }
+        }
+        
+        host.Run();
     }
     public static IHostBuilder CreateHostBuilder(string[] args)
     {

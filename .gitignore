@@ -10,3 +10,5 @@ KenshiClient/Kenshi_clone_1
 elasticsearch-data
 
 !Builds/Dockerfile
+db_password.txt
+db.env

@@ -2,6 +2,8 @@ using Docker.DotNet.Models;
 using k8s.Models;
 using Kenshi.API.Helpers;
 using Kenshi.API.Models;
+using Kenshi.API.Models.Abstract;
+using Kenshi.API.Models.Concrete;
 using Kenshi.API.Services;
 using Kenshi.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -17,9 +19,11 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     private readonly JwtTokenService _tokenService;
     private readonly IGameRoomService _gameRoomService;
     private readonly IMatchmakingService _matchmakingService;
-    private readonly UserService _userService;
+    private readonly GameUserService _gameUserService;
+    private readonly IUserService _userService;
     private readonly MetricsService _metricsService;
     private readonly ILogger<GameHub> _logger;
+    private readonly IRepository<PlayerConnection> _playerConnectionRepo;
     private readonly ConnectionMultiplexer redis;
 
     public const string CLIENT_VERSION = "0.11";
@@ -33,10 +37,11 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         IConfiguration config,
         JwtTokenService tokenService,
         IGameRoomService gameRoomService,
-        UserService userService,
+        GameUserService gameUserService,
         MetricsService metricsService,
         ILogger<GameHub> logger, 
-        IMatchmakingService matchmakingService)
+        IMatchmakingService matchmakingService, 
+        IRepository<PlayerConnection> playerConnectionRepo, IUserService userService)
     {   
         redis = ConnectionMultiplexer.Connect(RedisString(config));
 
@@ -44,10 +49,12 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         _config = config;
         _tokenService = tokenService;
         _gameRoomService = gameRoomService;
-        _userService = userService;
+        _gameUserService = gameUserService;
         _metricsService = metricsService;
         _logger = logger;
         _matchmakingService = matchmakingService;
+        _playerConnectionRepo = playerConnectionRepo;
+        _userService = userService;
     }
     
     public async Task DeleteGameRoom(string id)
@@ -137,7 +144,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             case "/w":
                 if (msgParams.Length > 2)
                 {
-                    if (UserService.IsUserLogged(msgParams[1]))
+                    if (GameUserService.IsUserLogged(msgParams[1]))
                     {
                         int length = msgParams[0].Length + msgParams[1].Length;
                         string content = message.Substring(length, message.Length);
@@ -173,7 +180,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         else
         {
             Console.WriteLine("Send lobby message");
-            await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", msg);
+            await Clients.Clients(GetUserConnectionIds(GameUserService.UsersInLobby)).SendAsync("ShowChatMessage", msg);
         }
     }
 
@@ -184,7 +191,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             return new List<string>();
         }
         
-        return UserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value.Id)?.ToList();
+        return GameUserService.userIds?.Where(v => users.Contains(v.Key))?.Select(v => v.Value.Id)?.ToList();
     }
 
     public List<string> GetPlayersInRoom(string port)
@@ -252,7 +259,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     
     public async Task StartMatchmaking()
     {
-        var user = _userService.GetUserByConnectionId(Context.ConnectionId);
+        var user = _gameUserService.GetUserByConnectionId(Context.ConnectionId);
         if (user == null)
         {
             return;
@@ -263,7 +270,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     public async Task StopMatchmaking()
     {
-        var user = _userService.GetUserByConnectionId(Context.ConnectionId);
+        var user = _gameUserService.GetUserByConnectionId(Context.ConnectionId);
         if (user == null)
         {
             return;
@@ -372,13 +379,16 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
 
     public async Task BroadcastLobbyUsersList()
     {
-        await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("UpdatePlayersList",
-            JsonConvert.SerializeObject(UserService.LoggedUsers));
+        await Clients.Clients(GetUserConnectionIds(GameUserService.UsersInLobby)).SendAsync("UpdatePlayersList",
+            JsonConvert.SerializeObject(GameUserService.LoggedUsers));
     }
     
     public override async Task OnConnectedAsync()
     {
         var remoteClientVersion = Context.GetHttpContext().Request.Headers["client_version"];
+        var requestToken = Context.GetHttpContext().Request.Headers["token"];
+        var requestUsername = Context.GetHttpContext().Request.Headers["username"];
+        
         if (remoteClientVersion != CLIENT_VERSION)
         {
             await Clients.Client(Context.ConnectionId).SendAsync("ShowConnectionMessage", $"Wrong client version [{remoteClientVersion}]. Download new one [{CLIENT_VERSION}]!");
@@ -386,44 +396,58 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             return;
         }
 
-        var username = $"User-{new Random().Next(10000).ToString()}";
-        Console.WriteLine($"{Context.ConnectionId}: {username} has joined");
-        Context.Items["username"] = username;
-        UserService.UsersInLobby.Add(username);
-        UserService.LoggedUsers.Add(username);
-        var user = new UserService.User
+        var userData = _userService.CheckToken(requestUsername.ToString(), requestToken.ToString());
+        
+        var user = new GameUserService.GameUser
         {
             Id = Context.ConnectionId,
-            Username = username,
+            Username = userData.User?.Username ?? $"User-{new Random().Next(10000).ToString()}",
             Customization = new Dictionary<int, int>(),
-            ConnectionId = Context.ConnectionId
+            ConnectionId = Context.ConnectionId,
+            User = userData.User
         };
         
-        UserService.userIds[username] = user;
+        Context.Items["username"] = user.Username;
+        GameUserService.UsersInLobby.Add(user.Username);
+        GameUserService.LoggedUsers.Add(user.Username);
+        
+        Console.WriteLine($"{Context.ConnectionId}: {user.Username} has joined");
+
+        user.Connection.LoginTime = DateTimeOffset.Now;
+        user.Connection.Username = user.Username;
+        user.Connection.Ip = Context.GetHttpContext().Connection.RemoteIpAddress.ToString();
+        
+        _playerConnectionRepo.Persist(user.Connection);
+        
+        GameUserService.userIds[user.Username] = user;
         
         _matchmakingService.AddUserToLobby(user, new Lobby());
         
         var token = _tokenService.GenerateToken(GetUsername());
         await BroadcastLobbyUsersList();
-        await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {username} has joined lobby");
+        await Clients.Clients(GetUserConnectionIds(GameUserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {user.Username} has joined lobby");
         await Clients.Client(Context.ConnectionId).SendAsync("SetConnectionData", JsonConvert.SerializeObject(new ConnectionDto
         {
             token = token,
-            nickname = username
+            nickname = user.Username
         }));
         
-        _metricsService.SetPlayersCount(UserService.LoggedUsers.Count);
+        _metricsService.SetPlayersCount(GameUserService.LoggedUsers.Count);
         _logger.LogInformation($"{GetUsername()} has logged in.");
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var username = GetUsername();
-        await Clients.Clients(GetUserConnectionIds(UserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {GetUsername()} has left lobby");
-        _matchmakingService.RemoveUserFromLobby(UserService.userIds[username]);
+        await Clients.Clients(GetUserConnectionIds(GameUserService.UsersInLobby)).SendAsync("ShowChatMessage", $"[SYS] {GetUsername()} has left lobby");
+        var user = GameUserService.userIds[username];
+        _matchmakingService.RemoveUserFromLobby(user);
 
-        UserService.UsersInLobby.Remove(username);
-        UserService.LoggedUsers.Remove(username);
+        GameUserService.UsersInLobby.Remove(username);
+        GameUserService.LoggedUsers.Remove(username);
+        
+        user.Connection.LogoutTime = DateTimeOffset.Now;
+        _playerConnectionRepo.Persist(user.Connection);
         
         string roomId = _gameRoomService.RemovePlayerFromRoom(username);
 
@@ -436,7 +460,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         await BroadcastLobbyUsersList();
 
         Console.WriteLine($"{Context.ConnectionId} has left");
-        _metricsService.SetPlayersCount(UserService.LoggedUsers.Count);
+        _metricsService.SetPlayersCount(GameUserService.LoggedUsers.Count);
         _logger.LogInformation($"{GetUsername()} has logged out.");
     }
 }

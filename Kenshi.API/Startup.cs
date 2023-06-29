@@ -6,12 +6,12 @@ using Hangfire.MemoryStorage;
 using Kenshi.API.Extensions;
 using Kenshi.API.Helpers;
 using Kenshi.API.Hub;
+using Kenshi.API.Models;
+using Kenshi.API.Models.Abstract;
+using Kenshi.API.Models.Concrete;
 using Kenshi.API.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 using Prometheus;
-using RabbitMQ.Client;
 
 namespace Kenshi.API;
 
@@ -26,8 +26,17 @@ public class Startup
     
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddServices(_configuration);
+        services.AddDbContext<MasterDbContext>(options =>
+            options.UseSqlServer(_configuration.GetConnectionString("master_database")));
+        
+        services.AddDbContext<PlayerDbContext>(options =>
+            options.UseSqlServer(_configuration.GetConnectionString("player_database")));
 
+        services.AddServices(_configuration);
+        
+        services.AddScoped(typeof(IRepository<>), typeof(MasterRepository<>));
+        services.AddScoped(typeof(IRepository<>), typeof(PlayerRepository<>));
+        
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

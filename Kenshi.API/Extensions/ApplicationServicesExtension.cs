@@ -20,9 +20,10 @@ public static class ApplicationServicesExtension
         services.AddTransient<JwtTokenService>();
         services.AddTransient<IGameRoomService, GameRoomService>();
         services.AddTransient<IMatchmakingService, MatchmakingService>();
-        services.AddTransient<UserService>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<GameUserService>();
         services.AddTransient<MetricsService>();
-        services.AddScoped<GameHub>();
+        services.AddTransient<GameHub>();
 
         services.AddSingleton<ILoggerProvider>(new NestLoggerProvider(new Uri(configuration["ConnectionStrings:elasticsearch"])));
         

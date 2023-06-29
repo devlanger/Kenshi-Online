@@ -21,7 +21,7 @@ public class EscapeView : ViewUI
     private void ExitLobbyClick()
     {
         _inputController.SetState(UIInputController.State.IDLE);
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     private void ResumeClick()

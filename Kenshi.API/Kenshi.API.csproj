@@ -10,12 +10,19 @@
 
     <ItemGroup>
         <PackageReference Include="AgonesSDK" Version="1.28.0" />
+        <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
         <PackageReference Include="Docker.DotNet" Version="3.125.12" />
         <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
         <PackageReference Include="Hangfire.AspNetCore" Version="1.8.0-rc2" />
         <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
         <PackageReference Include="KubernetesClient" Version="10.0.1" />
+        <PackageReference Include="MediatR" Version="12.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
         <PackageReference Include="Microsoft.Identity.Web" Version="1.16.0" />
         <PackageReference Include="NEST" Version="7.17.5" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
@@ -35,6 +42,10 @@
     <ItemGroup>
       <ProjectReference Include="..\Kenshi.Backend.Shared\Kenshi.Backend.Shared.csproj" />
       <ProjectReference Include="..\Kenshi.Shared\Kenshi.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Migrations" />
     </ItemGroup>
 
 </Project>

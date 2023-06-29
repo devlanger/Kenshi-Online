@@ -1,11 +1,14 @@
 using Kenshi.Shared.Models;
 using Newtonsoft.Json;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
 {
     private ConnectionController connectionController;
+    
+    [SerializeField] private TextMeshProUGUI usernameText;
     
     [SerializeField] private Button joinGameButton;
     [SerializeField] private Button exitGameButton;
@@ -34,6 +37,11 @@ public class MenuUI : MonoBehaviour
         refreshGameButton.onClick.AddListener(RefreshGameClick);
         
         connectionController.OnUsersUpdated += ConnectionControllerOnOnUsersUpdated;
+
+        if (PlayerPrefs.HasKey("login_username"))
+        {
+            usernameText.text = PlayerPrefs.GetString("login_username");
+        }
     }
 
     private void OnEnable()

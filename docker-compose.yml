@@ -9,7 +9,7 @@ services:
     depends_on:
       - redis
       - kenshirabbitmq
-#      - elasticsearch
+      - db-azure
     restart: on-failure
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -32,6 +32,23 @@ services:
       - "6379:6379"
     volumes:
       - ./data:/data
+    networks:
+      - local-dev
+    
+  db-azure:
+    image: mcr.microsoft.com/azure-sql-edge
+    hostname: db-azure
+    env_file:
+      - db.env
+    environment:
+      MSSQL_USER: "SA"
+      MSSQL_PID: "DEVELOPER"
+      ACCEPT_EULA: "1"
+    volumes:
+      - db_data:/var/opt/mssql
+    restart: unless-stopped
+    ports:
+      - "1434:1433"
     networks:
       - local-dev
     
@@ -94,4 +111,6 @@ volumes:
   prometheus-data:
     driver: local
   elasticsearch-data:
+    driver: local
+  db_data:
     driver: local

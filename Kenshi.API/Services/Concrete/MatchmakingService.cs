@@ -63,26 +63,26 @@ public class MatchmakingService : IMatchmakingService
         }
     }
     
-    public void AddUserToLobby(UserService.User user, Lobby lobby)
+    public void AddUserToLobby(GameUserService.GameUser gameUser, Lobby lobby)
     {
-        RemoveUserFromLobby(user);
+        RemoveUserFromLobby(gameUser);
 
-        user.Lobby = lobby;
-        user.Lobby.Users.Add(user);
+        gameUser.Lobby = lobby;
+        gameUser.Lobby.Users.Add(gameUser);
         
         Lobbies.Add(lobby);
-        _logger.LogInformation($"{user.Username} has joined lobby with id {lobby.Id}");
+        _logger.LogInformation($"{gameUser.Username} has joined lobby with id {lobby.Id}");
     }
 
-    public void RemoveUserFromLobby(UserService.User user)
+    public void RemoveUserFromLobby(GameUserService.GameUser gameUser)
     {
-        var lobby = user.Lobby;
-        if (user.Lobby is null) return;
+        var lobby = gameUser.Lobby;
+        if (gameUser.Lobby is null) return;
         
-        lobby.Users.Remove(user);
-        if(user.Lobby.Users.Count == 0) Lobbies.Remove(user.Lobby);
+        lobby.Users.Remove(gameUser);
+        if(gameUser.Lobby.Users.Count == 0) Lobbies.Remove(gameUser.Lobby);
 
-        _logger.LogInformation($"{user.Username} has left lobby with id {lobby.Id}");
+        _logger.LogInformation($"{gameUser.Username} has left lobby with id {lobby.Id}");
     }
 
     public void StartLobbyMatchmaking(Lobby lobby)

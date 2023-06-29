@@ -41,7 +41,7 @@ public class GameRoomInstance : IGameRoomInstance
             return;
         }
         
-        UserService.UsersInLobby.Remove(username);
+        GameUserService.UsersInLobby.Remove(username);
         Players.Add(username);
     }
 
@@ -52,7 +52,7 @@ public class GameRoomInstance : IGameRoomInstance
             return;
         }
         
-        UserService.UsersInLobby.Add(username);
+        GameUserService.UsersInLobby.Add(username);
         Players.Remove(username);
     }
 }
