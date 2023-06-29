@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameModeController : MonoBehaviour
 {
-    public DeathmatchMode Mode;
+    public GameMode Mode;
     
     public static GameModeController Instance { get; set; }
     
