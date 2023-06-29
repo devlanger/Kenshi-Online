@@ -54,7 +54,11 @@ public class Startup
         //}
 
         //app.UseHttpsRedirection();
-        
+        if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+        {
+            app.UseHttpsRedirection();
+        }
+
         app.UseMetricServer();
         app.UseHttpMetrics();
         

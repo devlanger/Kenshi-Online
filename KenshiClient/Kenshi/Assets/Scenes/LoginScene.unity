@@ -434,6 +434,16 @@ PrefabInstance:
       propertyPath: url
       value: http://localhost:3330
       objectReference: {fileID: 0}
+    - target: {fileID: 5470164442601523306, guid: 7b9cf6c01b86743c3a20991ed631e32a,
+        type: 3}
+      propertyPath: remoteUrl
+      value: https://209.38.227.113:3331
+      objectReference: {fileID: 0}
+    - target: {fileID: 5470164442601523306, guid: 7b9cf6c01b86743c3a20991ed631e32a,
+        type: 3}
+      propertyPath: useLocalUrl
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
