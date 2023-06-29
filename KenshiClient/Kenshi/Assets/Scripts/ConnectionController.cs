@@ -20,8 +20,10 @@ public class ConnectionController : MonoBehaviour
     public static ConnectionController Instance;
 
     private string token;
-    public bool useLocal = true;
-    public string host = "127.0.0.1";
+    [SerializeField] private ClientConnectionSettings _settings;
+
+    public bool useLocal => _settings.useLocalServer;
+    public string host => _settings.gameHubHost;
     public ConnectionDto connectionDto;
     public static string Nickname => Instance.connectionDto.nickname;
     public static string Token => Instance.connectionDto.token;
@@ -105,7 +107,7 @@ public class ConnectionController : MonoBehaviour
                 })
                 .Build();
 
-            NetworkCommandProcessor.RegisterCommand("connect", (string[] param) => { SceneManager.LoadScene(1); });
+            NetworkCommandProcessor.RegisterCommand("connect", (string[] param) => { SceneManager.LoadScene("GameRoomScene"); });
 
             RegisterStringEventListener("UpdatePlayersList");
             RegisterStringEventListener("ListGameRooms");

@@ -13,7 +13,7 @@ namespace StarterAssets
         public static CombatController Instance;
 
         public event Action<StatEventPacket.Data> OnStatsChanged;
-        public event Action<Player> OnPlayerDeath;
+        public event Action<Player, Player> OnPlayerDeath;
         
         private void Awake()
         {
@@ -79,9 +79,9 @@ namespace StarterAssets
             });
         }
 
-        public void DeadPlayer(Player hitTarget)
+        public void DeadPlayer(Player attacker, Player hitTarget)
         {
-            OnPlayerDeath?.Invoke(hitTarget);
+            OnPlayerDeath?.Invoke(attacker, hitTarget);
         }
     }
 }

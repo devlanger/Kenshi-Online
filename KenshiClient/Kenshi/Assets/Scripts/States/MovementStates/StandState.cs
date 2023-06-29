@@ -11,7 +11,8 @@ namespace StarterAssets
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+            if(stateMachine.Target.Input.CameraForward != Vector3.zero)
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
         }
 
         protected override void OnFixedUpdate(PlayerStateMachine stateMachine)

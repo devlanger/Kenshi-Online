@@ -4,10 +4,19 @@ using UnityEngine;
 
 public class GameModeController : MonoBehaviour
 {
+    public DeathmatchMode Mode;
+    
+    public static GameModeController Instance { get; set; }
+    
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
-        GameMode mode = new DeathmatchMode();
-        mode.Initialize(this);
+        Mode = new DeathmatchMode();
+        Mode.Initialize(this);
     }
 
     public void FinishGame()

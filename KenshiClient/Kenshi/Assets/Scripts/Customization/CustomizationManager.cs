@@ -20,6 +20,10 @@ public class CustomizationManager : ItemsManager<CustomizationItem>
         i = null;
         return false;
     }
+
+    public List<CustomizationItem> GetAll(ClothingPart part) => 
+        items.Where(i => i.slot == part)
+            .ToList();
 }
 
 public class ItemsManager<T> : SerializedScriptableObject where T : DataObject<int>

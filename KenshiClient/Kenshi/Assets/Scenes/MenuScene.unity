@@ -7186,7 +7186,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.7173857, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.7197266, y: -1.5853271}
+  m_AnchoredPosition: {x: -1.7197266, y: -1.5853119}
   m_SizeDelta: {x: 0.4399414, y: -4.5393066}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &483881899
@@ -10728,7 +10728,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.15100001, y: 1}
-  m_AnchoredPosition: {x: -87.12244, y: -0.03552246}
+  m_AnchoredPosition: {x: -87.12207, y: -0.03552246}
   m_SizeDelta: {x: -174.24298, y: 0.07098389}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &770855220
@@ -20685,62 +20685,62 @@ PrefabInstance:
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 65
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876350867007850, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 65
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352189030869, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -60
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352427678065, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
@@ -22561,7 +22561,8 @@ MonoBehaviour:
   playButtonText: {fileID: 1723870880}
   timeText: {fileID: 430756115}
   matchmakingText: {fileID: 896768522}
-  useTestServer: 0
+  _clientConnectionSettings: {fileID: 11400000, guid: cb79525acabfc4bd580a9dbab182bf57,
+    type: 2}
 --- !u!1 &1718239036
 GameObject:
   m_ObjectHideFlags: 0
@@ -23402,7 +23403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -24674,7 +24675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 2
+    SerializedFormat: 0
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -27162,8 +27163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aee32497dca974af2a8d8cc47f617d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useLocal: 0
-  host: 209.38.227.113
+  _settings: {fileID: 11400000, guid: cb79525acabfc4bd580a9dbab182bf57, type: 2}
   LoggedUsers: []
 --- !u!4 &2032751579
 Transform:
@@ -31675,7 +31675,7 @@ PrefabInstance:
     - target: {fileID: 5507396292425562198, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3078688.2
+      value: 4348534.5
       objectReference: {fileID: 0}
     - target: {fileID: 5676524939216836933, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
@@ -31985,7 +31985,7 @@ PrefabInstance:
     - target: {fileID: 6442575427398033601, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3051530
+      value: 4312674.5
       objectReference: {fileID: 0}
     - target: {fileID: 6450544556647172984, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
@@ -33414,7 +33414,7 @@ PrefabInstance:
     - target: {fileID: 2156876352450019134, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -1.5865479
+      value: -1.5865326
       objectReference: {fileID: 0}
     - target: {fileID: 2156876352450019134, guid: bc085298c9166467c97be40c6b197a30,
         type: 3}

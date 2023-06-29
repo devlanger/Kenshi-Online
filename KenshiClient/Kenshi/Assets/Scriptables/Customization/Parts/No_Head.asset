@@ -24,3 +24,4 @@ MonoBehaviour:
   id: 4
   part: {fileID: 0}
   slot: 1
+  icon: {fileID: 21300000, guid: 7f4e4e060438943c9a9fe30d89e78506, type: 3}

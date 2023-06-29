@@ -437,7 +437,7 @@ PrefabInstance:
     - target: {fileID: 5470164442601523306, guid: 7b9cf6c01b86743c3a20991ed631e32a,
         type: 3}
       propertyPath: remoteUrl
-      value: https://209.38.227.113:3331
+      value: http://209.38.227.113:3330
       objectReference: {fileID: 0}
     - target: {fileID: 5470164442601523306, guid: 7b9cf6c01b86743c3a20991ed631e32a,
         type: 3}

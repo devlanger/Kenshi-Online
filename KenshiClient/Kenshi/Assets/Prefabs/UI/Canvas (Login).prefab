@@ -1256,6 +1256,8 @@ MonoBehaviour:
   loginButton: {fileID: 3232630336090573493}
   _loginMessagePanel: {fileID: 4360216283535131570}
   _loginPanel: {fileID: 1435363821396869812}
+  _clientConnectionSettings: {fileID: 11400000, guid: cb79525acabfc4bd580a9dbab182bf57,
+    type: 2}
   useLocalUrl: 1
   localUrl: http://localhost:3330
   remoteUrl: http://209.38.227.113:3330

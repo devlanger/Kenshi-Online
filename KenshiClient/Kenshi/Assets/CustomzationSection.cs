@@ -14,6 +14,8 @@ public class CustomzationSection : SerializedMonoBehaviour
     [SerializeField] private ContentList list;
     [SerializeField] private ExtendedToggle itemPrefab;
     [SerializeField] private ToggleGroup _group;
+
+    public ClothingPart Part => part;
     
     private void Awake()
     {
@@ -22,6 +24,10 @@ public class CustomzationSection : SerializedMonoBehaviour
         foreach (var item in _customizationManager.items.Where(i => i.slot == part).ToList())
         {
             var inst = list.SpawnItem<ExtendedToggle>(itemPrefab);
+            if (inst.TryGetComponent(out CustomizationToggle ct))
+            {
+                ct.SetData(item);
+            }
             
             if (inst.TryGetComponent(out Toggle toggle))
             {
@@ -46,5 +52,11 @@ public class CustomzationSection : SerializedMonoBehaviour
                 _customizationView.WearItem(item.Item2);
             });
         }
+    }
+
+    public void SelectItem(int itemId)
+    {
+        var i = list.List.FirstOrDefault(l => l.GetComponent<CustomizationToggle>()?.Data?.id == itemId);
+        i.GetComponent<Toggle>().isOn = true;
     }
 }

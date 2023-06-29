@@ -50,7 +50,6 @@ public class SpawnPlayableBehaviour : PlayableBehaviour
             var abilityInfo = p.Input.abilityInfo;
             Vector3 hitPoint = p.Input.HitPoint;
 
-            Debug.Log("Throw");
             switch (data.spawnType)
             {
                 case Data.SpawnType.THROW:

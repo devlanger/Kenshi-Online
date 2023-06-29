@@ -26,6 +26,17 @@ namespace StarterAssets
 
         public event Action<FSMState> OnStateEnter;
 
+        public float GetSpeed(PlayerStateMachine stateMachine)
+        {
+            var speed = Target.tps.MoveSpeed;
+            if (stateMachine.Target.Input.IsSprinting())
+            {
+                speed = Target.tps.SprintSpeed;
+            }
+            
+            return speed;
+        }
+        
         public void ChangeState(FSMState newState, float delayTime = 0)
         {
             try

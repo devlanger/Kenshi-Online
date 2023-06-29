@@ -108,7 +108,7 @@ namespace Kenshi.Utils
                 if (response.dead && hitTarget.playerStateMachine.CurrentState.Id != FSMStateId.dead)
                 {
                     hitTarget.playerStateMachine.ChangeState(new DeadState());
-                    CombatController.Instance.DeadPlayer(hitTarget);
+                    CombatController.Instance.DeadPlayer(data.attacker, hitTarget);
                 }
             }
 

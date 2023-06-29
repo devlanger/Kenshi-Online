@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Kenshi.Shared.Packets.GameServer;
+using LiteNetLib;
 using StarterAssets;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -98,6 +100,7 @@ public class UIInputController : MonoBehaviour
                 _chatView.SetState(true);
                 break;
             case State.SCORES:
+                GameRoomNetworkController.SendPacketToServer(new UpdateFsmStatePacket(), DeliveryMethod.ReliableSequenced);
                 _scoresView.Activate();
                 break;
         }

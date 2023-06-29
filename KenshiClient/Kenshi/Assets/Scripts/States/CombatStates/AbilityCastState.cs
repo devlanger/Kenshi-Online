@@ -61,7 +61,8 @@ namespace StarterAssets.CombatStates
 
         protected override void OnInputUpdate(PlayerStateMachine stateMachine)
         {
-            stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
+            if(stateMachine.Target.Input.CameraForward != Vector3.zero)
+                stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
         }
 
         protected override void OnEnter(PlayerStateMachine stateMachine)
@@ -127,7 +128,8 @@ namespace StarterAssets.CombatStates
             }
             else
             {
-                stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
+                if(stateMachine.Target.Input.CameraForward != Vector3.zero)
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(stateMachine.Target.Input.CameraForward); 
             }
 
             stateMachine.Target.transform.position = data.startPos; 

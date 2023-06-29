@@ -18,15 +18,15 @@ public class LoginUI : MonoBehaviour
     [SerializeField] private Button loginButton;
     [SerializeField] private LoginMessagePanel _loginMessagePanel;
     [SerializeField] private GameObject _loginPanel;
+    [SerializeField] private ClientConnectionSettings _clientConnectionSettings;
 
-    [SerializeField] private bool useLocalUrl = true;
-    
-    [SerializeField] private string localUrl = "http://localhost:3330";
-    [SerializeField] private string remoteUrl = "";
+    private bool useLocalUrl => _clientConnectionSettings.useLocalLoginServer;
+    private string localUrl => _clientConnectionSettings.loginLocalUrl;
+    private string remoteUrl => _clientConnectionSettings.loginRemoteUrl;
     
     public string _url { get; private set; } = "http://localhost:3330";
-    [SerializeField] private string loginUrl = "/api/login";
-    [SerializeField] private string checkTokenUrl = "/api/check_token";
+    private string loginUrl => _clientConnectionSettings.loginApiEndpoint;
+    private string checkTokenUrl => _clientConnectionSettings.checkTokenApiEndpoint;
 
     private int selectedInputField = 0;
     

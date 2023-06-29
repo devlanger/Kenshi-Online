@@ -11,6 +11,8 @@ public class ContentList : MonoBehaviour
     [SerializeField] private bool removeChildren = true;
     private List<GameObject> list = new List<GameObject>();
 
+    public List<GameObject> List => list;
+
     [SerializeField] private List<GameObject> ignoredItems = new List<GameObject>();
 
     private void Awake()

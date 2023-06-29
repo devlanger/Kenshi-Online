@@ -11,7 +11,9 @@ public class PlayPanelController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI playButtonText;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private GameObject matchmakingText;
-    [SerializeField] private bool useTestServer = false;
+    [SerializeField] private ClientConnectionSettings _clientConnectionSettings;
+    
+    private bool UseTestServerOnPlayButton => _clientConnectionSettings.useTestServerOnPlayButton;
 
     private bool isSearching = false;
     private ConnectionController _connectionController;
@@ -70,7 +72,7 @@ public class PlayPanelController : MonoBehaviour
         //
         // SetState();
 
-        if (useTestServer)
+        if (UseTestServerOnPlayButton)
         {
             ConnectionControllerOnOnMessageReceived("SetMatchmakingState", "true");
             FindObjectOfType<ConnectionController>().ExecuteCommand($"join_game gameroom-5001");

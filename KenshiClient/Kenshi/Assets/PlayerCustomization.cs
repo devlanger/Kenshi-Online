@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -62,5 +63,30 @@ public class PlayerCustomization : SerializedMonoBehaviour
         }
         
         return null;
+    }
+
+    private CustomizationItem GetRandomItem(ClothingPart part)
+    {
+        var items = _customizationManager.GetAll(part);
+        return items.Any() ? items[UnityEngine.Random.Range(0, items.Count)] : null;
+    }
+    
+    public void Randomize()
+    {
+        var data = new CustomizationData()
+        {
+            items = new Dictionary<ClothingPart, int>()
+        };
+        
+        foreach (ClothingPart slot in Enum.GetValues(typeof(ClothingPart)))
+        {
+            var c = GetRandomItem(slot);
+            if (c != null)
+            {
+                data.items[slot] = c.id;
+            }
+        }
+        
+        SetCustomization(data);
     }
 }

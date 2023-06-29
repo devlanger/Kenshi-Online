@@ -32,8 +32,11 @@ namespace StarterAssets
             }
             else
             {
-                stateMachine.Target.transform.rotation =
-                    Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+                if (stateMachine.Target.Input.CameraForward != Vector3.zero)
+                {
+                    stateMachine.Target.transform.rotation =
+                        Quaternion.LookRotation(stateMachine.Target.Input.CameraForward);
+                }
             }
         }
 

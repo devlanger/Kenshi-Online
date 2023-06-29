@@ -28,9 +28,11 @@ public class Player : Mob
     public PlayerStateMachine movementStateMachine;
     public Animator animator;
     public NavMeshAgent agent;
-
+    
     public NetPeer peer;
     public Dictionary<StatEventPacket.StatId, object> stats = new Dictionary<StatEventPacket.StatId, object>();
+
+    public string Username => (string)stats[StatEventPacket.StatId.username];
     
     private void Awake()
     {

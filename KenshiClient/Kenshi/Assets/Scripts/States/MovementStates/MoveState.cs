@@ -29,14 +29,17 @@ namespace StarterAssets
 
             Vector3 forward = stateMachine.Target.Input.CameraForward;
             Vector3 toOther = velocity;
-            
-            if (velocity != Vector3.zero && Vector3.Dot(forward, toOther) > -0.1f)
+
+            if (velocity != Vector3.zero)
             {
-                stateMachine.Target.transform.rotation = Quaternion.LookRotation(velocity);
-            }
-            else
-            {
-                stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
+                if (Vector3.Dot(forward, toOther) > -0.1f)
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(velocity);
+                }
+                else
+                {
+                    stateMachine.Target.transform.rotation = Quaternion.LookRotation(-velocity);
+                }
             }
         }
 
@@ -71,7 +74,7 @@ namespace StarterAssets
             return velocity;
         }
 
-        private float GetSpeed(PlayerStateMachine stateMachine)
+        public float GetSpeed(PlayerStateMachine stateMachine)
         {
             var speed = tpsController.MoveSpeed;
             if (stateMachine.Target.Input.IsSprinting())

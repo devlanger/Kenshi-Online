@@ -187,7 +187,7 @@ public class GameRoomLobby : ViewUI
     IEnumerator LoadYourAsyncScene()
     {
         LoadingController.Instance.Activate();
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(1);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("GameRoomScene");
 
         while (!asyncLoad.isDone)
         {

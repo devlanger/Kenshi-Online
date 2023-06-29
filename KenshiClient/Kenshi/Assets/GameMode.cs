@@ -1,5 +1,6 @@
 namespace DefaultNamespace
 {
+    [System.Serializable]
     public abstract class GameMode
     {
         public virtual GameType GameType { get; }

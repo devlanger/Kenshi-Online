@@ -9,6 +9,7 @@ public class CustomizationItem : DataObject<int>
 {
     public GameObject part;
     public ClothingPart slot;
+    public Sprite icon;
 }
 
 [System.Serializable]

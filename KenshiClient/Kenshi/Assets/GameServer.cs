@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Claims;
+using DefaultNamespace;
 using Docker.DotNet;
 using Kenshi.Backend.Shared.Models;
 using Kenshi.Shared.Enums;
@@ -117,17 +118,39 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                 case PacketId.LoginRequest:
                     var playerId = peer.Id;
                     var claims = GetUserData(playerId, out var data);
-                    SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
+                    var loginPacket = SendablePacket.Deserialize<LoginRequestPacket>(packetId, reader);
                     SendPacket(playerId, new LoginResponsePacket(playerId, new LoginResponsePacket.Data
                     {
                         mapId = MapLoader.MapToBeLoaded
                     }), DeliveryMethod.ReliableOrdered);
-                    SendPacketToAll(new LoginEventPacket(playerId, claims.Name), DeliveryMethod.ReliableOrdered);
+                    
+                    SendPacketToAll(new LoginEventPacket(new LoginEventPacket.LoginData()
+                    {
+                        _playerId = playerId,
+                        username = claims.Name,
+                        isBot = false
+                    }), DeliveryMethod.ReliableOrdered);
+                    
                     foreach (var p in _players)
                     {
-                        SendPacket(playerId, new LoginEventPacket(p.Key, claims.Name), DeliveryMethod.ReliableOrdered);
+                        SendPacket(playerId, new LoginEventPacket(new LoginEventPacket.LoginData()
+                        {
+                            _playerId = p.Key,
+                            username = claims.Name,
+                            isBot = p.Value.IsBot
+                        }), DeliveryMethod.ReliableOrdered);
                     }
 
+                    UnityMainThreadDispatcher.Instance().Enqueue(() =>
+                    {
+                        var mode = FindObjectOfType<GameModeController>().Mode;
+                        switch (mode)
+                        {
+                            case DeathmatchMode m:
+                                SendPacket(playerId, new DeathmatchModeEventPacket(m), DeliveryMethod.ReliableOrdered);
+                                break;
+                        }
+                    });
                     break;
                 case PacketId.PositionUpdateRequest:
                     var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);

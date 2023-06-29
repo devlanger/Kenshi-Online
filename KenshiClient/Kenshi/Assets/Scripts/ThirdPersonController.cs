@@ -231,8 +231,13 @@ namespace StarterAssets
                 _speed = targetSpeed;
             }
 
-            Vector3 targetDirection = Quaternion.LookRotation(_input.CameraForward) * _input.InputDirection;
+            Vector3 targetDirection = Vector3.zero;
 
+            if (_input.CameraForward != Vector3.zero)
+            {
+                targetDirection = Quaternion.LookRotation(_input.CameraForward) * _input.InputDirection;
+            }
+            
             var velocity = (targetDirection.normalized * _speed) +
                        new Vector3(0.0f, _verticalVelocity, 0.0f);
             return velocity;

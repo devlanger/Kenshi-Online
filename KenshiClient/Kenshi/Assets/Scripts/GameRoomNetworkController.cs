@@ -143,7 +143,7 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         PacketId packetId = (PacketId)packet.packetId;
         if (packetId != PacketId.PositionUpdateEvent)
         {
-            Debug.Log($"Send to many [{packetId}]");
+            //Debug.Log($"Send to many [{packetId}]");
         }
 
         packet.writer.Put((byte)packetId);
@@ -212,11 +212,15 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
 
                 UnityMainThreadDispatcher.Instance().Enqueue(() =>
                 {
-                    Debug.Log("OtherPlayerId: " + packet._playerId);
-                    var p = SpawnOtherPlayer(packet._playerId);
+                    Debug.Log("OtherPlayerId: " + packet.data._playerId);
+                    var p = SpawnOtherPlayer(packet.data._playerId);
                     if (p != null)
                     {
-                        p.SetStat(StatEventPacket.StatId.username, packet.username);
+                        p.SetStat(StatEventPacket.StatId.username, packet.data.username);
+                        if (packet.data.isBot)
+                        {
+                            p.GetComponentInChildren<PlayerCustomization>().Randomize();
+                        }
                     }
                 });
             }
@@ -227,8 +231,8 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
             }
             else if (packetId == PacketId.DeathmatchModeEnd)
             {
-                var packet = SendablePacket.Deserialize<DeathmatchModeEndPacket>(packetId, reader);
-                FinishDeathmatchMode(packet);
+                var packet = SendablePacket.Deserialize<DeathmatchModeEventPacket>(packetId, reader);
+                UpdateDeathmatchMode(packet);
             }
             else if (packetId == PacketId.LogoutEvent)
             {
@@ -340,12 +344,26 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
     }
 
-    private void FinishDeathmatchMode(DeathmatchModeEndPacket packet)
+    private void UpdateDeathmatchMode(DeathmatchModeEventPacket packet)
     {
         var ui = FindObjectOfType<DeathmatchCanvas>(true);
-        if (ui == null) return;
+        if (ui != null)
+        {
+            if (packet._data.finished)
+            {
+                ui.Finish(packet._data);
+            }
+            else
+            {
+                ui.SetScore(packet._data.currentScore, packet._data.scoreToFinish);
+            }
+        }
         
-        ui.gameObject.SetActive(true);
+        var scoresUi = FindObjectOfType<ScoresView>(true);
+        if (scoresUi != null)
+        {
+            scoresUi.SetScores(packet._data);
+        }
     }
 
     private Player SpawnOtherPlayer(int playerId)

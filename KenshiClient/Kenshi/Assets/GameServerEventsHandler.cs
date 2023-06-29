@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using UnityEngine;
@@ -16,6 +17,10 @@ public class GameServerEventsHandler : MonoBehaviour
     public Dictionary<int, Player> _players = new Dictionary<int, Player>();
     public Dictionary<int, Player> bots = new Dictionary<int, Player>();
 
+    public List<Player> GetAllPlayers() => _players.Values.ToList();
+
+    public event Action<Player> OnPlayerJoined;
+    
     private void Awake()
     {
         Instance = this;
@@ -45,13 +50,14 @@ public class GameServerEventsHandler : MonoBehaviour
         }
 
         var inst = Instantiate(playerObject, arg2, Quaternion.identity);
-        AddPlayerToNetwork(arg1.Id, inst);
         inst.stats[StatEventPacket.StatId.username] = claims.Name;
+        AddPlayerToNetwork(arg1.Id, inst);
         _players[arg1.Id].peer = arg1;
     }
     
     public void AddBotToNetwork(Player p)
     {
+        p.stats[StatEventPacket.StatId.username] = $"Bot-{UnityEngine.Random.Range(1, 9999)}";
         AddPlayerToNetwork(lastBotId++, p);
         bots[p.NetworkId] = p;
         p.IsBot = true;
@@ -61,6 +67,7 @@ public class GameServerEventsHandler : MonoBehaviour
     {
         _players[id] = p;
         _players[id].NetworkId = id;
+        OnPlayerJoined?.Invoke(p);
     }
 
     private void ServerOnOnPlayerDespawned(int obj)
