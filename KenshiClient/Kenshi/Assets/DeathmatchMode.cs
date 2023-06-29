@@ -18,7 +18,7 @@ namespace DefaultNamespace
             public string winnerUsername;
             public int winnerScore;
             public int currentScore;
-            public int scoreToFinish = 2;
+            public int scoreToFinish = 20;
             public bool finished = false;
             public List<PlayerScore> scores = new List<PlayerScore>();
         }
