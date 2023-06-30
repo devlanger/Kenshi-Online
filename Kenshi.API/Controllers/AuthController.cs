@@ -45,6 +45,19 @@ public class AuthController : Controller
         return Ok(response);
     }
     
+    [HttpGet("activate")]
+    public IActionResult Activate(string username, string token)
+    {
+        CheckTokenResponse response = _userService.ActivateAccountEmail(username, token);
+        
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+
+        return Ok(response.Message);
+    }
+    
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequestModel model)
     {
@@ -64,7 +77,7 @@ public class AuthController : Controller
         var response = _userService.Register(model);
         if (!response.Success)
         {
-            return BadRequest("soon");
+            return BadRequest(response.Message);
         }
 
         return Ok(response);

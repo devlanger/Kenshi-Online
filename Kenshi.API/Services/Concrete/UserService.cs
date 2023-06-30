@@ -10,18 +10,15 @@ namespace Kenshi.API.Services.Concrete;
 
 public class UserService : IUserService
 {
-    private const string TOKEN_SECRET = "ASDASCASCMASLVKNAVSAFDSAD";
-    
-    private IRepository<User> _userRepo;
+    private readonly IRepository<User> _userRepo;
+    private readonly ITokenService _tokenService;
 
-    public UserService(IRepository<User> userRepo)
+    public UserService(
+        IRepository<User> userRepo, 
+        ITokenService tokenService)
     {
         _userRepo = userRepo;
-    }
-
-    public void GetUserByUsername(string username)
-    {
-        
+        _tokenService = tokenService;
     }
 
     public RegisterResponse Register(RegisterRequestModel model)
@@ -47,16 +44,48 @@ public class UserService : IUserService
         {
             Email = model.Email,
             Username = model.Username,
-            PasswordHash = passwordHash
+            PasswordHash = passwordHash,
+            EmailActivationToken = _tokenService.GenerateEmailActivationToken(),
+            IsActivated = false
         };
 
         _userRepo.Persist(user);
         response.User = MapUser(user, new UserDto());
-        response.Message = "User registered successfully.";
+        response.Message = "User registered successfully. Check email to activate account.";
         response.Success = true;
         return response;
     }
 
+    public CheckTokenResponse ActivateAccountEmail(string username, string emailToken)
+    {
+        var response = new CheckTokenResponse();
+        var user = _userRepo.WithQuery().FirstOrDefault(u => u.Username == username);
+        if (user is null || user.EmailActivationToken is null)
+        {
+            response.Message = "Invalid token.";
+            return response;
+        }
+
+        if (user.EmailActivationToken != emailToken)
+        {
+            response.Message = "Invalid token.";
+            return response;
+        }
+
+        if (user.IsActivated)
+        {
+            response.Message = "Account has been activated already.";
+            return response;
+        }
+        
+        user.IsActivated = true;
+        _userRepo.Persist(user);
+        response.Message = "Successfully activated account!";
+        response.User = MapUser(user, new UserDto());
+        
+        return response;
+    }
+    
     public CheckTokenResponse CheckToken(string username, string token)
     {
         var response = new CheckTokenResponse();
@@ -89,7 +118,7 @@ public class UserService : IUserService
     {
         CheckTokenResponse response = new CheckTokenResponse();
 
-        var token = GenerateJwtToken(model.Username);
+        var token = _tokenService.GenerateJwtGameToken(model.Username);
         var user = _userRepo.WithQuery().FirstOrDefault(u => u.Username == model.Username || u.Email == model.Username);
         if (user is null)
         {
@@ -140,22 +169,5 @@ public class UserService : IUserService
     private static string GenerateSalt()
     {
         return BCrypt.Net.BCrypt.GenerateSalt(5);
-    }
-
-    private string GenerateJwtToken(string username)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(TOKEN_SECRET);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.Name, username)
-            }),
-            Expires = DateTime.UtcNow.AddDays(7),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
     }
 }

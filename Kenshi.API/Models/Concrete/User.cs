@@ -14,5 +14,7 @@ public class User : BaseEntity
     
     public DateTimeOffset? TokenExpirationDate { get; set; }
     
+    public string? EmailActivationToken { get; set; }
+
     public bool IsActivated { get; set; }
 }

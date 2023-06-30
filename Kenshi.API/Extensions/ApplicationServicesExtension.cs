@@ -21,6 +21,7 @@ public static class ApplicationServicesExtension
         services.AddTransient<IGameRoomService, GameRoomService>();
         services.AddTransient<IMatchmakingService, MatchmakingService>();
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<ITokenService, TokenService>();
         services.AddTransient<GameUserService>();
         services.AddTransient<MetricsService>();
         services.AddTransient<GameHub>();

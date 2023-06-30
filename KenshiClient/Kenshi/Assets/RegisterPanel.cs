@@ -121,7 +121,7 @@ public class RegisterPanel : MonoBehaviour
 
             if (www.result != UnityWebRequest.Result.Success)
             {
-                string msg = $"{www.error}: " + www.downloadHandler.text;
+                string msg = www.downloadHandler.text;
                 Debug.Log(msg);
                 _loginMessagePanel.SetMessage(msg);
             }

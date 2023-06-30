@@ -6,11 +6,11 @@ namespace Kenshi.API.Services;
 
 public interface IUserService
 {
-    void GetUserByUsername(string username);
-    
     CheckTokenResponse Authenticate(LoginRequestModel model);
     
     RegisterResponse Register(RegisterRequestModel model);
+    
+    CheckTokenResponse ActivateAccountEmail(string username, string emailToken);
     
     CheckTokenResponse CheckToken(string username, string token);
 }
