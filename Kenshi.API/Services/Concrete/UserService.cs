@@ -35,9 +35,9 @@ public class UserService : IUserService
         }
         
         // Check if the username is already taken
-        if (_userRepo.WithQuery().FirstOrDefault(u => u.Username == model.Username) != null)
+        if (_userRepo.WithQuery().FirstOrDefault(u => u.Username == model.Username || u.Email == model.Email) != null)
         {
-            response.Message = "Username is already taken.";
+            response.Message = "Username or email is already taken.";
             return response;
         }
 
@@ -90,7 +90,7 @@ public class UserService : IUserService
         CheckTokenResponse response = new CheckTokenResponse();
 
         var token = GenerateJwtToken(model.Username);
-        var user = _userRepo.WithQuery().FirstOrDefault(u => u.Username == model.Username);
+        var user = _userRepo.WithQuery().FirstOrDefault(u => u.Username == model.Username || u.Email == model.Username);
         if (user is null)
         {
             response.Message = "Incorrect username or password.";
@@ -100,6 +100,12 @@ public class UserService : IUserService
         if (!VerifyPassword(model.Password, user.PasswordHash))
         {
             response.Message = "Incorrect username or password.";
+            return response;
+        }
+        
+        if (!user.IsActivated)
+        {
+            response.Message = "Account is not active.";
             return response;
         }
         

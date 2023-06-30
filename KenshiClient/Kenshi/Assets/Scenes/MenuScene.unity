@@ -14826,7 +14826,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 43228109}
   m_HandleRect: {fileID: 43228108}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -23403,7 +23403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -24675,7 +24675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
-    SerializedFormat: 0
+    SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects: []
     SerializedBytesString: 
@@ -31675,7 +31675,7 @@ PrefabInstance:
     - target: {fileID: 5507396292425562198, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 4348534.5
+      value: 4352102
       objectReference: {fileID: 0}
     - target: {fileID: 5676524939216836933, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
@@ -31985,7 +31985,7 @@ PrefabInstance:
     - target: {fileID: 6442575427398033601, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 4312674.5
+      value: 4315932
       objectReference: {fileID: 0}
     - target: {fileID: 6450544556647172984, guid: dbec377dd686646c4a9b8c418eaf0a59,
         type: 3}

@@ -13,4 +13,6 @@ public class User : BaseEntity
     public string? RefreshToken { get; set; }
     
     public DateTimeOffset? TokenExpirationDate { get; set; }
+    
+    public bool IsActivated { get; set; }
 }

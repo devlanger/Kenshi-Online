@@ -52,7 +52,7 @@ public class AuthController : Controller
         
         if (!response.Success)
         {
-            return BadRequest("Username or password is incorrect.");
+            return BadRequest(response.Message);
         }
 
         return Ok(response);

@@ -20,7 +20,7 @@ public class Program
         using (var scope = host.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 try
                 {
