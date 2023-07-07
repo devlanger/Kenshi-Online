@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
@@ -23,19 +24,29 @@ public class UIInputController : MonoBehaviour
     [SerializeField] private PlayerInput _inputController;
     [SerializeField] private EscapeView _escapeView;
     [SerializeField] private InGameChatUI _chatView;
-    [SerializeField] private ScoresView _scoresView;
+    private ScoresView _scoresView;
 
     public State CurrentState = State.IDLE;
 
     private void Awake()
     {
         Instance = this;
+        FindObjectOfType<GameModeUISpawner>().OnScoreViewSpawn += OnScoreViewSpawn;
+    }
+
+    private void OnScoreViewSpawn(ScoresView obj)
+    {
+        _scoresView = obj;
     }
 
     private void Start()
     {
-        _scoresView.Deactivate();
+        //_scoresView.Deactivate();
         SetState(State.IDLE);
+    }
+
+    private void OnGameModeSet(GameMode mode)
+    {
     }
 
     private void Update()

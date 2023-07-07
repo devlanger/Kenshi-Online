@@ -16,7 +16,7 @@ public class MatchmakingService : IMatchmakingService
 
     private const float MAX_SOLO_PLAYER_WAIT_TIME = 20;
     private const int MIN_PLAYERS_AMOUNT_TO_START_GAMEROOM = 2;
-    private const int PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME = 4;
+    public const int PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME = 4;
 
     public MatchmakingService(
         ILogger<MatchmakingService> logger, 
@@ -33,30 +33,31 @@ public class MatchmakingService : IMatchmakingService
         }
     }
     
-    public async Task UpdateMatchmakingLobbies()
+    public async Task<IEnumerable<IGameRoomInstance>> UpdateMatchmakingLobbies(HashSet<Lobby> lobbies, int roomSize)
     {
         int minPlayersAmount = MIN_PLAYERS_AMOUNT_TO_START_GAMEROOM;
-        int roomSize = PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME;
-        var allPlayers = Lobbies
+        var allPlayers = lobbies
             .Where(l => l.State == MatchmakingState.Searching)
             .OrderBy(l => l.WaitStartTime)
             .SelectMany(l => l.Users)
             .ToList();
 
-        HashSet<Lobby> lobbiesToGame = new HashSet<Lobby>();
-        for (int i = 0; i < allPlayers.Count; i = i + roomSize)
+        int expectedRooms = allPlayers.Count / roomSize;
+        if (lobbies.Count > 0)
         {
-            var usersToMatchmake = allPlayers.Skip(i).Take(roomSize).ToList();
-            if(usersToMatchmake.Count > 0)
+            double maxWaitTime = lobbies.Max(l => l.WaitTime);
+            if (maxWaitTime > MAX_SOLO_PLAYER_WAIT_TIME)
             {
-                //If user is waiting more than 60 seconds and nobody is in the game
-                //Connect him to play with the bots
-                if (usersToMatchmake[0].Lobby.WaitTime > MAX_SOLO_PLAYER_WAIT_TIME)
-                {
-                    minPlayersAmount = 1;
-                }
+                expectedRooms = 1;
+                minPlayersAmount = 1;
             }
-            
+        }
+        
+        HashSet<IGameRoomInstance> rooms = new HashSet<IGameRoomInstance>();
+        HashSet<Lobby> lobbiesToGame = new HashSet<Lobby>();
+        for (int i = 0; i < expectedRooms; i++)
+        {
+            var usersToMatchmake = allPlayers.Skip(i * roomSize).Take(roomSize).ToList();
             if (usersToMatchmake.Count >= minPlayersAmount)
             {
                 var room = _gameRoomService.CreateRoom("room", false);
@@ -68,6 +69,7 @@ public class MatchmakingService : IMatchmakingService
                     await _gameHubContext.Clients.Client(user.ConnectionId).SendAsync("JoinGameInstance",
                         JsonConvert.SerializeObject(room.GetDto()));
                     lobbiesToGame.Add(user.Lobby);
+                    rooms.Add(room);
                 }
             }
         }
@@ -76,6 +78,8 @@ public class MatchmakingService : IMatchmakingService
         {
             SetLobbyState(lobby, MatchmakingState.InGame);
         }
+
+        return rooms;
     }
     
     public void AddUserToLobby(GameUserService.GameUser gameUser, Lobby lobby)

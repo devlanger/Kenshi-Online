@@ -4,6 +4,7 @@ namespace Kenshi.API.Services;
 
 public interface IGameRoomService
 {
+    public int GetFreePort();
     void StartGameInstance(IGameRoomInstance roomData);
     void AddRoom(IGameRoomInstance room);
     List<IGameRoomInstance> GetRooms();

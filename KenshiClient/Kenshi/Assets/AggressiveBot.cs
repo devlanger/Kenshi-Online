@@ -178,7 +178,10 @@ public class BotRoamState : GenericFSMState<AggressiveBot.State>
     
     public Player GetTarget(PlayerStateMachine stateMachine)
     {
-        var p = PlayerUtils.GetPlayersAtPos(stateMachine.Target.transform.position, 20, stateMachine.Target).Where(p => p.playerStateMachine.CurrentState.Id != FSMStateId.dead).ToList();
+        var p = PlayerUtils.GetPlayersAtPos(stateMachine.Target.transform.position, 20, stateMachine.Target)
+            .Where(p => !p.IsInSameTeam(stateMachine.Target) && p.playerStateMachine.CurrentState.Id != FSMStateId.dead)
+            .ToList();
+        
         if (p.Count > 0)
         {
             return p[0];

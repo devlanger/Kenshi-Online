@@ -107,15 +107,17 @@ namespace StarterAssets.CombatStates
                             continue;
                     }
 
-                    // float angle = Vector3.Angle(c.transform.position - machine.transform.position, machine.transform.forward);
-                    // if (angle > attackAngle / 2)
-                    // {
-                    //     continue;
-                    // }
-            
                     Vector3 dir = (hitTarget.transform.position - machine.Target.transform.position);
                     dir.y = 0;
-
+                    float angle = Vector3.Angle(dir, machine.Target.transform.forward);
+                    if (machine.Target.IsLocalPlayer)
+                    {
+                        Debug.Log(angle);
+                    }
+                    if (angle > 90)
+                    {
+                        continue;
+                    }
                     CombatController.Instance.HitSingleTarget(new DamageData
                     {
                         attacker = machine.Target,

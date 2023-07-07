@@ -11,6 +11,6 @@ namespace Kenshi.Shared.Enums
         FsmUpdate = 7,
         StatEvent = 8,
         GameEventPacket = 9,
-        DeathmatchModeEnd = 10,
+        GameModeEvent = 10,
     }
 }

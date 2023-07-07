@@ -10,6 +10,7 @@ using Kenshi.API.Models;
 using Kenshi.API.Models.Abstract;
 using Kenshi.API.Models.Concrete;
 using Kenshi.API.Services;
+using Kenshi.API.Services.Concrete;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
 
@@ -108,7 +109,7 @@ public class Startup
     {            
         while (true)
         {        
-            await matchmakingService.UpdateMatchmakingLobbies();
+            await matchmakingService.UpdateMatchmakingLobbies(MatchmakingService.Lobbies, MatchmakingService.PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME);
             await Task.Delay(5000, new CancellationToken());
         }
     }

@@ -17,6 +17,7 @@ public class DeathmatchCanvas : MonoBehaviour
     [SerializeField] private GameObject finishPanel;
     [SerializeField] private GameObject gamePanel;
     [SerializeField] private Button leaveButton;
+    [SerializeField] private ScoresView _scoresView;
     
     private void Awake()
     {
@@ -39,5 +40,19 @@ public class DeathmatchCanvas : MonoBehaviour
     public void SetScore(int dataCurrentScore, int dataScoreToFinish)
     {
         gameScoreText.SetText($"{dataCurrentScore}/{dataScoreToFinish}");
+    }
+
+    public void UpdateData(DeathmatchMode.Data dmData)
+    {
+        if (dmData.finished)
+        {
+            Finish(dmData);
+        }
+        else
+        {
+            SetScore(dmData.currentScore, dmData.scoreToFinish);
+        }
+        
+        _scoresView.UpdateData(dmData);
     }
 }

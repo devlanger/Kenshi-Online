@@ -29,15 +29,16 @@ public class GameServerEventsHandler : MonoBehaviour
         server.OnPlayerPositionUpdate += ServerOnPlayerPositionUpdate;
     }
 
-    private void ServerOnPlayerPositionUpdate(int arg1, Vector3 arg2, Vector3 inputHitPoint)
+    private void ServerOnPlayerPositionUpdate(PositionUpdateRequestPacket packet)
     {
-        if (!_players.ContainsKey(arg1))
+        if (!_players.ContainsKey(packet.playerId))
         {
             return;
         }
 
-        _players[arg1].transform.position = arg2;
-        _players[arg1].Input.HitPoint = inputHitPoint;
+        _players[packet.playerId].transform.position = new Vector3(packet.x, packet.y, packet.z);
+        _players[packet.playerId].transform.rotation = Quaternion.Euler(0, ((int)packet.rotY * 5), 0);
+        _players[packet.playerId].Input.HitPoint = packet._inputHitPoint;
     }
 
     private int lastBotId = 1000;

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71b3448603b041bf97c69287916cd50, type: 3}
   m_Name: Client Connection Settings
   m_EditorClassIdentifier: 
-  useLocalServer: 0
+  useLocalServer: 1
   useTestServerOnPlayButton: 1
-  useLocalLoginServer: 0
+  useLocalLoginServer: 1
   loginLocalUrl: http://localhost:3330
   loginRemoteUrl: http://209.38.227.113:3330
   gameHubHost: 209.38.227.113

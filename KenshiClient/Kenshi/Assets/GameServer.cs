@@ -39,7 +39,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     public static Config Configuration = new Config();
 
     public event Action<NetPeer, ClaimsDto, Vector3> OnPlayerSpawned;
-    public event Action<int, Vector3, Vector3> OnPlayerPositionUpdate;
+    public event Action<PositionUpdateRequestPacket> OnPlayerPositionUpdate;
     public event Action<int> OnPlayerDespawned;
 
     public class ClaimsDto
@@ -146,18 +146,21 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                         var mode = FindObjectOfType<GameModeController>().Mode;
                         switch (mode)
                         {
-                            case DeathmatchMode m:
-                                SendPacket(playerId, new DeathmatchModeEventPacket(m), DeliveryMethod.ReliableOrdered);
+                            case DeathmatchMode dm:
+                                SendPacket(playerId, new GameModeEventPacket(dm.data), DeliveryMethod.ReliableOrdered);
+                                break;
+                            case TeamDeathmatchMode tm:
+                                SendPacket(playerId, new GameModeEventPacket(tm.data), DeliveryMethod.ReliableOrdered);
                                 break;
                         }
+                        
                     });
                     break;
                 case PacketId.PositionUpdateRequest:
                     var packet = SendablePacket.Deserialize<PositionUpdateRequestPacket>(packetId, reader);
                     UnityMainThreadDispatcher.Instance().Enqueue(() =>
                     {
-                        OnPlayerPositionUpdate?.Invoke(packet.playerId,
-                            new Vector3(packet.x, packet.y, packet.z), packet._inputHitPoint);
+                        OnPlayerPositionUpdate?.Invoke(packet);
                     });
                     SendPacketToAll(new PositionUpdatePacket(packet.playerId, packet.x, packet.y, packet.z,
                         packet.rotY, packet.speed), DeliveryMethod.Sequenced);

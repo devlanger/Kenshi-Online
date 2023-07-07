@@ -96,7 +96,7 @@ namespace StarterAssets.CombatStates
                 {
                     if (data.hitType != AttackState.DamageData.HitType.stun)
                     {
-                        stateMachine.Target.tps.SetVelocity(data.direction);
+                        stateMachine.Target.tps.SetVelocity(data.direction, true);
                     }
                 }
             }

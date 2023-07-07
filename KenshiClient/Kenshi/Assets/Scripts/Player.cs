@@ -32,6 +32,9 @@ public class Player : Mob
     public NetPeer peer;
     public Dictionary<StatEventPacket.StatId, object> stats = new Dictionary<StatEventPacket.StatId, object>();
 
+    public string teamName = "";
+    public bool IsInTeam => !string.IsNullOrEmpty(teamName);
+    
     public string Username => (string)stats[StatEventPacket.StatId.username];
     
     private void Awake()
@@ -142,5 +145,10 @@ public class Player : Mob
             c.enabled = b; 
             c.isStopped = !b;
         }
+    }
+
+    public bool IsInSameTeam(Player otherPlayer)
+    {
+        return teamName == otherPlayer.teamName;
     }
 }

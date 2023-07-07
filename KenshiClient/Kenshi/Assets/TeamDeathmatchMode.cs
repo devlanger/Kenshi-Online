@@ -6,30 +6,73 @@ using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace DefaultNamespace
 {
     [System.Serializable]
-    public class DeathmatchMode : GameMode
+    public class TeamDeathmatchMode : GameMode
     {
         [System.Serializable]
         public class Data
         {
-            public string winnerUsername;
+            public string winnerTeamName;
             public int winnerScore;
-            public int currentScore;
+            public int currentScore => blueTeamData.score + redTeamData.score;
             public int scoreToFinish = 20;
             public bool finished = false;
+            
+            public TeamData blueTeamData = new TeamData() { name = "blue"};
+            public TeamData redTeamData = new TeamData() { name = "red" };
+
+            public TeamData GetUserTeam(string username)
+            {
+                if (blueTeamData.scores.Any(p => p.username == username))
+                {
+                    return blueTeamData;
+                }
+                
+                if (redTeamData.scores.Any(p => p.username == username))
+                {
+                    return redTeamData;
+                }
+                
+                return null;
+            }
+
+            public TeamData GetTeamByLowestPlayerCount()
+            {
+                if (redTeamData.scores.Count > blueTeamData.scores.Count)
+                {
+                    return blueTeamData;
+                }
+
+                return redTeamData;
+            }
+        }
+
+        public class TeamData
+        {
+            public string name;
+            public int score;
             public List<PlayerScore> scores = new List<PlayerScore>();
+
+            public PlayerScore GetPlayerScore(string username)
+            {
+                return scores.FirstOrDefault(p => p.username == username);
+            }
+
+            public void AddPlayer(PlayerScore score)
+            {
+                scores.Add(score);
+            }
         }
         
-        public override GameType GameType => GameType.DEATHMATCH;
+        public override GameType GameType => GameType.TEAM_DEATHMATCH;
 
         public Data data;
 
-        private Dictionary<string, PlayerScore> userScores = new Dictionary<string, PlayerScore>();
-
-        public List<PlayerScore> GetScores() => userScores.Values.ToList();
+        public List<PlayerScore> GetScores() => null;
 
         public event Action<Data> OnScoresChanged;
         
@@ -37,15 +80,10 @@ namespace DefaultNamespace
         public class PlayerScore
         {
             public string username;
+            public string teamName;
             public int kills;
             public int deaths;
         }
-        
-        private string GetWinnerUsername() => 
-            userScores
-                .OrderByDescending(u => u.Value.kills)
-                .FirstOrDefault()
-                .Key;
         
         public override void Initialize(GameModeController gameModeController)
         {
@@ -67,39 +105,34 @@ namespace DefaultNamespace
 
         public void AddPlayerScore(Player player)
         {
-            if(userScores.ContainsKey(player.Username)) return;
+            var team = data.GetUserTeam(player.Username);
+            if(team != null) return;
             
+            team = data.GetTeamByLowestPlayerCount();
+
             var p = new PlayerScore()
             {
-                username = player.Username
+                username = player.Username,
+                teamName = team.name
             };
-            data.scores.Add(p);
-            userScores.Add(p.username, p);
+            player.teamName = team.name;
+            team.AddPlayer(p);
         }
 
         private void InstanceOnOnPlayerDeath(Player attacker, Player target)
         {
-            if (!userScores.ContainsKey(attacker.Username))
-            {
-                AddPlayerScore(attacker);
-            }
+            var attackerTeam = data.GetUserTeam(attacker.Username);
+            attackerTeam.GetPlayerScore(attacker.Username).kills++;
+            attackerTeam.score++;
             
-            if (!userScores.ContainsKey(target.Username))
-            {
-                AddPlayerScore(target);
-            }
+            data.GetUserTeam(target.Username).GetPlayerScore(target.Username).deaths++;
             
-            userScores[attacker.Username].kills++;
-            userScores[target.Username].deaths++;
-            
-            SetScores(GetScores());
-            data.currentScore++;
+            OnScoresChanged?.Invoke(data);
 
             if (data.currentScore >= data.scoreToFinish)
             {
-                string winner = GetWinnerUsername();
-                data.winnerScore = userScores[winner].kills;
-                data.winnerUsername = winner;
+                data.winnerScore = attackerTeam.score;
+                data.winnerTeamName = attackerTeam.name;
                 data.finished = true;
                 _gameModeController.StartCoroutine(ShowScoreAndFinish());
                 CombatController.Instance.OnPlayerDeath -= InstanceOnOnPlayerDeath;
@@ -112,18 +145,9 @@ namespace DefaultNamespace
 
         private IEnumerator ShowScoreAndFinish()
         {
-            var winnerUsername = GetWinnerUsername();
             GameRoomNetworkController.SendPacketToAll(new GameModeEventPacket(data), DeliveryMethod.ReliableUnordered);
-            
             yield return new WaitForSeconds(5);
             _gameModeController.FinishGame();
-        }
-
-        public void SetScores(List<PlayerScore> dataScores)
-        {
-            userScores = dataScores.ToDictionary(k => k.username, v => v);
-            data.scores = dataScores;
-            OnScoresChanged?.Invoke(data);
         }
     }
 }

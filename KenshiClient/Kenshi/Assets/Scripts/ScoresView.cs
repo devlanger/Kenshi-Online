@@ -1,43 +1,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [DefaultExecutionOrder(10)]
 public class ScoresView : ViewUI
 {
-    [SerializeField] private ContentList list;
-    [SerializeField] private ScoresViewListItem item;
+    public ScoresContainer scoresContainer;
 
-    public void SetScores(DeathmatchMode.Data data)
+    public void UpdateData(DeathmatchMode.Data data)
     {
-        list.Clear();
-
-        foreach (var score in data.scores)
+        scoresContainer.SetScores(data.scores.Select(d => new ScoresContainer.Data()
         {
-            AddScoreItem(new ScoreItemDto()
-            {
-                name = score.username,
-                death = score.deaths,
-                kill = score.kills,
-                level = 1,
-                ping = 40
-            });
-        }
-    }
-
-    private void AddScoreItem(ScoreItemDto scoreItemDto)
-    {
-        var i = list.SpawnItem(item);
-        i.Fill(scoreItemDto);
+            name = d.username,
+            deaths = d.deaths,
+            ping = 40,
+            level = 1,
+            kills = d.kills
+        }).ToList());
     }
 }
 
 public class ScoreItemDto
 {
-    public byte level;
     public string name;
+    public int level;
     public int kill;
     public int death;
     public int ping;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using DefaultNamespace;
 using Kenshi.Shared;
 using Kenshi.Shared.Enums;
 using Kenshi.Shared.Packets.GameServer;
@@ -229,10 +230,10 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
                 var packet = SendablePacket.Deserialize<PositionUpdatePacket>(packetId, reader);
                 UpdatePosition(packet);
             }
-            else if (packetId == PacketId.DeathmatchModeEnd)
+            else if (packetId == PacketId.GameModeEvent)
             {
-                var packet = SendablePacket.Deserialize<DeathmatchModeEventPacket>(packetId, reader);
-                UpdateDeathmatchMode(packet);
+                var packet = SendablePacket.Deserialize<GameModeEventPacket>(packetId, reader);
+                UpdateGameMode(packet);
             }
             else if (packetId == PacketId.LogoutEvent)
             {
@@ -344,25 +345,27 @@ public class GameRoomNetworkController : MonoBehaviour, INetEventListener
         }
     }
 
-    private void UpdateDeathmatchMode(DeathmatchModeEventPacket packet)
+    private void UpdateGameMode(GameModeEventPacket packet)
     {
-        var ui = FindObjectOfType<DeathmatchCanvas>(true);
-        if (ui != null)
+        GameModeController.Instance.InitializeMode(packet.GameType);
+
+        switch (packet.GameType)
         {
-            if (packet._data.finished)
-            {
-                ui.Finish(packet._data);
-            }
-            else
-            {
-                ui.SetScore(packet._data.currentScore, packet._data.scoreToFinish);
-            }
-        }
-        
-        var scoresUi = FindObjectOfType<ScoresView>(true);
-        if (scoresUi != null)
-        {
-            scoresUi.SetScores(packet._data);
+            case GameType.DEATHMATCH:
+                var ui = FindObjectOfType<DeathmatchCanvas>(true);
+                if (ui != null)
+                {
+                    ui.UpdateData(packet._dmData);
+                }
+                break;
+            
+            case GameType.TEAM_DEATHMATCH:
+                var tmUi = FindObjectOfType<TeamDeathmatchCanvas>(true);
+                if (tmUi != null)
+                {
+                    tmUi.UpdateData(packet._tmData);
+                }
+                break;
         }
     }
 

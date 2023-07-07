@@ -18,6 +18,11 @@ public class GameRoomInstance : IGameRoomInstance
     public int PlayersCount => Players.Count;
     public RoomSettingsDto Settings { get; set; } = new RoomSettingsDto();
 
+    public GameRoomInstance()
+    {
+        Players = new List<string>();
+    }
+    
     public GameRoomDto GetDto() => new GameRoomDto
     {
         roomNumber = RoomNumber,
