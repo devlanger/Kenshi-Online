@@ -25,7 +25,7 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
     private NetPeer _ourPeer;
     [SerializeField] private GameServerEventsHandler handler;
 
-    private Dictionary<int, Player> _players => handler._players;
+    private Dictionary<int, Player> _players => handler._players.ToDictionary(k => k.Key, v => v.Value);
     public static bool IsServer => GameRoomNetworkController.Instance == null;
 
     private static int players = 0;
@@ -213,11 +213,6 @@ public class GameServer : MonoBehaviour, INetEventListener, INetLogger
                     break;
             }
         }
-    }
-
-    private Player GetPlayerById(int playerId)
-    {
-        return _players[playerId];
     }
 
     private void SendPacket(int peerId, SendablePacket p, DeliveryMethod deliveryMethod = DeliveryMethod.Unreliable)

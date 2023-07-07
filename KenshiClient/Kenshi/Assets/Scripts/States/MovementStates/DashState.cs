@@ -102,15 +102,18 @@ namespace StarterAssets
             {
                 if (stateMachine.Target.TryGetComponent(out AnimationsController animationsController))
                 {
-                    var animData = animationsController.GetDashAnimation(data.dashIndex,
-                        stateMachine.Variables.AlternateDashAnimation);
-                    
-                    SetAnimation(stateMachine, animData?.value ?? 0);
-
-                    if (animData.fx != null)
+                    if (data != null && stateMachine.Variables != null)
                     {
-                        VfxController.Instance.SpawnFx(animData.fx, stateMachine.Target.transform.position,
-                            stateMachine.Target.transform.rotation);
+                        var animData = animationsController.GetDashAnimation(data.dashIndex,
+                            stateMachine.Variables.AlternateDashAnimation);
+
+                        SetAnimation(stateMachine, animData?.value ?? 0);
+
+                        if (animData.fx != null)
+                        {
+                            VfxController.Instance.SpawnFx(animData.fx, stateMachine.Target.transform.position,
+                                stateMachine.Target.transform.rotation);
+                        }
                     }
                 };
                 

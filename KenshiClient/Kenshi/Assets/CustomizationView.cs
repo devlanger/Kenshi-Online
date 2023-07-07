@@ -32,7 +32,7 @@ public class CustomizationView : ViewUI
     {
         character.Randomize();
 
-        foreach (var i in character.customizationData.items)
+        foreach (var i in character.customizationData.items.ToList())
         {
             _sections.FirstOrDefault(s => s.Part == i.Key)?.SelectItem(i.Value);
         }

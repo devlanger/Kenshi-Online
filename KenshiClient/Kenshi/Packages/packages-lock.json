@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ms.shell": {
+      "version": "https://github.com/wlgys8/UnityShell.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dd6f53f9891f356bafbe8c144b0a36e327905033"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

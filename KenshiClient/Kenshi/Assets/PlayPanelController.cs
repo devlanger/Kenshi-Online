@@ -32,6 +32,14 @@ public class PlayPanelController : MonoBehaviour
         _connectionController.OnMessageReceived += ConnectionControllerOnOnMessageReceived;
     }
 
+    private void OnDestroy()
+    {
+        if (_connectionController != null)
+        {
+            _connectionController.OnMessageReceived -= ConnectionControllerOnOnMessageReceived;
+        }
+    }
+
     private void ConnectionControllerOnOnMessageReceived(string arg1, string arg2)
     {
         switch (arg1)

@@ -3,110 +3,89 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using MS.Shell.Editor;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class GameServerBuilder
 {
+    private static int progressId;
+
+    private const string UNITY_EDITOR_PATH = "/Applications/Unity/Hub/Editor/2022.3.1f1/Unity.app/Contents/MacOS/Unity";
+    private const string UNITY_PROJECT_PATH = "/Users/piotrlanger/Repositories/Kenshi/KenshiClient/Kenshi_clone_0";
+    private const string GAMESERVER_DEPLOY_SHELL_SCRIPT_PATH = "/Users/piotrlanger/Repositories/Kenshi/tools/gameserver/docker_deploy.sh";
+    private const string GAMESERVER_BUILD_PATH = @"/Users/piotrlanger/Repositories/Kenshi/Builds/gameserver";
+    private static List<string> _scenesToBuild = new List<string>()
+    {
+        "Assets/Scenes/GameServerScene.unity", 
+        "Assets/Scenes/Map_Forest.unity",
+        "Assets/Scenes/Map_Dungeon1.unity",
+        "Assets/Scenes/Map_Crypt.unity",
+    };
+
+    [MenuItem("Building/Build and Deploy server")]
+    public static async void BuildDeployServerDocker()
+    {
+        progressId = Progress.Start("Deploying Backend", "Running deployment...");
+        Progress.Report(progressId, 0.25f);
+        await BuildWithOtherEditor();
+        Progress.Report(progressId, 0.65f);
+        await DeployServerDocker();
+        Progress.Remove(progressId);
+    }
+
+    private static async Task BuildWithOtherEditor()
+    {
+        var arg =
+            $@"{UNITY_EDITOR_PATH} -quit -batchmode -logFile build_log.txt -projectPath {UNITY_PROJECT_PATH} -executeMethod GameServerBuilder.BuildGameServer";
+
+        await ExecuteShellScript("Building Server", arg);
+    }
+    
+    [MenuItem("Building/Deploy server docker")]
+    public static async Task DeployServerDocker()
+    {
+        await ExecuteShellScript("Deploying Server", GAMESERVER_DEPLOY_SHELL_SCRIPT_PATH);
+        EditorUtility.ClearProgressBar();
+    }
+    
     [MenuItem("Building/Build Game Server for Ubuntu")]
     public static void BuildGameServer ()
     {
-        // Get filename.
-        string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
-        string[] levels = new string[] {
-            "Assets/Scenes/GameServerScene.unity", 
-            "Assets/Scenes/Map_Forest.unity",
-            "Assets/Scenes/Map_Dungeon1.unity",
-            "Assets/Scenes/Map_Crypt.unity",
-        };
+        string path = GAMESERVER_BUILD_PATH;
 
         BuildPipeline.BuildPlayer(new BuildPlayerOptions()
         {
-            scenes = levels,
+            scenes = _scenesToBuild.ToArray(),
             locationPathName = path + "/gameserver.x86_64",
             target = BuildTarget.StandaloneLinux64,
             subtarget = (int)StandaloneBuildSubtarget.Server
         });
-    }
-    
-    [MenuItem("Building/Deploy Game Server")]
-    public static void DeployGameServer ()
-    {
-        ProcessStartInfo startInfo = new ProcessStartInfo(@"/bin/zsh")
-        {
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardInput = true,
-            RedirectStandardError  = true
-        };
-        Process myProcess = new Process
-        {
-            StartInfo = startInfo
-        };
-        //
-        myProcess.Start();
-
-        myProcess.BeginOutputReadLine();
-        myProcess.BeginErrorReadLine();
-
-        myProcess.StandardInput.WriteLine(@"sudo /Applications/Unity/Hub/Editor/2022.3.1f1/Unity.app/Contents/MacOS/Unity -quit -batchmode -logFile build_log.txt -projectPath KenshiClient/Kenshi_clone_0 -executeMethod GameServerBuilder.BuildGameServer");
-        //myProcess.WaitForExit();
-        
-        //ExecuteShellScript("Deploying Game Server", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/gameserver/", "deploy.sh");
-    }
-    
-    [MenuItem("Building/Deploy Backend")]
-    public static void DeployBackend ()
-    {
-        ExecuteShellScript("Deploying Backend", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/backend/", "deploy.sh");
-    }
-    
-    [MenuItem("Building/Deploy GameServer And Backend")]
-    public static void DeployGameServerAndBackend ()
-    {
-        EditorUtility.DisplayProgressBar("Deploying Game Server", "Running deployment...", 0.1f);
-        ExecuteShellScript("Deploying Game Server", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/gameserver/", "deploy.sh", false);
-        EditorUtility.DisplayProgressBar("Deploying Backend", "Running deployment...", 0.75f);
-        ExecuteShellScript("Deploying Backend", "/Users/piotrlanger/RiderProjects/KenshiBackend/tools/backend/", "deploy.sh", false);
         EditorUtility.ClearProgressBar();
     }
-    
-    private static void ExecuteShellScript(string title, string path, string script, bool loadingScreen = true)
+
+    private static async Task ExecuteShellScript(string title, string script, bool loadingScreen = true)
     {
         try
         {
-            if(loadingScreen)
-                EditorUtility.DisplayProgressBar(title, "Running deployment...", 0.1f);
-            
-            string argument = script;
-            UnityEngine.Debug.Log("============== Start Executing [" + argument + "] ===============");
-            ProcessStartInfo startInfo = new ProcessStartInfo(@"C:\Program Files\Git\git-bash.exe")
-            {
-                WorkingDirectory = path,
-                UseShellExecute = false,
-                RedirectStandardOutput = true
+            var operation = EditorShell.Execute(script);
+            operation.onExit += (exitCode)=>{
+    
             };
-            Process myProcess = new Process
-            {
-                StartInfo = startInfo
+            operation.onLog += (EditorShell.LogType LogType,string log)=>{
+                UnityEngine.Debug.Log(log);
+                Progress.Report(progressId, 0.8f, log);
             };
-            myProcess.StartInfo.Arguments = argument;
-            myProcess.Start();
-            string output = myProcess.StandardOutput.ReadToEnd();
-            UnityEngine.Debug.Log("Result for [" + argument + "] is : \n" + output);
-            myProcess.WaitForExit();
-            UnityEngine.Debug.Log("============== End ===============");
-            
-            if(loadingScreen)
-                EditorUtility.ClearProgressBar();
+
+            int exitCode = await operation; //support async/await
         }
         catch (Exception e)
         {
-            UnityEngine.Debug.LogError(e);
-            
-            if(loadingScreen)
-                EditorUtility.ClearProgressBar();
+            UnityEngine.Debug.Log(e);
         }
     }
 }

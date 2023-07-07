@@ -77,6 +77,14 @@ namespace StarterAssets
                 maxValue = (ushort)100,
                 playerId = deadPlayer.NetworkId
             });
+            
+            CombatController.Instance.SetPlayerStat(new StatEventPacket.Data
+            {
+                statId = StatEventPacket.StatId.mana,
+                value = (ushort)100,
+                maxValue = (ushort)100,
+                playerId = deadPlayer.NetworkId
+            });
         }
 
         public void DeadPlayer(Player attacker, Player hitTarget)

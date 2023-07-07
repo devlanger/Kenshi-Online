@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.ms.shell": "https://github.com/wlgys8/UnityShell.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "1.1.3",
     "com.unity.cinemachine": "2.9.5",

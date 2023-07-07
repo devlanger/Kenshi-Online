@@ -13,7 +13,11 @@ public class MatchmakingService : IMatchmakingService
     private readonly ILogger<MatchmakingService> _logger;
     private readonly IGameRoomService _gameRoomService;
     private readonly IHubContext<GameHub> _gameHubContext;
-    
+
+    private const float MAX_SOLO_PLAYER_WAIT_TIME = 20;
+    private const int MIN_PLAYERS_AMOUNT_TO_START_GAMEROOM = 2;
+    private const int PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME = 4;
+
     public MatchmakingService(
         ILogger<MatchmakingService> logger, 
         IGameRoomService gameRoomService, 
@@ -31,7 +35,8 @@ public class MatchmakingService : IMatchmakingService
     
     public async Task UpdateMatchmakingLobbies()
     {
-        int roomSize = 4;
+        int minPlayersAmount = MIN_PLAYERS_AMOUNT_TO_START_GAMEROOM;
+        int roomSize = PLAYERS_ROOM_SIZE_TO_TAKE_FOR_GAME;
         var allPlayers = Lobbies
             .Where(l => l.State == MatchmakingState.Searching)
             .OrderBy(l => l.WaitStartTime)
@@ -42,7 +47,17 @@ public class MatchmakingService : IMatchmakingService
         for (int i = 0; i < allPlayers.Count; i = i + roomSize)
         {
             var usersToMatchmake = allPlayers.Skip(i).Take(roomSize).ToList();
-            if (usersToMatchmake.Count >= 2)
+            if(usersToMatchmake.Count > 0)
+            {
+                //If user is waiting more than 60 seconds and nobody is in the game
+                //Connect him to play with the bots
+                if (usersToMatchmake[0].Lobby.WaitTime > MAX_SOLO_PLAYER_WAIT_TIME)
+                {
+                    minPlayersAmount = 1;
+                }
+            }
+            
+            if (usersToMatchmake.Count >= minPlayersAmount)
             {
                 var room = _gameRoomService.CreateRoom("room", false);
                 _gameRoomService.StartGameInstance(room);
