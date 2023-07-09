@@ -91,7 +91,7 @@ public class KubernetesService
                 $"CONTAINER_NAME={GetPodName(freePort)}",
                 $"GAME_MODE={(int)settings.GameModeType}",
                 $"GAME_SERVER_PORT={freePort}",
-                $"REDIS_HOST=redis",g
+                $"REDIS_HOST=redis",
                 $"RABBIT_MQ_HOST=kenshirabbitmq",
                 $"JWT_SECRET={_configuration["Jwt:Key"]}",
                 $"MAP_NAME={settings.MapName}",
