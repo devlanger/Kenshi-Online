@@ -4,8 +4,25 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2b7588ad_002Dc9d1_002D4e1b_002D99b7_002D840a9d2f6e3e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=37defd23_002D7923_002D48f4_002D8fd1_002D71c30ec7e481/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=37defd23_002D7923_002D48f4_002D8fd1_002D71c30ec7e481/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=5b23be8e_002Dd92f_002D4778_002D8eb6_002D09a7827f702d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestMatchmakingSpread" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::ABAF1D72-6C19-41D7-909D-0A03FE58BCB8::net6.0::Kenshi.UnitTest.MatchmakingServiceTests.TestMatchmakingSpread&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a6978299_002D9d27_002D4522_002D839e_002Df6f603b7ed34/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber_WhenSoloPlayer(4,30,1)" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::ABAF1D72-6C19-41D7-909D-0A03FE58BCB8::net6.0::Kenshi.UnitTest.MatchmakingServiceTests.UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber_WhenSoloPlayer(4,30,1)&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::ABAF1D72-6C19-41D7-909D-0A03FE58BCB8::net6.0::Kenshi.UnitTest.MatchmakingServiceTests.UpdateMatchmakingLobbies_WhenCalled_MatchesRoomUsername&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::ABAF1D72-6C19-41D7-909D-0A03FE58BCB8::net6.0::Kenshi.UnitTest.MatchmakingServiceTests.TestMatchmakingSpread&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e9f7ec4d_002D1dcc_002D47a1_002Dbee5_002Deefdf253dc73/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestMatchmakingSpread #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::ABAF1D72-6C19-41D7-909D-0A03FE58BCB8::net6.0::Kenshi.UnitTest.MatchmakingServiceTests.TestMatchmakingSpread&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	
 	</wpf:ResourceDictionary>

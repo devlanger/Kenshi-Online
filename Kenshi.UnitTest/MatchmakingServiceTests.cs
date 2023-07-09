@@ -33,42 +33,46 @@ public class MatchmakingServiceTests
         _mockGameHubContext = new Mock<IHubContext<GameHub>>();
         _mockHubClients = new Mock<IHubClients>();
         _mockClientProxy = new Mock<IClientProxy>();
-        _matchmakingService = new MatchmakingService(_logger.Object, _mockGameRoomService.Object, _mockGameHubContext.Object);
+        _matchmakingService =
+            new MatchmakingService(_logger.Object, _mockGameRoomService.Object, _mockGameHubContext.Object);
 
         _mockHubClients.Setup(h => h.Client(It.IsAny<string>())).Returns(_mockClientProxy.Object);
         _mockGameHubContext.Setup(h => h.Clients).Returns(_mockHubClients.Object);
 
-        _mockGameRoomService.Setup(m => m.CreateRoom(It.IsAny<string>(), It.IsAny<bool>())).Returns(()=> _roomInstance = new GameRoomInstance()
-        {
-            Port = id++,
-            DisplayName = "Test-Room",
-            RoomNumber = "1",
-            Started = false,
-            LeaderUsername = "test",
-            Settings = new RoomSettingsDto()
-        });
-        
+        _mockGameRoomService.Setup(m => m.CreateRoom(It.IsAny<string>(), It.IsAny<GameType>(), It.IsAny<bool>()))
+            .Returns(() => _roomInstance = new GameRoomInstance()
+            {
+                Port = id++,
+                DisplayName = "Test-Room",
+                RoomNumber = "1",
+                Started = false,
+                LeaderUsername = "test",
+                Settings = new RoomSettingsDto()
+            });
+
         _mockGameRoomService.Setup(m => m.StartGameInstance(_roomInstance));
     }
-    
+
     [Test]
     [TestCase(3, 4, 0)]
     [TestCase(4, 4, 1)]
     [TestCase(6, 4, 1)]
     [TestCase(10, 4, 2)]
     [TestCase(12, 5, 2)]
-    public async Task UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber(int numPlayers, int roomSize, int expectedNumGameRooms)
+    public async Task UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber(int numPlayers, int roomSize,
+        int expectedNumGameRooms)
     {
         // Arrange
         var lobbies = PopulateLobbies(numPlayers);
 
         // Act
         await _matchmakingService.UpdateMatchmakingLobbies(lobbies.ToHashSet(), roomSize);
-        
+
         // Assert
-        _mockGameRoomService.Verify(m => m.CreateRoom("room", false), Times.Exactly(expectedNumGameRooms));
+        _mockGameRoomService.Verify(m => m.CreateRoom("room", It.IsAny<GameType>(), false),
+            Times.Exactly(expectedNumGameRooms));
     }
-    
+
     [Test]
     public async Task UpdateMatchmakingLobbies_WhenCalled_MatchesRoomUsername()
     {
@@ -84,13 +88,15 @@ public class MatchmakingServiceTests
                 new GameUserService.GameUser() { Username = "User4" },
             },
             State = MatchmakingState.Searching,
-            WaitStartTime = DateTimeOffset.Now
+            WaitStartTime = DateTimeOffset.Now,
+            GameTypesSelected = new List<GameType>() { GameType.DEATHMATCH }
         };
 
         foreach (var user in lobby1.Users)
         {
             user.Lobby = lobby1;
         }
+
         var lobby2 = new Lobby()
         {
             Id = "2",
@@ -101,6 +107,7 @@ public class MatchmakingServiceTests
                 new GameUserService.GameUser() { Username = "User7" },
                 new GameUserService.GameUser() { Username = "User8" },
             },
+            GameTypesSelected = new List<GameType>() { GameType.TEAM_DEATHMATCH },
             State = MatchmakingState.Searching,
             WaitStartTime = DateTimeOffset.Now
         };
@@ -108,6 +115,7 @@ public class MatchmakingServiceTests
         {
             user.Lobby = lobby2;
         }
+
         var lobby3 = new Lobby()
         {
             Id = "3",
@@ -117,6 +125,7 @@ public class MatchmakingServiceTests
                 new GameUserService.GameUser() { Username = "User10" },
                 new GameUserService.GameUser() { Username = "User11" },
             },
+            GameTypesSelected = new List<GameType>() { GameType.TEAM_DEATHMATCH },
             State = MatchmakingState.Searching,
             WaitStartTime = DateTimeOffset.Now
         };
@@ -124,19 +133,65 @@ public class MatchmakingServiceTests
         {
             user.Lobby = lobby3;
         }
-        
+
         // Act
-        var rooms = await _matchmakingService.UpdateMatchmakingLobbies(new HashSet<Lobby>(){lobby1, lobby2, lobby3}.ToHashSet(), 4);
-        
+        var rooms = await _matchmakingService.UpdateMatchmakingLobbies(
+            new HashSet<Lobby>() { lobby1, lobby2, lobby3 }.ToHashSet(), 4);
+
         //Assert
-        Assert.IsTrue(rooms.Count() == 2);
+        Assert.IsTrue(rooms.Count() == 1);
         Assert.IsTrue(rooms.All(r => r.Players.Count == 4));
     }
-    
+
+    private static readonly List<Lobby> testLobbies1 = new List<Lobby>();
+
+    [Test]
+    public async Task TestMatchmakingSpread()
+    {
+        //Arrange
+        List<Lobby> lobbies = new List<Lobby>()
+        {
+            CreateLobby("1", 1, new List<GameType>() { GameType.DEATHMATCH }), 
+            CreateLobby("2", 1, new List<GameType>() { GameType.DEATHMATCH }),
+            CreateLobby("3", 2, new List<GameType>() { GameType.DEATHMATCH }),
+            CreateLobby("4", 2, new List<GameType>() { GameType.DEATHMATCH }),
+            CreateLobby("5", 2, new List<GameType>() { GameType.TEAM_DEATHMATCH }),
+            CreateLobby("6", 1, new List<GameType>() { GameType.TEAM_DEATHMATCH }),
+            CreateLobby("7", 1, new List<GameType>() { GameType.TEAM_DEATHMATCH }),
+        };
+
+        //Act
+        var rooms = await _matchmakingService.UpdateMatchmakingLobbies(lobbies.ToHashSet(), 4);
+
+        //Assert
+        Assert.AreEqual(rooms.Count(), 2);
+    }
+
+    private static Lobby CreateLobby(string id, int usersAmount, List<GameType> types)
+    {
+        Lobby lobby1 = new Lobby()
+        {
+            Id = id,
+            GameTypesSelected = new List<GameType>() { GameType.DEATHMATCH },
+            State = MatchmakingState.Searching
+        };
+
+        for (int i = 0; i < usersAmount; i++)
+        {
+            lobby1.Users.Add(new GameUserService.GameUser()
+            {
+                Username = "user1"
+            });
+        }
+
+        return lobby1;
+    }
+
     [Test]
     [TestCase(4, 10, 0)]
     [TestCase(4, 30, 1)]
-    public async Task UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber_WhenSoloPlayer(int roomSize, float waitTimeInSeconds, int expectedNumGameRooms)
+    public async Task UpdateMatchmakingLobbies_WhenCalled_MatchesRoomNumber_WhenSoloPlayer(int roomSize,
+        float waitTimeInSeconds, int expectedNumGameRooms)
     {
         // Arrange
         Lobby lastLobby = new Lobby()
@@ -144,9 +199,10 @@ public class MatchmakingServiceTests
             Id = "1",
             Users = new List<GameUserService.GameUser>(),
             State = MatchmakingState.Searching,
-            WaitStartTime = DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(waitTimeInSeconds))
+            WaitStartTime = DateTimeOffset.Now.Subtract(TimeSpan.FromSeconds(waitTimeInSeconds)),
+            GameTypesSelected = new List<GameType>() { GameType.DEATHMATCH, GameType.TEAM_DEATHMATCH }
         };
-        
+
         lastLobby.Users.Add(new GameUserService.GameUser()
         {
             Lobby = lastLobby,
@@ -156,10 +212,11 @@ public class MatchmakingServiceTests
         });
 
         // Act
-        var rooms = await _matchmakingService.UpdateMatchmakingLobbies(new HashSet<Lobby>(){ lastLobby }, roomSize);
-        
+        var rooms = await _matchmakingService.UpdateMatchmakingLobbies(new HashSet<Lobby>() { lastLobby }, roomSize);
+
         // Assert
-        _mockGameRoomService.Verify(m => m.CreateRoom("room", false), Times.Exactly(expectedNumGameRooms));
+        _mockGameRoomService.Verify(m => m.CreateRoom("room", It.IsAny<GameType>(), false),
+            Times.Exactly(expectedNumGameRooms));
     }
 
     private static IEnumerable<Lobby> PopulateLobbies(int numPlayers)
@@ -181,7 +238,7 @@ public class MatchmakingServiceTests
 
             var user = new GameUserService.GameUser
                 { Username = $"user{i}", ConnectionId = $"connection{i}", Lobby = lastLobby };
-            
+
             lastLobby.Users.Add(user);
         }
 

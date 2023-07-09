@@ -14,6 +14,7 @@ public class GameRoomInstance : IGameRoomInstance
     public List<string> Players { get; set; } = new List<string>();
     public bool Started { get; set; }
     public int Port { get; set; }
+    public GameType GameType { get; set; }
     public int MaxPlayers => Settings.playersAmount;
     public int PlayersCount => Players.Count;
     public RoomSettingsDto Settings { get; set; } = new RoomSettingsDto();

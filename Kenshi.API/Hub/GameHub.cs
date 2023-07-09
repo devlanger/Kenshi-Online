@@ -86,7 +86,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
         {
             Console.WriteLine($"create game {name}");
             
-            var gameRoomInstance = _gameRoomService.CreateRoom(name, false);
+            var gameRoomInstance = _gameRoomService.CreateRoom(name, GameType.DEATHMATCH, false);
 
             gameRoomInstance.SetLeader(GetUsername());
             gameRoomInstance.AddPlayer(GetUsername());
@@ -257,7 +257,7 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
     }
 
     
-    public async Task StartMatchmaking()
+    public async Task StartMatchmaking(string gameModes)
     {
         var user = _gameUserService.GetUserByConnectionId(Context.ConnectionId);
         if (user == null)
@@ -265,6 +265,19 @@ public class GameHub : Microsoft.AspNetCore.SignalR.Hub
             return;
         }
         
+        var types = gameModes.Split(",").Select(m =>
+        {
+            if (int.TryParse(m, out var mode) && Enum.IsDefined(typeof(GameType), mode))
+            {
+                return (GameType)mode;
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid game mode: {m}");
+            }
+        }).ToList();
+
+        user.Lobby.GameTypesSelected = types;
         _matchmakingService.StartLobbyMatchmaking(user.Lobby);
     }
 

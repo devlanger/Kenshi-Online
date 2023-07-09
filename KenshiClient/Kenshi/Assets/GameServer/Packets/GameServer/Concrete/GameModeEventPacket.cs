@@ -1,6 +1,7 @@
 using System.IO;
 using DefaultNamespace;
 using Kenshi.Shared.Enums;
+using Kenshi.Shared.Models;
 using LiteNetLib.Utils;
 
 namespace Kenshi.Shared.Packets.GameServer

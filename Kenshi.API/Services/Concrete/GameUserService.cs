@@ -31,7 +31,8 @@ public class GameUserService
         public UserDto? User { get; set; }
 
         public bool IsAuthenticated => User is not null;
-        
+        public int Rating { get; set; }
+
         public GameUser()
         {
             Connection = new PlayerConnection();

@@ -1,3 +1,5 @@
+using Kenshi.Shared.Models;
+
 namespace DefaultNamespace
 {
     [System.Serializable]
@@ -10,11 +12,5 @@ namespace DefaultNamespace
         {
             _gameModeController = gameModeController;
         }
-    }
-
-    public enum GameType
-    {
-        DEATHMATCH = 1,
-        TEAM_DEATHMATCH = 2,
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using DefaultNamespace;
+using Kenshi.Shared.Models;
 using UnityEngine;
 
 public class GameModeController : MonoBehaviour
@@ -24,8 +25,7 @@ public class GameModeController : MonoBehaviour
         {
             if (Environment.GetEnvironmentVariable("GAME_MODE") != null)
             {
-                int gameModeIndex = 0;
-                if (int.TryParse(Environment.GetEnvironmentVariable("GAME_MODE"), out gameModeIndex))
+                if (int.TryParse(Environment.GetEnvironmentVariable("GAME_MODE"), out int gameModeIndex))
                 {
                     InitializeMode(GetModeInstance((GameType)gameModeIndex));
                 }

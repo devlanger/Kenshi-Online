@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ public class PlayPanelController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private GameObject matchmakingText;
     [SerializeField] private ClientConnectionSettings _clientConnectionSettings;
+    [SerializeField] private GameModePanel _gameModePanel;
     
     private bool UseTestServerOnPlayButton => _clientConnectionSettings.useTestServerOnPlayButton;
 
@@ -56,6 +58,8 @@ public class PlayPanelController : MonoBehaviour
                     SetState();
                 }
                 
+                _gameModePanel.SetInteractable(!isSearching);
+                
                 if(waitingCoroutine != null) StopCoroutine(waitingCoroutine);
                 waitingCoroutine = StartCoroutine(StartWaitingTimer());
                 break;
@@ -87,7 +91,13 @@ public class PlayPanelController : MonoBehaviour
             return;
         }
 
-        await _connectionController.ExecuteCommand(!isSearching ? $"start_matchmaking" : "stop_matchmaking");
+        if (!isSearching && _gameModePanel.SelectedTypes.Count == 0)
+        {
+            return;
+        }
+        
+        string gameModes = string.Join(",", _gameModePanel.SelectedTypes.Select(m => (int)m));
+        await _connectionController.ExecuteCommand(!isSearching ? $"start_matchmaking {gameModes}" : "stop_matchmaking");
     }
 
     private void SetState()

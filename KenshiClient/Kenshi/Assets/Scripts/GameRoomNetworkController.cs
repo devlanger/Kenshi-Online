@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using DefaultNamespace;
 using Kenshi.Shared;
 using Kenshi.Shared.Enums;
+using Kenshi.Shared.Models;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using Sirenix.OdinInspector;

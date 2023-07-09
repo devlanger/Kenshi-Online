@@ -9,6 +9,7 @@ public interface IGameRoomInstance
     
     string RoomNumber { get; set; }
     string LeaderUsername { get; set; }
+    GameType GameType { get; set; }
     int Port { get; set; }
     int MaxPlayers { get; }
     int PlayersCount { get; }

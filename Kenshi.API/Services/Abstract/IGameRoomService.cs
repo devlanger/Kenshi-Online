@@ -1,4 +1,5 @@
 using System.Collections;
+using Kenshi.Shared.Models;
 
 namespace Kenshi.API.Services;
 
@@ -14,5 +15,5 @@ public interface IGameRoomService
     void RemoveRoom(string id);
     IGameRoomInstance GetRoomForUsername(string playerName);
     IGameRoomInstance GetRoom(string dtoRoomId);
-    IGameRoomInstance CreateRoom(string name, bool isTest);
+    IGameRoomInstance CreateRoom(string name, GameType type, bool isTest);
 }

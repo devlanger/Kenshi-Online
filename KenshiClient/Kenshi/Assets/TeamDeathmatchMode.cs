@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Kenshi.Shared.Models;
 using Kenshi.Shared.Packets.GameServer;
 using LiteNetLib;
 using StarterAssets;

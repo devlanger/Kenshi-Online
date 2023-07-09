@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Client Connection Settings
   m_EditorClassIdentifier: 
   useLocalServer: 1
-  useTestServerOnPlayButton: 1
+  useTestServerOnPlayButton: 0
   useLocalLoginServer: 1
   loginLocalUrl: http://localhost:3330
   loginRemoteUrl: http://209.38.227.113:3330

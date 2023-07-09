@@ -1,4 +1,5 @@
 using Kenshi.API.Helpers;
+using Kenshi.Shared.Models;
 
 namespace Kenshi.API.Services;
 
@@ -27,7 +28,8 @@ public class GameRoomService : IGameRoomService
             var pod = _dockerService.CreatePod(new GameRoomPodSettings
             {
                 Port = roomData.Port, 
-                MapName = roomData.Settings.mapName
+                MapName = roomData.Settings.mapName,
+                GameModeType = roomData.GameType
             });
                     
             if (pod.Result)
@@ -133,7 +135,7 @@ public class GameRoomService : IGameRoomService
         return Rooms.ContainsKey(dtoRoomId) ? Rooms[dtoRoomId] : null;
     }
 
-    public IGameRoomInstance CreateRoom(string name, bool isTest)
+    public IGameRoomInstance CreateRoom(string name, GameType type, bool isTest)
     {
         int port = GetFreePort();
         var room = new GameRoomInstance()
@@ -143,7 +145,8 @@ public class GameRoomService : IGameRoomService
             Port = port,
             Started = false,
             RoomId = KubernetesService.GetPodName(port),
-            TestServer = isTest
+            TestServer = isTest,
+            GameType = type
         };
         AddRoom(room);
         

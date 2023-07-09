@@ -89,8 +89,9 @@ public class KubernetesService
             Env = new List<string>
             {
                 $"CONTAINER_NAME={GetPodName(freePort)}",
+                $"GAME_MODE={(int)settings.GameModeType}",
                 $"GAME_SERVER_PORT={freePort}",
-                $"REDIS_HOST=redis",
+                $"REDIS_HOST=redis",g
                 $"RABBIT_MQ_HOST=kenshirabbitmq",
                 $"JWT_SECRET={_configuration["Jwt:Key"]}",
                 $"MAP_NAME={settings.MapName}",

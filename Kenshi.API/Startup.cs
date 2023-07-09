@@ -11,6 +11,7 @@ using Kenshi.API.Models.Abstract;
 using Kenshi.API.Models.Concrete;
 using Kenshi.API.Services;
 using Kenshi.API.Services.Concrete;
+using Kenshi.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 using Prometheus;
 
@@ -92,7 +93,7 @@ public class Startup
         if (createTestServer)
         {
             Console.WriteLine("Create debug room at port 5001 for testing locally (run server manually).");
-            roomsService.CreateRoom("5001", true);
+            roomsService.CreateRoom("5001", GameType.DEATHMATCH, true);
         }
     }
 
