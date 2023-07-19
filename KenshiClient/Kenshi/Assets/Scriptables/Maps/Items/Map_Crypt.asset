@@ -24,3 +24,5 @@ MonoBehaviour:
   id: 2
   mapName: Crypt
   sceneName: Map_Crypt
+  skybox: {fileID: 0}
+  icon: {fileID: 21300000, guid: b0bb609b733f52e498d926943ca2104e, type: 3}

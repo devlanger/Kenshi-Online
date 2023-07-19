@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Backend.Shared", "Ke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.UnitTest", "Kenshi.UnitTest\Kenshi.UnitTest.csproj", "{ABAF1D72-6C19-41D7-909D-0A03FE58BCB8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kenshi.Web.App", "Kenshi.Web.App\Kenshi.Web.App.csproj", "{D0AFBFDA-E3FC-4489-A866-1C1F05DE6756}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{ABAF1D72-6C19-41D7-909D-0A03FE58BCB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABAF1D72-6C19-41D7-909D-0A03FE58BCB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABAF1D72-6C19-41D7-909D-0A03FE58BCB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0AFBFDA-E3FC-4489-A866-1C1F05DE6756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0AFBFDA-E3FC-4489-A866-1C1F05DE6756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0AFBFDA-E3FC-4489-A866-1C1F05DE6756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0AFBFDA-E3FC-4489-A866-1C1F05DE6756}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

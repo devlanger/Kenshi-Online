@@ -12,3 +12,5 @@ elasticsearch-data
 !Builds/Dockerfile
 db_password.txt
 db.env
+
+node_modules

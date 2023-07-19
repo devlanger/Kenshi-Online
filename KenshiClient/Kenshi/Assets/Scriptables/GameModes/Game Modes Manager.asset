@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed13e60f8c5454fb7aec249ff0fc485f, type: 3}
-  m_Name: Maps Manager
+  m_Script: {fileID: 11500000, guid: 483acac066fbb487fb662c7bdbfadf02, type: 3}
+  m_Name: Game Modes Manager
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -22,4 +22,5 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   items:
-  - {fileID: 11400000, guid: 484e4e11928754552af09e3fc33b6df6, type: 2}
+  - {fileID: 11400000, guid: 816286701c0e2421ea03cfb0c590103d, type: 2}
+  - {fileID: 11400000, guid: c08f33c68f86a40dfb7dcc74c7339c46, type: 2}

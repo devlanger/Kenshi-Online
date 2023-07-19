@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed13e60f8c5454fb7aec249ff0fc485f, type: 3}
-  m_Name: Maps Manager
+  m_Script: {fileID: 11500000, guid: f42c4322a24f74d6382afdeb0d8de79b, type: 3}
+  m_Name: DeathmatchGameMode
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,5 +21,10 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  items:
-  - {fileID: 11400000, guid: 484e4e11928754552af09e3fc33b6df6, type: 2}
+  id: 0
+  name: Deathmatch
+  icon: {fileID: 21300000, guid: 678a437d7c2d54df0a34a56b91757322, type: 3}
+  description: "A deathmatch where cunning, skill, and speed determine victory. \n\nBattle
+    in ancient temples, bamboo forests, and moonlit rooftops. With diverse ninja
+    warriors and lethal weapons, the arena crackles with anticipation. \n\nAcrobatics
+    and lightning-fast strikes define this furious, blood-soaked dance of combat."
