@@ -28,6 +28,21 @@ services:
     networks:
       - local-dev
         
+  kenshi-web:
+    depends_on:
+      - db-azure
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Kenshi.Web.App/Dockerfile
+    ports:
+      - 7119:7119
+      - 5151:5151
+    environment:
+      - "ASPNETCORE_URLS=https://+:7119,https://+:5151"
+    networks:
+      - local-dev
+        
   redis:
     image: redis:latest
     ports:
