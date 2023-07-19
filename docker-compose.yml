@@ -39,7 +39,7 @@ services:
       - 7119:7119
       - 5151:5151
     environment:
-      - "ASPNETCORE_URLS=https://+:7119,https://+:5151"
+      - "ASPNETCORE_URLS=http://+:5151"
     networks:
       - local-dev
         
