@@ -11,6 +11,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+RUN npm install -g npm
+RUN npm install
+
 WORKDIR /src
 COPY ["Kenshi.Web.App/Kenshi.Web.App.csproj", "Kenshi.Web.App/"]
 RUN dotnet restore "Kenshi.Web.App/Kenshi.Web.App.csproj"
